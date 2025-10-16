@@ -6,7 +6,6 @@
 		<groupId>edu.upeu.microservices-schedule</groupId>
 		<artifactId>microservices-schedule</artifactId>
 		<version>1.0.0</version>
-		<packaging>pom</packaging>
 	</parent>
 	<groupId>pe.edu.upeu</groupId>
 	<artifactId>microservice_schedule</artifactId>
