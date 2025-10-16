@@ -8,6 +8,17 @@
             "mainClass": "pe.edu.upeu.microservice_eureka.MicroserviceEurekaServerApplication",
             "projectName": "microservice-eureka-server",
             "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=60096 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=microservice-eureka-server"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MicroserviceUserApplication<microservice_user>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pe.edu.upeu.microservice_user.MicroserviceUserApplication",
+            "projectName": "microservice_user",
+            "args": "",
             "envFile": "${workspaceFolder}/.env"
         }
     ]
