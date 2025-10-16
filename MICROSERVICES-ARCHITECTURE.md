@@ -195,6 +195,36 @@ curl http://localhost:8081/health
 
 5. **Resiliencia**: Si un servicio cae, Eureka lo detecta automáticamente y deja de enrutar tráfico hacia él.
 
+## 🔧 Solución de Problemas
+
+### Microservicio "no ejecutable" desde el IDE
+
+**Problema:** El IDE muestra que el microservicio no es ejecutable.
+
+**Solución aplicada:** Se ha añadido la configuración `<mainClass>` y el goal `repackage` en el plugin `spring-boot-maven-plugin` de todos los microservicios para que sean ejecutables:
+
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <mainClass>pe.edu.upeu.package.MainClass</mainClass>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+**Para resolver:**
+1. Recargar el proyecto Maven (click derecho en el proyecto → Maven → Reload Project)
+2. O ejecutar: `mvn clean install`
+3. Ahora podrás ejecutar los microservicios desde el sidebar del IDE
+
 ## 🔄 Próximos Pasos Sugeridos
 
 - [ ] Implementar Circuit Breaker (Resilience4j)

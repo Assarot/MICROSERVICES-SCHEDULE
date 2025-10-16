@@ -5,6 +5,20 @@
     <file url="file://$PROJECT_DIR$/microservice-course-management/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservice-enviroment/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservice-enviroment/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice-eureka-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice-eureka-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_auth/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_auth/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_incident/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_incident/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_inventory/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_inventory/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_schedule/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_schedule/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservice_user/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
