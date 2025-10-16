@@ -1,0 +1,98 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Auth Service Routes
+        - id: microservice-auth
+          uri: lb://microservice-auth
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        # User Service Routes
+        - id: microservice-user
+          uri: lb://microservice-user
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        # Course Management Service Routes
+        - id: microservice-course-management
+          uri: lb://microservice-course-management
+          predicates:
+            - Path=/api/courses/**
+          filters:
+            - StripPrefix=1
+
+        # Schedule Service Routes
+        - id: microservice-schedule
+          uri: lb://microservice-schedule
+          predicates:
+            - Path=/api/schedules/**
+          filters:
+            - StripPrefix=1
+
+        # Inventory Service Routes
+        - id: microservice-inventory
+          uri: lb://microservice-inventory
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            - StripPrefix=1
+
+        # Incident Service Routes
+        - id: microservice-incident
+          uri: lb://microservice-incident
+          predicates:
+            - Path=/api/incidents/**
+          filters:
+            - StripPrefix=1
+
+        # Environment Service Routes
+        - id: microservice-environment
+          uri: lb://microservice-enviroment
+          predicates:
+            - Path=/api/environments/**
+          filters:
+            - StripPrefix=1
+
+server:
+  port: ${SERVER_PORT:8080}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    pe.edu.upeu.microservice_gateway: DEBUG
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
