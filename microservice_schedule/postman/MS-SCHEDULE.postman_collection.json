@@ -1,0 +1,432 @@
+{
+	"info": {
+		"_postman_id": "ms-schedule-collection-001",
+		"name": "MS-SCHEDULE API",
+		"description": "Colección de endpoints para el microservicio MS-SCHEDULE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Type Hour",
+			"item": [
+				{
+					"name": "Create Type Hour",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"typeHour\": \"Teórica\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-hours",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-hours"]
+						}
+					}
+				},
+				{
+					"name": "Get All Type Hours",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-hours",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-hours"]
+						}
+					}
+				},
+				{
+					"name": "Get Type Hour by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-hours/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-hours", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Type Hour",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"typeHour\": \"Teórica Actualizada\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-hours/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-hours", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Type Hour",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-hours/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-hours", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Type Assignment",
+			"item": [
+				{
+					"name": "Create Type Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Presencial\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-assignments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get All Type Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-assignments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get Type Assignment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Type Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Virtual\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Type Assignment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/type-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "type-assignments", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Week Day",
+			"item": [
+				{
+					"name": "Create Week Day",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Lunes\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/week-days",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "week-days"]
+						}
+					}
+				},
+				{
+					"name": "Get All Week Days",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/week-days",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "week-days"]
+						}
+					}
+				},
+				{
+					"name": "Get Week Day by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/week-days/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "week-days", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Week Day",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Martes\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/week-days/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "week-days", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Week Day",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/week-days/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "week-days", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Schedule",
+			"item": [
+				{
+					"name": "Create Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startTime\": \"08:00:00\",\n  \"endTime\": \"10:00:00\",\n  \"duration\": 120,\n  \"idTypeSchedule\": 1,\n  \"idAcademicSpace\": 1,\n  \"idCourseAssignment\": 1,\n  \"idWeekName\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedules",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedules"]
+						}
+					}
+				},
+				{
+					"name": "Get All Schedules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedules",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedules"]
+						}
+					}
+				},
+				{
+					"name": "Get Schedule by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedules/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedules", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startTime\": \"10:00:00\",\n  \"endTime\": \"12:00:00\",\n  \"duration\": 120,\n  \"idTypeSchedule\": 1,\n  \"idAcademicSpace\": 1,\n  \"idCourseAssignment\": 1,\n  \"idWeekName\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedules/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedules", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedules/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedules", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Schedule Assignment",
+			"item": [
+				{
+					"name": "Create Schedule Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assignmentDate\": \"2024-10-15\",\n  \"idSchedule\": 1,\n  \"idTypeAssignment\": 1,\n  \"idUserProfile\": 1,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedule-assignments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedule-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get All Schedule Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedule-assignments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedule-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get Schedule Assignment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedule-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedule-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Schedule Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assignmentDate\": \"2024-10-16\",\n  \"idSchedule\": 1,\n  \"idTypeAssignment\": 2,\n  \"idUserProfile\": 1,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedule-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedule-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Schedule Assignment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/schedule-assignments/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "schedule-assignments", "1"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8081",
+			"type": "string"
+		}
+	]
+}

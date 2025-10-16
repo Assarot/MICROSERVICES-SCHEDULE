@@ -3,8 +3,6 @@ package pe.edu.upeu.microservice_course_management.infrastructure.adapters.input
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import pe.edu.upeu.microservice_course_management.domain.model.CourseMode;
-import pe.edu.upeu.microservice_course_management.domain.model.CourseType;
 
 @Builder
 @Getter

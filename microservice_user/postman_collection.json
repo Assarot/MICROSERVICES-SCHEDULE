@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "MS-USER API",
+    "description": "Colección de endpoints del microservicio de gestión de perfiles de usuario",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Profiles",
+      "item": [
+        {
+          "name": "Crear Perfil de Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"names\": \"Juan Carlos\",\n  \"lastName\": \"García López\",\n  \"email\": \"nuevo.usuario@email.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 123, Lima\",\n  \"dob\": \"1990-05-15\",\n  \"profilePicture\": \"https://via.placeholder.com/150\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Todos los Perfiles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Perfiles Activos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "active"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Perfil por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Perfil por Email",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/email/juan.garcia@email.com",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "email", "juan.garcia@email.com"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"names\": \"Juan Carlos Actualizado\",\n  \"lastName\": \"García López\",\n  \"email\": \"juan.garcia.actualizado@email.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 456, Lima\",\n  \"dob\": \"1990-05-15\",\n  \"profilePicture\": \"https://via.placeholder.com/150\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activar Perfil",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1/activate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1", "activate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Perfil",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1", "deactivate"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Perfil",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

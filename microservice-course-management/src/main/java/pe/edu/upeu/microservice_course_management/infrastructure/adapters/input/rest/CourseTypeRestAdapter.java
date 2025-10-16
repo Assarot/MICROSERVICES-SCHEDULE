@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.microservice_course_management.application.ports.input.CourseTypeServicePort;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.input.rest.mapper.CourseTypeRestMapper;
-import pe.edu.upeu.microservice_course_management.infrastructure.adapters.input.rest.model.request.CourseTypeCreateRequest;;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.input.rest.model.request.CourseTypeCreateRequest;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.input.rest.model.respose.CourseTypeResponse;
 
 import java.util.List;

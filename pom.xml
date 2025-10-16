@@ -11,8 +11,13 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>microservice-course-management</module>
         <module>microservice-enviroment</module>
+        <module>microservice-course-management</module>
+        <module>microservice_user</module>
+        <module>microservice_inventory</module>
+        <module>microservice_incident</module>
+        <module>microservice_auth</module>
+        <module>microservice_schedule</module>
     </modules>
 
     <properties>

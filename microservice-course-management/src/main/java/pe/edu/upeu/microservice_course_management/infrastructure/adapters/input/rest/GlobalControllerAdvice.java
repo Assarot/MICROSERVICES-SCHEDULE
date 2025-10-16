@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pe.edu.upeu.microservice_course_management.domain.exception.CourseNotFoundException;
 import pe.edu.upeu.microservice_course_management.domain.model.ErrorResponse;
-import pe.edu.upeu.microservice_course_management.utils.ErrorCatalog;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
