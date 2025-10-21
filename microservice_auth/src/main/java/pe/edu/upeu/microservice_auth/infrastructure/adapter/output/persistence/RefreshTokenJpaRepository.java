@@ -3,6 +3,7 @@ package pe.edu.upeu.microservice_auth.infrastructure.adapter.output.persistence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pe.edu.upeu.microservice_auth.domain.model.RefreshToken;
 
@@ -20,5 +21,5 @@ public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, L
     
     @Modifying
     @Query("DELETE FROM RefreshToken rt WHERE rt.expiryDate < :now")
-    void deleteExpiredTokens(Instant now);
+    void deleteExpiredTokens(@Param("now") Instant now);
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.microservice_auth.domain.exception.InvalidCredentialsException;
 import pe.edu.upeu.microservice_auth.domain.exception.UserNotFoundException;
+import pe.edu.upeu.microservice_auth.domain.model.AuthSession;
 import pe.edu.upeu.microservice_auth.domain.model.AuthUser;
 import pe.edu.upeu.microservice_auth.domain.model.RefreshToken;
 import pe.edu.upeu.microservice_auth.domain.port.input.LoginUseCase;
@@ -24,6 +25,7 @@ public class LoginService implements LoginUseCase {
     private final PasswordEncoderPort passwordEncoderPort;
     private final JwtServicePort jwtServicePort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
+    private final AuthSessionRepositoryPort authSessionRepositoryPort;
 
     @Override
     @Transactional
@@ -60,6 +62,14 @@ public class LoginService implements LoginUseCase {
                 .expiryDate(Instant.now().plusMillis(jwtServicePort.getRefreshTokenExpiration()))
                 .build();
         refreshTokenRepositoryPort.save(refreshToken);
+
+        // Save auth session to database
+        AuthSession authSession = AuthSession.builder()
+                .token(accessToken)
+                .authUser(user)
+                .expiresIn(Instant.now().plusMillis(jwtServicePort.getAccessTokenExpiration()))
+                .build();
+        authSessionRepositoryPort.save(authSession);
 
         log.info("User logged in successfully: {}", username);
 

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        log.info("GET /api/users");
+        log.info("GET /api/auth/users");
 
         List<AuthUser> users = userManagementUseCase.getAllUsers();
         List<UserResponseDTO> response = users.stream()
@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        log.info("GET /api/users/{}", id);
+        log.info("GET /api/auth/users/{}", id);
 
         AuthUser user = userManagementUseCase.getUserById(id);
         UserResponseDTO response = userMapper.toResponseDTO(user);
@@ -52,7 +52,7 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> updateUser(
             @PathVariable Long id,
             @RequestBody Map<String, Object> updates) {
-        log.info("PUT /api/users/{}", id);
+        log.info("PUT /api/auth/users/{}", id);
 
         AuthUser userToUpdate = AuthUser.builder()
                 .username((String) updates.get("username"))
@@ -70,7 +70,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
-        log.info("DELETE /api/users/{}", id);
+        log.info("DELETE /api/auth/users/{}", id);
 
         userManagementUseCase.deleteUser(id);
         
@@ -82,7 +82,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> assignRole(
             @PathVariable Long id,
             @PathVariable String roleName) {
-        log.info("POST /api/users/{}/roles/{}", id, roleName);
+        log.info("POST /api/auth/users/{}/roles/{}", id, roleName);
 
         userManagementUseCase.assignRoleToUser(id, roleName);
         
@@ -94,7 +94,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> removeRole(
             @PathVariable Long id,
             @PathVariable String roleName) {
-        log.info("DELETE /api/users/{}/roles/{}", id, roleName);
+        log.info("DELETE /api/auth/users/{}/roles/{}", id, roleName);
 
         userManagementUseCase.removeRoleFromUser(id, roleName);
         

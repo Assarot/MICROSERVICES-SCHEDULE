@@ -3,6 +3,7 @@ package pe.edu.upeu.microservice_auth.infrastructure.adapter.output.persistence;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pe.edu.upeu.microservice_auth.domain.model.AuthSession;
 
@@ -20,5 +21,5 @@ public interface AuthSessionJpaRepository extends JpaRepository<AuthSession, Lon
     
     @Modifying
     @Query("DELETE FROM AuthSession a WHERE a.expiresIn < :now")
-    void deleteExpiredSessions(Instant now);
+    void deleteExpiredSessions(@Param("now") Instant now);
 }

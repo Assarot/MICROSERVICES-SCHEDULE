@@ -1,7 +1,7 @@
 -- Insert default admin user
 -- Password: admin123 (BCrypt encoded)
 INSERT INTO auth_user (username, password, failed_logins_attempts, is_active, id_user_profile) 
-VALUES ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 0, true, NULL);
+VALUES ('admin', '$2a$12$Hbuv9GksPRStCKpNlLjqru.9IlS/K9EsDDUGofsGHb7IUXIzfhmSu', 0, true, NULL);
 
 -- Assign ADMIN role to admin user
 INSERT INTO auth_user_role (id_auth_user, id_role) 
