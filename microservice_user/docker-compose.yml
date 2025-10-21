@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:latest
+    container_name: ms-user-postgres
+    environment:
+      POSTGRES_DB: ms_user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ms-user-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Microservicio MS-USER
+  # ms-user:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: ms-user-app
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ms_user_db
+  #     SPRING_DATASOURCE_USERNAME: postgres
+  #     SPRING_DATASOURCE_PASSWORD: postgres
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - ms-user-network
+  #   restart: unless-stopped
+
+  # PgAdmin (opcional, para administrar la base de datos)
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: ms-user-pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@msuser.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - ms-user-network
+  #   restart: unless-stopped
+
+networks:
+  ms-user-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: ms-incident
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5437/incident_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        '[format_sql]': true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${SERVER_PORT:8086}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api-key: ${CLOUDINARY_API_KEY:378959715585574}
+  api-secret: ${CLOUDINARY_API_SECRET:wZsTcnnd8Lr_gqnwu4XqHh3Ve9k}

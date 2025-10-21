@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: microservice-inventory
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5438/inventory_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${SERVER_PORT:8085}
+  servlet:
+    context-path: /api/v1
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+# Cloudinary Configuration
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api-key: ${CLOUDINARY_API_KEY:438283623645833}
+  api-secret: ${CLOUDINARY_API_SECRET:7flPFwzxA6pBWiTflhDhi3cNBAQ}
+
+logging:
+  level:
+    pe.edu.upeu.microservice_inventory: DEBUG
+    org.hibernate.SQL: DEBUG

@@ -1,0 +1,13 @@
+target/
+.mvn/wrapper/maven-wrapper.jar
+.git
+.gitignore
+README.md
+README_MS_USER.md
+*.log
+.idea
+.vscode
+*.iml
+.env
+.env.example
+postman_collection.json

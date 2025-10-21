@@ -1,0 +1,562 @@
+{
+	"info": {
+		"_postman_id": "ms-inventory-collection",
+		"name": "MS-INVENTORY API",
+		"description": "Complete API collection for MS-INVENTORY microservice with hexagonal architecture",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "STATE",
+			"item": [
+				{
+					"name": "Create State",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Available\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/states",
+							"host": ["{{baseUrl}}"],
+							"path": ["states"]
+						}
+					}
+				},
+				{
+					"name": "Get All States",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/states",
+							"host": ["{{baseUrl}}"],
+							"path": ["states"]
+						}
+					}
+				},
+				{
+					"name": "Get State by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/states/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["states", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Active States",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/states/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["states", "active"]
+						}
+					}
+				},
+				{
+					"name": "Update State",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Available - Updated\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/states/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["states", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete State",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/states/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["states", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "CATEGORY RESOURCE",
+			"item": [
+				{
+					"name": "Create Category Resource",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Electronics\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/category-resources",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources"]
+						}
+					}
+				},
+				{
+					"name": "Get All Category Resources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/category-resources",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources"]
+						}
+					}
+				},
+				{
+					"name": "Get Category Resource by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/category-resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Active Category Resources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/category-resources/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources", "active"]
+						}
+					}
+				},
+				{
+					"name": "Update Category Resource",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Electronics - Updated\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/category-resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Category Resource",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/category-resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["category-resources", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "RESOURCE TYPE",
+			"item": [
+				{
+					"name": "Create Resource Type",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Laptop\",\n  \"isActive\": true,\n  \"idCategoryResource\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resource-types",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types"]
+						}
+					}
+				},
+				{
+					"name": "Get All Resource Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-types",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types"]
+						}
+					}
+				},
+				{
+					"name": "Get Resource Type by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-types/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Active Resource Types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-types/active",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types", "active"]
+						}
+					}
+				},
+				{
+					"name": "Get Resource Types by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-types/category/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types", "category", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Resource Type",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Laptop - Updated\",\n  \"isActive\": true,\n  \"idCategoryResource\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resource-types/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Resource Type",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-types/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-types", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "RESOURCE",
+			"item": [
+				{
+					"name": "Create Resource with Photo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "resource",
+									"value": "{\"code\":\"LAP001\",\"stock\":10,\"observation\":\"New laptop\",\"idResourceType\":1,\"idState\":1}",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/path/to/image.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resources",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources"]
+						}
+					}
+				},
+				{
+					"name": "Create Resource without Photo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "resource",
+									"value": "{\"code\":\"LAP002\",\"stock\":5,\"observation\":\"Another laptop\",\"idResourceType\":1,\"idState\":1}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resources",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources"]
+						}
+					}
+				},
+				{
+					"name": "Get All Resources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resources",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources"]
+						}
+					}
+				},
+				{
+					"name": "Get Resource by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Resources by Type",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resources/type/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources", "type", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Resources by State",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resources/state/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources", "state", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Resource with Photo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "resource",
+									"value": "{\"code\":\"LAP001-UPD\",\"stock\":15,\"observation\":\"Updated laptop\",\"idResourceType\":1,\"idState\":1}",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/path/to/new-image.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Resource",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resources/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resources", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "RESOURCE ASSIGNMENT",
+			"item": [
+				{
+					"name": "Create Resource Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idAcademicSpace\": 1,\n  \"idResource\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get All Resource Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments"]
+						}
+					}
+				},
+				{
+					"name": "Get Resource Assignment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Assignments by Resource",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments/resource/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments", "resource", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Assignments by Academic Space",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments/academic-space/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments", "academic-space", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Resource Assignment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idAcademicSpace\": 2,\n  \"idResource\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Resource Assignment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/resource-assignments/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["resource-assignments", "1"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

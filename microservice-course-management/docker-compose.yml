@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres-course:
+    image: postgres:latest
+    container_name: postgres-course-db
+    environment:
+      POSTGRES_DB: course_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres-course-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d course_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ms-course-management:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: ms-course-management
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "8083:8083"
+  #   depends_on:
+  #     postgres-course:
+  #       condition: service_healthy
+  #   networks:
+  #     - microservices-network
+  #   restart: unless-stopped
+
+volumes:
+  postgres-course-data:
+
+networks:
+  microservices-network:
+    driver: bridge

@@ -1,0 +1,85 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Auth Service Routes (includes /api/auth/users)
+        - id: microservice-auth
+          uri: lb://microservice-auth
+          predicates:
+            - Path=/api/auth/**
+
+        # User Profile Service Routes
+        - id: ms-user
+          uri: lb://ms-user
+          predicates:
+            - Path=/api/users/**
+
+        # Course Management Service Routes
+        - id: ms-course-management
+          uri: lb://ms-course-management
+          predicates:
+            - Path=/api/courses/**
+
+        # Schedule Service Routes
+        - id: microservice_schedule
+          uri: lb://microservice_schedule
+          predicates:
+            - Path=/api/schedules/**
+
+        # Inventory Service Routes
+        - id: microservice-inventory
+          uri: lb://microservice-inventory
+          predicates:
+            - Path=/api/inventory/**
+
+        # Incident Service Routes
+        - id: ms-incident
+          uri: lb://ms-incident
+          predicates:
+            - Path=/api/incidents/**
+
+        # Environment Service Routes
+        - id: ms-enviroment
+          uri: lb://ms-enviroment
+          predicates:
+            - Path=/api/environments/**
+
+server:
+  port: ${SERVER_PORT:8080}
+  address: 0.0.0.0  # Accesible desde la red local
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    pe.edu.upeu.microservice_gateway: DEBUG
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true

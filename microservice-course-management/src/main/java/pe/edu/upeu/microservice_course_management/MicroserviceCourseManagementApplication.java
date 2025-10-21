@@ -4,13 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignment;
-import pe.edu.upeu.microservice_course_management.domain.model.CourseType;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.*;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.*;
 
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
 @RequiredArgsConstructor
