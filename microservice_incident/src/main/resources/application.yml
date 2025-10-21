@@ -37,6 +37,6 @@ eureka:
     instance-id: ${spring.application.name}:${random.value}
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:your_cloud_name}
-  api-key: ${CLOUDINARY_API_KEY:your_api_key}
-  api-secret: ${CLOUDINARY_API_SECRET:your_api_secret}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api-key: ${CLOUDINARY_API_KEY:378959715585574}
+  api-secret: ${CLOUDINARY_API_SECRET:wZsTcnnd8Lr_gqnwu4XqHh3Ve9k}

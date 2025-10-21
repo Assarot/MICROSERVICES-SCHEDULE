@@ -41,9 +41,9 @@ eureka:
 
 # Cloudinary Configuration
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:your_cloud_name}
-  api-key: ${CLOUDINARY_API_KEY:your_api_key}
-  api-secret: ${CLOUDINARY_API_SECRET:your_api_secret}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api-key: ${CLOUDINARY_API_KEY:438283623645833}
+  api-secret: ${CLOUDINARY_API_SECRET:7flPFwzxA6pBWiTflhDhi3cNBAQ}
 
 logging:
   level:

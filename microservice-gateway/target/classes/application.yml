@@ -8,61 +8,47 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        # Auth Service Routes
+        # Auth Service Routes (includes /api/auth/users)
         - id: microservice-auth
           uri: lb://microservice-auth
           predicates:
             - Path=/api/auth/**
-          filters:
-            - StripPrefix=1
 
-        # User Service Routes
-        - id: microservice-user
-          uri: lb://microservice-user
+        # User Profile Service Routes
+        - id: ms-user
+          uri: lb://ms-user
           predicates:
             - Path=/api/users/**
-          filters:
-            - StripPrefix=1
 
         # Course Management Service Routes
-        - id: microservice-course-management
-          uri: lb://microservice-course-management
+        - id: ms-course-management
+          uri: lb://ms-course-management
           predicates:
             - Path=/api/courses/**
-          filters:
-            - StripPrefix=1
 
         # Schedule Service Routes
-        - id: microservice-schedule
-          uri: lb://microservice-schedule
+        - id: microservice_schedule
+          uri: lb://microservice_schedule
           predicates:
             - Path=/api/schedules/**
-          filters:
-            - StripPrefix=1
 
         # Inventory Service Routes
         - id: microservice-inventory
           uri: lb://microservice-inventory
           predicates:
             - Path=/api/inventory/**
-          filters:
-            - StripPrefix=1
 
         # Incident Service Routes
-        - id: microservice-incident
-          uri: lb://microservice-incident
+        - id: ms-incident
+          uri: lb://ms-incident
           predicates:
             - Path=/api/incidents/**
-          filters:
-            - StripPrefix=1
 
         # Environment Service Routes
-        - id: microservice-environment
-          uri: lb://microservice-enviroment
+        - id: ms-enviroment
+          uri: lb://ms-enviroment
           predicates:
             - Path=/api/environments/**
-          filters:
-            - StripPrefix=1
 
 server:
   port: ${SERVER_PORT:8080}

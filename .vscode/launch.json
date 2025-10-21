@@ -20,6 +20,26 @@
             "projectName": "microservice_user",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MicroserviceGatewayApplication<microservice-gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pe.edu.upeu.microservice_gateway.MicroserviceGatewayApplication",
+            "projectName": "microservice-gateway",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MicroserviceAuthApplication<microservice_auth>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pe.edu.upeu.microservice_auth.MicroserviceAuthApplication",
+            "projectName": "microservice_auth",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

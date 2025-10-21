@@ -1,0 +1,424 @@
+{
+	"info": {
+		"name": "Microservices Schedule - Gateway API",
+		"description": "Colección de endpoints accedidos vía Gateway (puerto 8080)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "gateway_url", "value": "http://localhost:8080"},
+		{"key": "access_token", "value": ""},
+		{"key": "refresh_token", "value": ""}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [{"key": "token", "value": "{{access_token}}"}]
+	},
+	"item": [
+		{
+			"name": "1. Auth Service",
+			"item": [
+				{
+					"name": "Register",
+					"event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 201) {", "var jsonData = pm.response.json();", "pm.collectionVariables.set('access_token', jsonData.accessToken);", "pm.collectionVariables.set('refresh_token', jsonData.refreshToken);", "}"]}}],
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"Admin123!\",\n    \"userProfileId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/auth/register", "host": ["{{gateway_url}}"], "path": ["api", "auth", "register"]}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 200) {", "var jsonData = pm.response.json();", "pm.collectionVariables.set('access_token', jsonData.accessToken);", "pm.collectionVariables.set('refresh_token', jsonData.refreshToken);", "}"]}}],
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"Admin123!\"\n}"},
+						"url": {"raw": "{{gateway_url}}/api/auth/login", "host": ["{{gateway_url}}"], "path": ["api", "auth", "login"]}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"auth": {"type": "noauth"},
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}"},
+						"url": {"raw": "{{gateway_url}}/api/auth/refresh-token", "host": ["{{gateway_url}}"], "path": ["api", "auth", "refresh-token"]}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}"},
+						"url": {"raw": "{{gateway_url}}/api/auth/logout", "host": ["{{gateway_url}}"], "path": ["api", "auth", "logout"]}
+					}
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/auth/users", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users"]}
+					}
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/auth/users/:id", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"username\": \"updated_user\",\n    \"isActive\": true,\n    \"userProfileId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/auth/users/:id", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/auth/users/:id", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Assign Role",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "{{gateway_url}}/api/auth/users/:id/roles/:roleName", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users", ":id", "roles", ":roleName"], "variable": [{"key": "id", "value": "1"}, {"key": "roleName", "value": "ADMIN"}]}
+					}
+				},
+				{
+					"name": "Remove Role",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/auth/users/:id/roles/:roleName", "host": ["{{gateway_url}}"], "path": ["api", "auth", "users", ":id", "roles", ":roleName"], "variable": [{"key": "id", "value": "1"}, {"key": "roleName", "value": "USER"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. User Profile Service",
+			"item": [
+				{
+					"name": "Create User Profile",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan.perez@example.com\",\n    \"phoneNumber\": \"+51987654321\",\n    \"address\": \"Av. Principal 123\",\n    \"active\": true\n}"},
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles"]}
+					}
+				},
+				{
+					"name": "Get All User Profiles",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles"]}
+					}
+				},
+				{
+					"name": "Get User Profile By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/:id", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Get User Profile By Email",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/email/:email", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", "email", ":email"], "variable": [{"key": "email", "value": "juan.perez@example.com"}]}
+					}
+				},
+				{
+					"name": "Get Active User Profiles",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/active", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", "active"]}
+					}
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"firstName\": \"Juan Carlos\",\n    \"lastName\": \"Pérez García\",\n    \"email\": \"juan.perez@example.com\",\n    \"phoneNumber\": \"+51987654321\",\n    \"address\": \"Av. Secundaria 456\",\n    \"active\": true\n}"},
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/:id", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Deactivate User Profile",
+					"request": {
+						"method": "PATCH",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/:id/deactivate", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", ":id", "deactivate"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Activate User Profile",
+					"request": {
+						"method": "PATCH",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/:id/activate", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", ":id", "activate"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete User Profile",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/users/v1/user-profiles/:id", "host": ["{{gateway_url}}"], "path": ["api", "users", "v1", "user-profiles", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Course Management Service",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/courses/v1/api", "host": ["{{gateway_url}}"], "path": ["api", "courses", "course", "v1", "api"]}
+					}
+				},
+				{
+					"name": "Get Course By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/courses/v1/api/:id", "host": ["{{gateway_url}}"], "path": ["api", "courses", "course", "v1", "api", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Create Course",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"name\": \"Programación Web\",\n    \"code\": \"PWE001\",\n    \"credits\": 4,\n    \"hours\": 6,\n    \"courseTypeId\": 1,\n    \"courseModeId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/courses/v1/api", "host": ["{{gateway_url}}"], "path": ["api", "courses", "course", "v1", "api"]}
+					}
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"name\": \"Programación Web Avanzada\",\n    \"code\": \"PWE001\",\n    \"credits\": 5,\n    \"hours\": 8\n}"},
+						"url": {"raw": "{{gateway_url}}/api/courses/v1/api/:id", "host": ["{{gateway_url}}"], "path": ["api", "courses", "course", "v1", "api", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/courses/v1/api/:id", "host": ["{{gateway_url}}"], "path": ["api", "courses", "course", "v1", "api", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Schedule Service",
+			"item": [
+				{
+					"name": "Get All Schedules",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/schedules/v1/schedules", "host": ["{{gateway_url}}"], "path": ["api", "schedules", "v1", "schedules"]}
+					}
+				},
+				{
+					"name": "Get Schedule By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/schedules/v1/schedules/:id", "host": ["{{gateway_url}}"], "path": ["api", "schedules", "v1", "schedules", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Create Schedule",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"startTime\": \"08:00:00\",\n    \"endTime\": \"10:00:00\",\n    \"weekDayId\": 1,\n    \"typeHourId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/schedules/v1/schedules", "host": ["{{gateway_url}}"], "path": ["api", "schedules", "v1", "schedules"]}
+					}
+				},
+				{
+					"name": "Update Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"startTime\": \"08:00:00\",\n    \"endTime\": \"11:00:00\",\n    \"weekDayId\": 1,\n    \"typeHourId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/schedules/v1/schedules/:id", "host": ["{{gateway_url}}"], "path": ["api", "schedules", "v1", "schedules", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete Schedule",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/schedules/v1/schedules/:id", "host": ["{{gateway_url}}"], "path": ["api", "schedules", "v1", "schedules", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Inventory Service",
+			"item": [
+				{
+					"name": "Get All Resources",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources"]}
+					}
+				},
+				{
+					"name": "Get Resource By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources/:id", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Get Resources By Type",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources/type/:typeId", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources", "type", ":typeId"], "variable": [{"key": "typeId", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Get Resources By State",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources/state/:stateId", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources", "state", ":stateId"], "variable": [{"key": "stateId", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Create Resource",
+					"request": {
+						"method": "POST",
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{"key": "resource", "value": "{\"name\":\"Proyector\",\"code\":\"PROJ001\",\"brand\":\"Epson\",\"typeId\":1,\"stateId\":1,\"categoryId\":1}", "type": "text"},
+								{"key": "photo", "type": "file", "src": []}
+							]
+						},
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources"]}
+					}
+				},
+				{
+					"name": "Delete Resource",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/inventory/v1/resources/:id", "host": ["{{gateway_url}}"], "path": ["api", "inventory", "v1", "resources", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Incident Service",
+			"item": [
+				{
+					"name": "Get All Incidents",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/incidents/v1/incidents", "host": ["{{gateway_url}}"], "path": ["api", "incidents", "v1", "incidents"]}
+					}
+				},
+				{
+					"name": "Get Incident By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/incidents/v1/incidents/:id", "host": ["{{gateway_url}}"], "path": ["api", "incidents", "v1", "incidents", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Create Incident",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"title\": \"Proyector no enciende\",\n    \"description\": \"El proyector del aula 301 no enciende\",\n    \"reportedBy\": \"Juan Pérez\",\n    \"statusId\": 1,\n    \"severityId\": 2,\n    \"resourceId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/incidents/v1/incidents", "host": ["{{gateway_url}}"], "path": ["api", "incidents", "v1", "incidents"]}
+					}
+				},
+				{
+					"name": "Update Incident",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"title\": \"Proyector reparado\",\n    \"description\": \"El proyector fue reparado exitosamente\",\n    \"statusId\": 3\n}"},
+						"url": {"raw": "{{gateway_url}}/api/incidents/v1/incidents/:id", "host": ["{{gateway_url}}"], "path": ["api", "incidents", "v1", "incidents", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete Incident",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/incidents/v1/incidents/:id", "host": ["{{gateway_url}}"], "path": ["api", "incidents", "v1", "incidents", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Environment Service",
+			"item": [
+				{
+					"name": "Get All Academic Spaces",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/environments/api/academic-space", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "academic-space"]}
+					}
+				},
+				{
+					"name": "Get Academic Space By ID",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/environments/api/academic-space/:id", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "academic-space", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Create Academic Space",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"name\": \"Aula 301\",\n    \"code\": \"A301\",\n    \"capacity\": 40,\n    \"floorId\": 1,\n    \"typeId\": 1,\n    \"stateId\": 1\n}"},
+						"url": {"raw": "{{gateway_url}}/api/environments/api/academic-space", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "academic-space"]}
+					}
+				},
+				{
+					"name": "Update Academic Space",
+					"request": {
+						"method": "PUT",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {"mode": "raw", "raw": "{\n    \"name\": \"Aula 301 Renovada\",\n    \"capacity\": 45\n}"},
+						"url": {"raw": "{{gateway_url}}/api/environments/api/academic-space/:id", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "academic-space", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Delete Academic Space",
+					"request": {
+						"method": "DELETE",
+						"url": {"raw": "{{gateway_url}}/api/environments/api/academic-space/:id", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "academic-space", ":id"], "variable": [{"key": "id", "value": "1"}]}
+					}
+				},
+				{
+					"name": "Get All Buildings",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/environments/api/building", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "building"]}
+					}
+				},
+				{
+					"name": "Get All Floors",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "{{gateway_url}}/api/environments/api/floor", "host": ["{{gateway_url}}"], "path": ["api", "environments", "v1", "api", "floor"]}
+					}
+				}
+			]
+		}
+	]
+}
