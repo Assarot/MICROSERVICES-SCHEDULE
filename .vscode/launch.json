@@ -40,6 +40,16 @@
             "projectName": "microservice_auth",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MicroserviceInventory2Application<2microservice_inventory>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pe.edu.upeu.microserviceinventory2.MicroserviceInventory2Application",
+            "projectName": "2microservice_inventory",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

@@ -27,17 +27,17 @@ public class ResourceTypeRestAdapter {
     }
 
     @PutMapping("/{id}")
-    public ResourceTypeResponse update(@PathVariable Long id, @Valid @RequestBody ResourceTypeRequest request) {
+    public ResourceTypeResponse update(@PathVariable("id") Long id, @Valid @RequestBody ResourceTypeRequest request) {
         return restMapper.toResponse(servicePort.update(id, restMapper.toModel(request)));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 
     @GetMapping("/{id}")
-    public ResourceTypeResponse getById(@PathVariable Long id) {
+    public ResourceTypeResponse getById(@PathVariable("id") Long id) {
         return restMapper.toResponse(servicePort.findById(id));
     }
 
@@ -52,7 +52,7 @@ public class ResourceTypeRestAdapter {
     }
 
     @GetMapping("/category/{categoryId}")
-    public List<ResourceTypeResponse> getByCategory(@PathVariable Long categoryId) {
+    public List<ResourceTypeResponse> getByCategory(@PathVariable("categoryId") Long categoryId) {
         return restMapper.toResponseList(servicePort.findByCategoryId(categoryId));
     }
 }

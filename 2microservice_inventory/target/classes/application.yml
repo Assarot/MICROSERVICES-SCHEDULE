@@ -1,6 +1,6 @@
 spring:
   application:
-    name: inventory2-service
+    name: microservice-inventory
 
   datasource:
     url: jdbc:postgresql://localhost:5438/inventory_db
@@ -38,9 +38,9 @@ logging:
     org.hibernate.SQL: DEBUG
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME:delrhxndr}
-  api-key: ${CLOUDINARY_API_KEY:632262923474188}
-  api-secret: ${CLOUDINARY_API_SECRET:H4IyXIbToNh2jV7OWZBVFLaiLxM}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api-key: ${CLOUDINARY_API_KEY:438283623645833}
+  api-secret: ${CLOUDINARY_API_SECRET:7flPFwzxA6pBWiTflhDhi3cNBAQ}
 
 external:
   enviroment-base-url: ${ENVIROMENT_BASE_URL:http://localhost:8080/api/environments}

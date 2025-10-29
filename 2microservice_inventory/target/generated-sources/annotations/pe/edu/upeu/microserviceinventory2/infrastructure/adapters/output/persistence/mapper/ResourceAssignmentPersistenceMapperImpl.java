@@ -17,8 +17,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-28T19:32:06-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
+    date = "2025-10-29T07:44:28-0500",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251001-1143, environment: Java 21.0.8 (Eclipse Adoptium)"
 )
 @Component
 public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignmentPersistenceMapper {
@@ -31,9 +31,9 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         ResourceAssignmentEntity.ResourceAssignmentEntityBuilder resourceAssignmentEntity = ResourceAssignmentEntity.builder();
 
-        resourceAssignmentEntity.idResourceAssignment( model.getIdResourceAssignment() );
         resourceAssignmentEntity.idAcademicSpace( model.getIdAcademicSpace() );
         resourceAssignmentEntity.idResource( model.getIdResource() );
+        resourceAssignmentEntity.idResourceAssignment( model.getIdResourceAssignment() );
         resourceAssignmentEntity.resource( resourceToResourceEntity( model.getResource() ) );
 
         return resourceAssignmentEntity.build();
@@ -47,9 +47,9 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         ResourceAssignment.ResourceAssignmentBuilder resourceAssignment = ResourceAssignment.builder();
 
-        resourceAssignment.idResourceAssignment( entity.getIdResourceAssignment() );
         resourceAssignment.idAcademicSpace( entity.getIdAcademicSpace() );
         resourceAssignment.idResource( entity.getIdResource() );
+        resourceAssignment.idResourceAssignment( entity.getIdResourceAssignment() );
         resourceAssignment.resource( resourceEntityToResource( entity.getResource() ) );
 
         return resourceAssignment.build();
@@ -77,8 +77,8 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
         CategoryResourceEntity.CategoryResourceEntityBuilder categoryResourceEntity = CategoryResourceEntity.builder();
 
         categoryResourceEntity.idCategoryResource( categoryResource.getIdCategoryResource() );
-        categoryResourceEntity.name( categoryResource.getName() );
         categoryResourceEntity.isActive( categoryResource.getIsActive() );
+        categoryResourceEntity.name( categoryResource.getName() );
 
         return categoryResourceEntity.build();
     }
@@ -90,11 +90,11 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         ResourceTypeEntity.ResourceTypeEntityBuilder resourceTypeEntity = ResourceTypeEntity.builder();
 
-        resourceTypeEntity.idResourceType( resourceType.getIdResourceType() );
-        resourceTypeEntity.name( resourceType.getName() );
-        resourceTypeEntity.isActive( resourceType.getIsActive() );
-        resourceTypeEntity.idCategoryResource( resourceType.getIdCategoryResource() );
         resourceTypeEntity.categoryResource( categoryResourceToCategoryResourceEntity( resourceType.getCategoryResource() ) );
+        resourceTypeEntity.idCategoryResource( resourceType.getIdCategoryResource() );
+        resourceTypeEntity.idResourceType( resourceType.getIdResourceType() );
+        resourceTypeEntity.isActive( resourceType.getIsActive() );
+        resourceTypeEntity.name( resourceType.getName() );
 
         return resourceTypeEntity.build();
     }
@@ -107,8 +107,8 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
         StateEntity.StateEntityBuilder stateEntity = StateEntity.builder();
 
         stateEntity.idState( state.getIdState() );
-        stateEntity.name( state.getName() );
         stateEntity.isActive( state.getIsActive() );
+        stateEntity.name( state.getName() );
 
         return stateEntity.build();
     }
@@ -120,15 +120,15 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         ResourceEntity.ResourceEntityBuilder resourceEntity = ResourceEntity.builder();
 
-        resourceEntity.idResource( resource.getIdResource() );
         resourceEntity.code( resource.getCode() );
-        resourceEntity.stock( resource.getStock() );
-        resourceEntity.resourcePhotoUrl( resource.getResourcePhotoUrl() );
-        resourceEntity.observation( resource.getObservation() );
+        resourceEntity.idResource( resource.getIdResource() );
         resourceEntity.idResourceType( resource.getIdResourceType() );
         resourceEntity.idState( resource.getIdState() );
+        resourceEntity.observation( resource.getObservation() );
+        resourceEntity.resourcePhotoUrl( resource.getResourcePhotoUrl() );
         resourceEntity.resourceType( resourceTypeToResourceTypeEntity( resource.getResourceType() ) );
         resourceEntity.state( stateToStateEntity( resource.getState() ) );
+        resourceEntity.stock( resource.getStock() );
 
         return resourceEntity.build();
     }
@@ -141,8 +141,8 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
         CategoryResource.CategoryResourceBuilder categoryResource = CategoryResource.builder();
 
         categoryResource.idCategoryResource( categoryResourceEntity.getIdCategoryResource() );
-        categoryResource.name( categoryResourceEntity.getName() );
         categoryResource.isActive( categoryResourceEntity.getIsActive() );
+        categoryResource.name( categoryResourceEntity.getName() );
 
         return categoryResource.build();
     }
@@ -154,11 +154,11 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         ResourceType.ResourceTypeBuilder resourceType = ResourceType.builder();
 
-        resourceType.idResourceType( resourceTypeEntity.getIdResourceType() );
-        resourceType.name( resourceTypeEntity.getName() );
-        resourceType.isActive( resourceTypeEntity.getIsActive() );
-        resourceType.idCategoryResource( resourceTypeEntity.getIdCategoryResource() );
         resourceType.categoryResource( categoryResourceEntityToCategoryResource( resourceTypeEntity.getCategoryResource() ) );
+        resourceType.idCategoryResource( resourceTypeEntity.getIdCategoryResource() );
+        resourceType.idResourceType( resourceTypeEntity.getIdResourceType() );
+        resourceType.isActive( resourceTypeEntity.getIsActive() );
+        resourceType.name( resourceTypeEntity.getName() );
 
         return resourceType.build();
     }
@@ -171,8 +171,8 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
         State.StateBuilder state = State.builder();
 
         state.idState( stateEntity.getIdState() );
-        state.name( stateEntity.getName() );
         state.isActive( stateEntity.getIsActive() );
+        state.name( stateEntity.getName() );
 
         return state.build();
     }
@@ -184,15 +184,15 @@ public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignme
 
         Resource.ResourceBuilder resource = Resource.builder();
 
-        resource.idResource( resourceEntity.getIdResource() );
         resource.code( resourceEntity.getCode() );
-        resource.stock( resourceEntity.getStock() );
-        resource.resourcePhotoUrl( resourceEntity.getResourcePhotoUrl() );
-        resource.observation( resourceEntity.getObservation() );
+        resource.idResource( resourceEntity.getIdResource() );
         resource.idResourceType( resourceEntity.getIdResourceType() );
         resource.idState( resourceEntity.getIdState() );
+        resource.observation( resourceEntity.getObservation() );
+        resource.resourcePhotoUrl( resourceEntity.getResourcePhotoUrl() );
         resource.resourceType( resourceTypeEntityToResourceType( resourceEntity.getResourceType() ) );
         resource.state( stateEntityToState( resourceEntity.getState() ) );
+        resource.stock( resourceEntity.getStock() );
 
         return resource.build();
     }

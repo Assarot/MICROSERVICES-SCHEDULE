@@ -38,11 +38,6 @@ spring:
           predicates:
             - Path=/api/inventory/**
 
-        - id: inventory2-service
-          uri: lb://inventory2-service
-          predicates:
-            - Path=/api/inventory/**
-
         # Incident Service Routes
         - id: ms-incident
           uri: lb://ms-incident
