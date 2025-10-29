@@ -10,8 +10,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.input.rest.mod
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-29T07:44:29-0500",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251001-1143, environment: Java 21.0.8 (Eclipse Adoptium)"
+    date = "2025-10-29T13:34:13-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
 )
 @Component
 public class CategoryResourceRestMapperImpl implements CategoryResourceRestMapper {
@@ -24,8 +24,8 @@ public class CategoryResourceRestMapperImpl implements CategoryResourceRestMappe
 
         CategoryResource.CategoryResourceBuilder categoryResource = CategoryResource.builder();
 
-        categoryResource.isActive( request.getIsActive() );
         categoryResource.name( request.getName() );
+        categoryResource.isActive( request.getIsActive() );
 
         return categoryResource.build();
     }
@@ -39,8 +39,8 @@ public class CategoryResourceRestMapperImpl implements CategoryResourceRestMappe
         CategoryResourceResponse categoryResourceResponse = new CategoryResourceResponse();
 
         categoryResourceResponse.setIdCategoryResource( model.getIdCategoryResource() );
-        categoryResourceResponse.setIsActive( model.getIsActive() );
         categoryResourceResponse.setName( model.getName() );
+        categoryResourceResponse.setIsActive( model.getIsActive() );
 
         return categoryResourceResponse;
     }

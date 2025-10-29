@@ -10,8 +10,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.input.rest.mod
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-29T07:44:28-0500",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251001-1143, environment: Java 21.0.8 (Eclipse Adoptium)"
+    date = "2025-10-29T13:34:13-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
 )
 @Component
 public class ResourceTypeRestMapperImpl implements ResourceTypeRestMapper {
@@ -24,9 +24,9 @@ public class ResourceTypeRestMapperImpl implements ResourceTypeRestMapper {
 
         ResourceType.ResourceTypeBuilder resourceType = ResourceType.builder();
 
-        resourceType.idCategoryResource( request.getIdCategoryResource() );
-        resourceType.isActive( request.getIsActive() );
         resourceType.name( request.getName() );
+        resourceType.isActive( request.getIsActive() );
+        resourceType.idCategoryResource( request.getIdCategoryResource() );
 
         return resourceType.build();
     }
@@ -39,10 +39,10 @@ public class ResourceTypeRestMapperImpl implements ResourceTypeRestMapper {
 
         ResourceTypeResponse resourceTypeResponse = new ResourceTypeResponse();
 
-        resourceTypeResponse.setCategoryResource( model.getCategoryResource() );
         resourceTypeResponse.setIdResourceType( model.getIdResourceType() );
-        resourceTypeResponse.setIsActive( model.getIsActive() );
         resourceTypeResponse.setName( model.getName() );
+        resourceTypeResponse.setIsActive( model.getIsActive() );
+        resourceTypeResponse.setCategoryResource( model.getCategoryResource() );
 
         return resourceTypeResponse;
     }

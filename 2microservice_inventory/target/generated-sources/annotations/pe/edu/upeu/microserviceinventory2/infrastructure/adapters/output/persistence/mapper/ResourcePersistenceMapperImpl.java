@@ -15,8 +15,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-29T07:44:29-0500",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251001-1143, environment: Java 21.0.8 (Eclipse Adoptium)"
+    date = "2025-10-29T13:34:13-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
 )
 @Component
 public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper {
@@ -29,15 +29,15 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
 
         ResourceEntity.ResourceEntityBuilder resourceEntity = ResourceEntity.builder();
 
-        resourceEntity.code( model.getCode() );
         resourceEntity.idResource( model.getIdResource() );
+        resourceEntity.code( model.getCode() );
+        resourceEntity.stock( model.getStock() );
+        resourceEntity.resourcePhotoUrl( model.getResourcePhotoUrl() );
+        resourceEntity.observation( model.getObservation() );
         resourceEntity.idResourceType( model.getIdResourceType() );
         resourceEntity.idState( model.getIdState() );
-        resourceEntity.observation( model.getObservation() );
-        resourceEntity.resourcePhotoUrl( model.getResourcePhotoUrl() );
         resourceEntity.resourceType( resourceTypeToResourceTypeEntity( model.getResourceType() ) );
         resourceEntity.state( stateToStateEntity( model.getState() ) );
-        resourceEntity.stock( model.getStock() );
 
         return resourceEntity.build();
     }
@@ -50,15 +50,15 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
 
         Resource.ResourceBuilder resource = Resource.builder();
 
-        resource.code( entity.getCode() );
         resource.idResource( entity.getIdResource() );
+        resource.code( entity.getCode() );
+        resource.stock( entity.getStock() );
+        resource.resourcePhotoUrl( entity.getResourcePhotoUrl() );
+        resource.observation( entity.getObservation() );
         resource.idResourceType( entity.getIdResourceType() );
         resource.idState( entity.getIdState() );
-        resource.observation( entity.getObservation() );
-        resource.resourcePhotoUrl( entity.getResourcePhotoUrl() );
         resource.resourceType( resourceTypeEntityToResourceType( entity.getResourceType() ) );
         resource.state( stateEntityToState( entity.getState() ) );
-        resource.stock( entity.getStock() );
 
         return resource.build();
     }
@@ -85,8 +85,8 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
         CategoryResourceEntity.CategoryResourceEntityBuilder categoryResourceEntity = CategoryResourceEntity.builder();
 
         categoryResourceEntity.idCategoryResource( categoryResource.getIdCategoryResource() );
-        categoryResourceEntity.isActive( categoryResource.getIsActive() );
         categoryResourceEntity.name( categoryResource.getName() );
+        categoryResourceEntity.isActive( categoryResource.getIsActive() );
 
         return categoryResourceEntity.build();
     }
@@ -98,11 +98,11 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
 
         ResourceTypeEntity.ResourceTypeEntityBuilder resourceTypeEntity = ResourceTypeEntity.builder();
 
-        resourceTypeEntity.categoryResource( categoryResourceToCategoryResourceEntity( resourceType.getCategoryResource() ) );
-        resourceTypeEntity.idCategoryResource( resourceType.getIdCategoryResource() );
         resourceTypeEntity.idResourceType( resourceType.getIdResourceType() );
-        resourceTypeEntity.isActive( resourceType.getIsActive() );
         resourceTypeEntity.name( resourceType.getName() );
+        resourceTypeEntity.isActive( resourceType.getIsActive() );
+        resourceTypeEntity.idCategoryResource( resourceType.getIdCategoryResource() );
+        resourceTypeEntity.categoryResource( categoryResourceToCategoryResourceEntity( resourceType.getCategoryResource() ) );
 
         return resourceTypeEntity.build();
     }
@@ -115,8 +115,8 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
         StateEntity.StateEntityBuilder stateEntity = StateEntity.builder();
 
         stateEntity.idState( state.getIdState() );
-        stateEntity.isActive( state.getIsActive() );
         stateEntity.name( state.getName() );
+        stateEntity.isActive( state.getIsActive() );
 
         return stateEntity.build();
     }
@@ -129,8 +129,8 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
         CategoryResource.CategoryResourceBuilder categoryResource = CategoryResource.builder();
 
         categoryResource.idCategoryResource( categoryResourceEntity.getIdCategoryResource() );
-        categoryResource.isActive( categoryResourceEntity.getIsActive() );
         categoryResource.name( categoryResourceEntity.getName() );
+        categoryResource.isActive( categoryResourceEntity.getIsActive() );
 
         return categoryResource.build();
     }
@@ -142,11 +142,11 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
 
         ResourceType.ResourceTypeBuilder resourceType = ResourceType.builder();
 
-        resourceType.categoryResource( categoryResourceEntityToCategoryResource( resourceTypeEntity.getCategoryResource() ) );
-        resourceType.idCategoryResource( resourceTypeEntity.getIdCategoryResource() );
         resourceType.idResourceType( resourceTypeEntity.getIdResourceType() );
-        resourceType.isActive( resourceTypeEntity.getIsActive() );
         resourceType.name( resourceTypeEntity.getName() );
+        resourceType.isActive( resourceTypeEntity.getIsActive() );
+        resourceType.idCategoryResource( resourceTypeEntity.getIdCategoryResource() );
+        resourceType.categoryResource( categoryResourceEntityToCategoryResource( resourceTypeEntity.getCategoryResource() ) );
 
         return resourceType.build();
     }
@@ -159,8 +159,8 @@ public class ResourcePersistenceMapperImpl implements ResourcePersistenceMapper 
         State.StateBuilder state = State.builder();
 
         state.idState( stateEntity.getIdState() );
-        state.isActive( stateEntity.getIsActive() );
         state.name( stateEntity.getName() );
+        state.isActive( stateEntity.getIsActive() );
 
         return state.build();
     }
