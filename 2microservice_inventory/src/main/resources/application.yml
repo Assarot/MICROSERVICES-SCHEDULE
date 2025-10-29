@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: inventory2-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5438/inventory_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+server:
+  port: ${SERVER_PORT:8085}
+  servlet:
+    context-path: /api/v1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+logging:
+  level:
+    pe.edu.upeu.microserviceinventory2: DEBUG
+    org.hibernate.SQL: DEBUG
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:delrhxndr}
+  api-key: ${CLOUDINARY_API_KEY:632262923474188}
+  api-secret: ${CLOUDINARY_API_SECRET:H4IyXIbToNh2jV7OWZBVFLaiLxM}
+
+external:
+  enviroment-base-url: ${ENVIROMENT_BASE_URL:http://localhost:8080/api/environments}

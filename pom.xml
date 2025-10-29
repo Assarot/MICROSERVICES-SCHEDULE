@@ -14,12 +14,12 @@
         <module>microservice-enviroment</module>
         <module>microservice-course-management</module>
         <module>microservice_user</module>
-        <module>microservice_inventory</module>
         <module>microservice_incident</module>
         <module>microservice_auth</module>
         <module>microservice_schedule</module>
         <module>microservice-eureka-server</module>
         <module>microservice-gateway</module>
+        <module>2microservice_inventory</module>
     </modules>
 
     <properties>

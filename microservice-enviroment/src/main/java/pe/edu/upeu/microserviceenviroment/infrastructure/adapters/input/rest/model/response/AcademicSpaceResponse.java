@@ -1,9 +1,6 @@
 package pe.edu.upeu.microserviceenviroment.infrastructure.adapters.input.rest.model.response;
 
 import lombok.*;
-import pe.edu.upeu.microserviceenviroment.domain.model.Floor;
-import pe.edu.upeu.microserviceenviroment.domain.model.State;
-import pe.edu.upeu.microserviceenviroment.domain.model.TypeAcademicSpace;
 
 @Builder
 @Getter
@@ -16,7 +13,7 @@ public class AcademicSpaceResponse {
     private String observation;
     private String location;
     private int capacity;
-    private State state;
-    private Floor floor;
-    private TypeAcademicSpace typeAcademicSpace;
+    private StateResponse state;
+    private FloorResponse floor;
+    private TypeAcademicSpaceResponse typeAcademicSpace;
 }

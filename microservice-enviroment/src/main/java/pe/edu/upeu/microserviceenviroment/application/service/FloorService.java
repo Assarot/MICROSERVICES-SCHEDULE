@@ -26,6 +26,11 @@ public class FloorService implements FloorServicePort {
     }
 
     @Override
+    public List<Floor> findByBuildingId(Long buildingId) {
+        return floorPersistancePort.findByBuildingId(buildingId);
+    }
+
+    @Override
     public Floor save(Floor floor) {
         return floorPersistancePort.save(floor);
     }

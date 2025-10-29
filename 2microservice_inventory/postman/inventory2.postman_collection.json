@@ -1,0 +1,68 @@
+{
+  "info": {
+    "name": "2microservice_inventory",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "States",
+      "item": [
+        {"name":"Create State","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/states","host":["{{base}}"],"path":["states"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Disponible\",\n  \"isActive\": true\n}"}}},
+        {"name":"List States","request":{"method":"GET","url":{"raw":"{{base}}/states","host":["{{base}}"],"path":["states"]}}},
+        {"name":"Get State by Id","request":{"method":"GET","url":{"raw":"{{base}}/states/{{idState}}","host":["{{base}}"],"path":["states","{{idState}}"]}}},
+        {"name":"Update State","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/states/{{idState}}","host":["{{base}}"],"path":["states","{{idState}}"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Ocupado\",\n  \"isActive\": true\n}"}}},
+        {"name":"Delete State","request":{"method":"DELETE","url":{"raw":"{{base}}/states/{{idState}}","host":["{{base}}"],"path":["states","{{idState}}"]}}}
+      ]
+    },
+    {
+      "name": "CategoryResource",
+      "item": [
+        {"name":"Create","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/category-resources","host":["{{base}}"],"path":["category-resources"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Mobiliario\",\n  \"isActive\": true\n}"}}},
+        {"name":"List","request":{"method":"GET","url":{"raw":"{{base}}/category-resources","host":["{{base}}"],"path":["category-resources"]}}},
+        {"name":"List Active","request":{"method":"GET","url":{"raw":"{{base}}/category-resources/active","host":["{{base}}"],"path":["category-resources","active"]}}},
+        {"name":"Get by Id","request":{"method":"GET","url":{"raw":"{{base}}/category-resources/{{idCategory}}","host":["{{base}}"],"path":["category-resources","{{idCategory}}"]}}},
+        {"name":"Update","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/category-resources/{{idCategory}}","host":["{{base}}"],"path":["category-resources","{{idCategory}}"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Mobiliario y enseres\",\n  \"isActive\": true\n}"}}},
+        {"name":"Delete","request":{"method":"DELETE","url":{"raw":"{{base}}/category-resources/{{idCategory}}","host":["{{base}}"],"path":["category-resources","{{idCategory}}"]}}}
+      ]
+    },
+    {
+      "name": "ResourceType",
+      "item": [
+        {"name":"Create","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/resource-types","host":["{{base}}"],"path":["resource-types"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Silla\",\n  \"isActive\": true,\n  \"idCategoryResource\": 1\n}"}}},
+        {"name":"List","request":{"method":"GET","url":{"raw":"{{base}}/resource-types","host":["{{base}}"],"path":["resource-types"]}}},
+        {"name":"List Active","request":{"method":"GET","url":{"raw":"{{base}}/resource-types/active","host":["{{base}}"],"path":["resource-types","active"]}}},
+        {"name":"List by Category","request":{"method":"GET","url":{"raw":"{{base}}/resource-types/category/{{idCategory}}","host":["{{base}}"],"path":["resource-types","category","{{idCategory}}"]}}},
+        {"name":"Get by Id","request":{"method":"GET","url":{"raw":"{{base}}/resource-types/{{idResourceType}}","host":["{{base}}"],"path":["resource-types","{{idResourceType}}"]}}},
+        {"name":"Update","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/resource-types/{{idResourceType}}","host":["{{base}}"],"path":["resource-types","{{idResourceType}}"]},"body":{"mode":"raw","raw":"{\n  \"name\": \"Silla Premium\",\n  \"isActive\": true,\n  \"idCategoryResource\": 1\n}"}}},
+        {"name":"Delete","request":{"method":"DELETE","url":{"raw":"{{base}}/resource-types/{{idResourceType}}","host":["{{base}}"],"path":["resource-types","{{idResourceType}}"]}}}
+      ]
+    },
+    {
+      "name": "Resource",
+      "item": [
+        {"name":"Create (multipart)","request":{"method":"POST","header":[{"key":"Content-Type","value":"multipart/form-data"}],"url":{"raw":"{{base}}/resources","host":["{{base}}"],"path":["resources"]},"body":{"mode":"formdata","formdata":[{"key":"resource","type":"text","contentType":"application/json","value":"{\n  \"code\": \"RS-0001\",\n  \"stock\": 10,\n  \"observation\": \"Sillas nuevas\",\n  \"idResourceType\": 1,\n  \"idState\": 1\n}"},{"key":"photo","type":"file","src":[]}]}}},
+        {"name":"Update (multipart)","request":{"method":"PUT","header":[{"key":"Content-Type","value":"multipart/form-data"}],"url":{"raw":"{{base}}/resources/{{idResource}}","host":["{{base}}"],"path":["resources","{{idResource}}"]},"body":{"mode":"formdata","formdata":[{"key":"resource","type":"text","contentType":"application/json","value":"{\n  \"code\": \"RS-0001\",\n  \"stock\": 12,\n  \"observation\": \"Sillas nuevas actualizadas\",\n  \"idResourceType\": 1,\n  \"idState\": 1\n}"},{"key":"photo","type":"file","src":[]}]}}},
+        {"name":"List","request":{"method":"GET","url":{"raw":"{{base}}/resources","host":["{{base}}"],"path":["resources"]}}},
+        {"name":"Get by Id","request":{"method":"GET","url":{"raw":"{{base}}/resources/{{idResource}}","host":["{{base}}"],"path":["resources","{{idResource}}"]}}},
+        {"name":"List by Type","request":{"method":"GET","url":{"raw":"{{base}}/resources/type/{{idResourceType}}","host":["{{base}}"],"path":["resources","type","{{idResourceType}}"]}}},
+        {"name":"List by State","request":{"method":"GET","url":{"raw":"{{base}}/resources/state/{{idState}}","host":["{{base}}"],"path":["resources","state","{{idState}}"]}}},
+        {"name":"Delete","request":{"method":"DELETE","url":{"raw":"{{base}}/resources/{{idResource}}","host":["{{base}}"],"path":["resources","{{idResource}}"]}}}
+      ]
+    },
+    {
+      "name": "ResourceAssignment",
+      "item": [
+        {"name":"Create","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/resource-assignments","host":["{{base}}"],"path":["resource-assignments"]},"body":{"mode":"raw","raw":"{\n  \"idAcademicSpace\": 1,\n  \"idResource\": 1\n}"}}},
+        {"name":"Update","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"{{base}}/resource-assignments/{{idResourceAssignment}}","host":["{{base}}"],"path":["resource-assignments","{{idResourceAssignment}}"]},"body":{"mode":"raw","raw":"{\n  \"idAcademicSpace\": 1,\n  \"idResource\": 1\n}"}}},
+        {"name":"List","request":{"method":"GET","url":{"raw":"{{base}}/resource-assignments","host":["{{base}}"],"path":["resource-assignments"]}}},
+        {"name":"Get by Id","request":{"method":"GET","url":{"raw":"{{base}}/resource-assignments/{{idResourceAssignment}}","host":["{{base}}"],"path":["resource-assignments","{{idResourceAssignment}}"]}}},
+        {"name":"List by Resource","request":{"method":"GET","url":{"raw":"{{base}}/resource-assignments/resource/{{idResource}}","host":["{{base}}"],"path":["resource-assignments","resource","{{idResource}}"]}}},
+        {"name":"List by Academic Space","request":{"method":"GET","url":{"raw":"{{base}}/resource-assignments/academic-space/{{idAcademicSpace}}","host":["{{base}}"],"path":["resource-assignments","academic-space","{{idAcademicSpace}}"]}}},
+        {"name":"Delete","request":{"method":"DELETE","url":{"raw":"{{base}}/resource-assignments/{{idResourceAssignment}}","host":["{{base}}"],"path":["resource-assignments","{{idResourceAssignment}}"]}}}
+      ]
+    }
+  ],
+  "variable": [
+    {"key":"base","value":"http://localhost:8085/api/v1"}
+  ]
+}
