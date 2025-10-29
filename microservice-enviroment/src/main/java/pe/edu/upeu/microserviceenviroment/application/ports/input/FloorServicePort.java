@@ -7,6 +7,7 @@ import java.util.List;
 public interface FloorServicePort {
     Floor findById(Long id);
     List<Floor> findAll();
+    List<Floor> findByBuildingId(Long buildingId);
     Floor save(Floor floor);
     Floor update(Long id,Floor floor);
     void deleteById(Long id);

@@ -6,6 +6,7 @@ import pe.edu.upeu.microserviceenviroment.application.ports.output.AcademicSpace
 import pe.edu.upeu.microserviceenviroment.domain.model.AcademicSpace;
 import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.mapper.AcademicSpacePersistenceMapper;
 import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.repository.AcademicSpaceRepository;
+import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.entity.AcademicSpaceEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,30 @@ public class AcademicSpacePersistenceAdapter implements AcademicSpacePersistance
 
     @Override
     public AcademicSpace save(AcademicSpace academicSpace) {
-        return mapper.toAcademicSpace(repository.save(mapper.toAcademicSpaceEntity(academicSpace)));
+        if (academicSpace.getIdAcademicSpace() != null) {
+            AcademicSpaceEntity existing = repository.findById(academicSpace.getIdAcademicSpace())
+                    .orElseGet(() -> mapper.toAcademicSpaceEntity(academicSpace));
+
+            // Update scalar fields
+            existing.setSpaceName(academicSpace.getSpaceName());
+            existing.setObservation(academicSpace.getObservation());
+            existing.setLocation(academicSpace.getLocation());
+            existing.setCapacity(academicSpace.getCapacity());
+
+            // Update associations using mapper helper methods (they set only the id)
+            existing.setTypeAcademicSpaceEntity(mapper.mapTypeAcademicSpaceEntity(academicSpace.getTypeAcademicSpace()));
+            existing.setStateEntity(mapper.mapStateToEntity(academicSpace.getState()));
+            existing.setFloorEntity(mapper.mapFloorToEntity(academicSpace.getFloor()));
+
+            AcademicSpaceEntity saved = repository.save(existing);
+            AcademicSpaceEntity reloaded = repository.findById(saved.getIdAcademicSpace()).orElse(saved);
+            return mapper.toAcademicSpace(reloaded);
+        }
+
+        AcademicSpaceEntity entity = mapper.toAcademicSpaceEntity(academicSpace);
+        AcademicSpaceEntity savedEntity = repository.save(entity);
+        AcademicSpaceEntity reloaded = repository.findById(savedEntity.getIdAcademicSpace()).orElse(savedEntity);
+        return mapper.toAcademicSpace(reloaded);
     }
 
     @Override

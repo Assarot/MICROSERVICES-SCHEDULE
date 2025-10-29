@@ -7,6 +7,8 @@ import pe.edu.upeu.microserviceenviroment.domain.model.State;
 import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.mapper.StatePersistenceMapper;
 import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.repository.StateRepository;
 
+import pe.edu.upeu.microserviceenviroment.infrastructure.adapters.output.persistence.entity.StateEntity;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,20 @@ public class StatePersistenceAdapter implements StatePersistancePort {
 
     @Override
     public State save(State state) {
+        try {
+            if (state.getIdState() > 0) {
+                return repository.findById(state.getIdState())
+                        .map(existing -> {
+                            existing.setName(state.getName());
+                            existing.setIsActive(state.getIsActive());
+                            StateEntity saved = repository.save(existing);
+                            return mapper.toState(saved);
+                        }).orElseGet(() -> mapper.toState(repository.save(mapper.toStateEntity(state))));
+            }
+        } catch (Exception e) {
+
+        }
+
         return mapper.toState(repository.save(mapper.toStateEntity(state)));
     }
 

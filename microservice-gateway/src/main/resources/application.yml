@@ -49,6 +49,8 @@ spring:
           uri: lb://ms-enviroment
           predicates:
             - Path=/api/environments/**
+          filters:
+            - StripPrefix=2
 
 server:
   port: ${SERVER_PORT:8080}

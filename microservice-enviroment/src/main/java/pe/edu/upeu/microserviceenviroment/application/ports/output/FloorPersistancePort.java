@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface FloorPersistancePort {
     Optional<Floor> findById(Long id);
     List<Floor> findAll();
+    List<Floor> findByBuildingId(Long buildingId);
     Floor save(Floor floor);
     void deleteById(Long id);
 }

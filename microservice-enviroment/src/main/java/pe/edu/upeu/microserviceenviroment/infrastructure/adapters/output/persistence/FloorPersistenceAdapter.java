@@ -29,6 +29,12 @@ public class FloorPersistenceAdapter implements FloorPersistancePort {
     }
 
     @Override
+    public List<Floor> findByBuildingId(Long buildingId) {
+        List<FloorEntity> entities = repository.findByBuildingEntity_IdBuilding(buildingId);
+        return mapper.toFloorList(entities);
+    }
+
+    @Override
     public Floor save(Floor floor) {
         // If we have an ID, update existing entity to preserve collections (avoid orphan issues)
         if (floor.getIdFloor() != null) {
