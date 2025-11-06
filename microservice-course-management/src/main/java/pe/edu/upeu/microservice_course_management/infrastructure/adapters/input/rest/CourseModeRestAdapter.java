@@ -26,7 +26,7 @@ public class CourseModeRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public CourseModeResponse findById(@PathVariable Long id) {
+    public CourseModeResponse findById(@PathVariable("id") Long id) {
         return restMapper.toCourseModeResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class CourseModeRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public CourseModeResponse update(@PathVariable Long id, @Valid @RequestBody CourseModeCreateRequest request) {
+    public CourseModeResponse update(@PathVariable("id") Long id, @Valid @RequestBody CourseModeCreateRequest request) {
         return restMapper.toCourseModeResponse(servicePort.update(id, restMapper.toCourseMode(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }

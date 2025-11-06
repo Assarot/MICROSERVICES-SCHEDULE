@@ -26,7 +26,7 @@ public class ProfessionalSchoolRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public ProfessionalSchoolResponse findById(@PathVariable Long id) {
+    public ProfessionalSchoolResponse findById(@PathVariable("id") Long id) {
         return restMapper.toProfessionalSchoolResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class ProfessionalSchoolRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public ProfessionalSchoolResponse update(@PathVariable Long id, @Valid @RequestBody ProfessionalSchoolCreateRequest request) {
+    public ProfessionalSchoolResponse update(@PathVariable("id") Long id, @Valid @RequestBody ProfessionalSchoolCreateRequest request) {
         return restMapper.toProfessionalSchoolResponse(servicePort.update(id, restMapper.toProfessionalSchool(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 

@@ -26,7 +26,7 @@ public class TeacherRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public TeacherResponse findById(@PathVariable Long id) {
+    public TeacherResponse findById(@PathVariable("id") Long id) {
         return restMapper.toTeacherResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class TeacherRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public TeacherResponse update(@PathVariable Long id, @Valid @RequestBody TeacherCreateRequest request) {
+    public TeacherResponse update(@PathVariable("id") Long id, @Valid @RequestBody TeacherCreateRequest request) {
         return restMapper.toTeacherResponse(servicePort.update(id, restMapper.toTeacher(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }

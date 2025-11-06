@@ -25,6 +25,8 @@ spring:
           uri: lb://ms-course-management
           predicates:
             - Path=/api/courses/**
+          filters:
+            - StripPrefix=2
 
         # Schedule Service Routes
         - id: microservice_schedule

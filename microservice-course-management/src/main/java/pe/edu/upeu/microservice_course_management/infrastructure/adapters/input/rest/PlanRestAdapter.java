@@ -26,7 +26,7 @@ public class PlanRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public PlanResponse findById(@PathVariable Long id){
+    public PlanResponse findById(@PathVariable("id") Long id){
         return restMapper.toPlanResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class PlanRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public PlanResponse update(@PathVariable Long id, @Valid @RequestBody PlanCreateRequest request) {
+    public PlanResponse update(@PathVariable("id") Long id, @Valid @RequestBody PlanCreateRequest request) {
         return restMapper.toPlanResponse(servicePort.update(id, restMapper.toPlan(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }

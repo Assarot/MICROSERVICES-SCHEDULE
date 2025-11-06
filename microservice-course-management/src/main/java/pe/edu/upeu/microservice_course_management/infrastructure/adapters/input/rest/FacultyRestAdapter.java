@@ -26,7 +26,7 @@ public class FacultyRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public FacultyResponse findById(@PathVariable Long id) {
+    public FacultyResponse findById(@PathVariable("id") Long id) {
         return restMapper.toFacultyResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class FacultyRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public FacultyResponse update(@PathVariable Long id, @Valid @RequestBody FacultyCreateRequest request) {
+    public FacultyResponse update(@PathVariable("id") Long id, @Valid @RequestBody FacultyCreateRequest request) {
         return restMapper.toFacultyResponse(servicePort.update(id, restMapper.toFaculty(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 

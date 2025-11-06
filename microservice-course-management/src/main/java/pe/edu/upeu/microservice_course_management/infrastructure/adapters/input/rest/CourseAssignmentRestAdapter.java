@@ -26,7 +26,7 @@ public class CourseAssignmentRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public CourseAssignmentResponse findById(@PathVariable Long id) {
+    public CourseAssignmentResponse findById(@PathVariable("id") Long id) {
         return restMapper.toCourseAssignmentResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class CourseAssignmentRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public CourseAssignmentResponse update(@PathVariable Long id, @Valid @RequestBody CourseAssignmentCreateRequest request) {
+    public CourseAssignmentResponse update(@PathVariable("id") Long id, @Valid @RequestBody CourseAssignmentCreateRequest request) {
         return restMapper.toCourseAssignmentResponse(servicePort.update(id, restMapper.toCourseAssignment(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 

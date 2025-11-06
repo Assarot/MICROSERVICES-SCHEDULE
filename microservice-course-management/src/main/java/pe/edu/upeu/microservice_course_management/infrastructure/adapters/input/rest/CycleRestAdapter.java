@@ -26,7 +26,7 @@ public class CycleRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public CycleResponse findById(@PathVariable Long id) {
+    public CycleResponse findById(@PathVariable("id") Long id) {
         return restMapper.toCycleResponse(servicePort.findById(id));
     }
 
@@ -38,12 +38,12 @@ public class CycleRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public CycleResponse update(@PathVariable Long id, @Valid @RequestBody CycleCreateRequest request) {
+    public CycleResponse update(@PathVariable("id") Long id, @Valid @RequestBody CycleCreateRequest request) {
         return restMapper.toCycleResponse(servicePort.update(id, restMapper.toCycle(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }

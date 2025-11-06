@@ -4,9 +4,9 @@ spring:
   jackson:
     default-property-inclusion: non_null
   datasource:
-    url: ${DB_HOST}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5439/course_db
+    username: admin
+    password: admin123
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true

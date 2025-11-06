@@ -13,36 +13,48 @@ spring:
           uri: lb://microservice-auth
           predicates:
             - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
 
         # User Profile Service Routes
         - id: ms-user
           uri: lb://ms-user
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=2
 
         # Course Management Service Routes
         - id: ms-course-management
           uri: lb://ms-course-management
           predicates:
             - Path=/api/courses/**
+          filters:
+            - StripPrefix=2
 
         # Schedule Service Routes
         - id: microservice_schedule
           uri: lb://microservice_schedule
           predicates:
             - Path=/api/schedules/**
+          filters:
+            - StripPrefix=2
 
         # Inventory Service Routes
         - id: microservice-inventory
           uri: lb://microservice-inventory
           predicates:
             - Path=/api/inventory/**
+          filters:
+            - StripPrefix=2
 
         # Incident Service Routes
         - id: ms-incident
           uri: lb://ms-incident
           predicates:
             - Path=/api/incidents/**
+          filters:
+            - StripPrefix=2
 
         # Environment Service Routes
         - id: ms-enviroment

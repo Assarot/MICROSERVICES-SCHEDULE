@@ -25,6 +25,11 @@ public class CourseTypeRestAdapter {
         return restMapper.toCourseTypeResposeList(servicePort.findAll());
     }
 
+    @GetMapping("/v1/api/{id}")
+    public CourseTypeResponse findById(@PathVariable("id") Long id) {
+        return restMapper.toCourseTypeResponse(servicePort.findById(id));
+    }
+
     @PostMapping("/v1/api")
     public ResponseEntity<CourseTypeResponse> save(@Valid @RequestBody CourseTypeCreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -33,12 +38,12 @@ public class CourseTypeRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public CourseTypeResponse update(@PathVariable Long id, @Valid @RequestBody CourseTypeCreateRequest request) {
+    public CourseTypeResponse update(@PathVariable("id") Long id, @Valid @RequestBody CourseTypeCreateRequest request) {
         return restMapper.toCourseTypeResponse(servicePort.update(id, restMapper.toCourseType(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }

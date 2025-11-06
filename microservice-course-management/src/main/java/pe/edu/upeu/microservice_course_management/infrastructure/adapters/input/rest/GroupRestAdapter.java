@@ -25,7 +25,7 @@ public class GroupRestAdapter {
     }
 
     @GetMapping("/v1/api/{id}")
-    public GroupResponse findById(@PathVariable Long id) {
+    public GroupResponse findById(@PathVariable("id") Long id) {
         return restMapper.toGroupResponse(servicePort.findById(id));
     }
 
@@ -37,12 +37,12 @@ public class GroupRestAdapter {
     }
 
     @PutMapping("/v1/api/{id}")
-    public GroupResponse update(@PathVariable Long id, @Valid @RequestBody GroupCreateRequest request) {
+    public GroupResponse update(@PathVariable("id") Long id, @Valid @RequestBody GroupCreateRequest request) {
         return restMapper.toGroupResponse(servicePort.update(id, restMapper.toGroup(request)));
     }
 
     @DeleteMapping("/v1/api/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         servicePort.deleteById(id);
     }
 }
