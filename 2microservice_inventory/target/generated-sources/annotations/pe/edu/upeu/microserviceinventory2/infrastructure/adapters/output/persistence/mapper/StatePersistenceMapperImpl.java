@@ -9,8 +9,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-29T13:34:13-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
+    date = "2025-11-06T09:06:19-0500",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251023-0518, environment: Java 21.0.8 (Eclipse Adoptium)"
 )
 @Component
 public class StatePersistenceMapperImpl implements StatePersistenceMapper {
@@ -24,8 +24,8 @@ public class StatePersistenceMapperImpl implements StatePersistenceMapper {
         StateEntity.StateEntityBuilder stateEntity = StateEntity.builder();
 
         stateEntity.idState( state.getIdState() );
-        stateEntity.name( state.getName() );
         stateEntity.isActive( state.getIsActive() );
+        stateEntity.name( state.getName() );
 
         return stateEntity.build();
     }
@@ -39,8 +39,8 @@ public class StatePersistenceMapperImpl implements StatePersistenceMapper {
         State.StateBuilder state = State.builder();
 
         state.idState( entity.getIdState() );
-        state.name( entity.getName() );
         state.isActive( entity.getIsActive() );
+        state.name( entity.getName() );
 
         return state.build();
     }

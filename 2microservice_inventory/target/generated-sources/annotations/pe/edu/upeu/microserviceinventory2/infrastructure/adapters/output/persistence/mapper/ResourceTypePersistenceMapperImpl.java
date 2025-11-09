@@ -11,8 +11,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-29T13:34:13-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
+    date = "2025-11-06T09:06:19-0500",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251023-0518, environment: Java 21.0.8 (Eclipse Adoptium)"
 )
 @Component
 public class ResourceTypePersistenceMapperImpl implements ResourceTypePersistenceMapper {
@@ -25,11 +25,11 @@ public class ResourceTypePersistenceMapperImpl implements ResourceTypePersistenc
 
         ResourceTypeEntity.ResourceTypeEntityBuilder resourceTypeEntity = ResourceTypeEntity.builder();
 
-        resourceTypeEntity.idResourceType( model.getIdResourceType() );
-        resourceTypeEntity.name( model.getName() );
-        resourceTypeEntity.isActive( model.getIsActive() );
-        resourceTypeEntity.idCategoryResource( model.getIdCategoryResource() );
         resourceTypeEntity.categoryResource( categoryResourceToCategoryResourceEntity( model.getCategoryResource() ) );
+        resourceTypeEntity.idCategoryResource( model.getIdCategoryResource() );
+        resourceTypeEntity.idResourceType( model.getIdResourceType() );
+        resourceTypeEntity.isActive( model.getIsActive() );
+        resourceTypeEntity.name( model.getName() );
 
         return resourceTypeEntity.build();
     }
@@ -42,11 +42,11 @@ public class ResourceTypePersistenceMapperImpl implements ResourceTypePersistenc
 
         ResourceType.ResourceTypeBuilder resourceType = ResourceType.builder();
 
-        resourceType.idResourceType( entity.getIdResourceType() );
-        resourceType.name( entity.getName() );
-        resourceType.isActive( entity.getIsActive() );
-        resourceType.idCategoryResource( entity.getIdCategoryResource() );
         resourceType.categoryResource( categoryResourceEntityToCategoryResource( entity.getCategoryResource() ) );
+        resourceType.idCategoryResource( entity.getIdCategoryResource() );
+        resourceType.idResourceType( entity.getIdResourceType() );
+        resourceType.isActive( entity.getIsActive() );
+        resourceType.name( entity.getName() );
 
         return resourceType.build();
     }
@@ -73,8 +73,8 @@ public class ResourceTypePersistenceMapperImpl implements ResourceTypePersistenc
         CategoryResourceEntity.CategoryResourceEntityBuilder categoryResourceEntity = CategoryResourceEntity.builder();
 
         categoryResourceEntity.idCategoryResource( categoryResource.getIdCategoryResource() );
-        categoryResourceEntity.name( categoryResource.getName() );
         categoryResourceEntity.isActive( categoryResource.getIsActive() );
+        categoryResourceEntity.name( categoryResource.getName() );
 
         return categoryResourceEntity.build();
     }
@@ -87,8 +87,8 @@ public class ResourceTypePersistenceMapperImpl implements ResourceTypePersistenc
         CategoryResource.CategoryResourceBuilder categoryResource = CategoryResource.builder();
 
         categoryResource.idCategoryResource( categoryResourceEntity.getIdCategoryResource() );
-        categoryResource.name( categoryResourceEntity.getName() );
         categoryResource.isActive( categoryResourceEntity.getIsActive() );
+        categoryResource.name( categoryResourceEntity.getName() );
 
         return categoryResource.build();
     }

@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.microservice_auth.domain.model.AuthUser;
-import pe.edu.upeu.microservice_auth.domain.port.input.LoginUseCase;
-import pe.edu.upeu.microservice_auth.domain.port.input.RefreshTokenUseCase;
 import pe.edu.upeu.microservice_auth.domain.port.input.RegisterUseCase;
+import pe.edu.upeu.microservice_auth.application.service.AuthService;
 import pe.edu.upeu.microservice_auth.infrastructure.adapter.input.dto.*;
 import pe.edu.upeu.microservice_auth.infrastructure.adapter.input.mapper.UserMapper;
 
@@ -22,8 +22,7 @@ import java.util.Map;
 public class AuthController {
 
     private final RegisterUseCase registerUseCase;
-    private final LoginUseCase loginUseCase;
-    private final RefreshTokenUseCase refreshTokenUseCase;
+    private final AuthService authService;
     private final UserMapper userMapper;
 
     @PostMapping("/register")
@@ -36,16 +35,15 @@ public class AuthController {
                 registerDTO.getUserProfileId()
         );
 
-        // After registration, automatically log in the user
-        Map<String, Object> loginResponse = loginUseCase.login(
+        Map<String, Object> loginResponse = authService.loginWithRememberMe(
                 registerDTO.getUsername(),
                 registerDTO.getPassword()
         );
 
         AuthResponseDTO response = AuthResponseDTO.builder()
-                .accessToken((String) loginResponse.get("accessToken"))
-                .refreshToken((String) loginResponse.get("refreshToken"))
-                .expiresIn(((Number) loginResponse.get("expiresIn")).longValue())
+                .accessToken((String) loginResponse.get("access_token"))
+                .refreshToken((String) loginResponse.get("refresh_token"))
+                .expiresIn(((Number) loginResponse.get("expires_in")).longValue())
                 .user(userMapper.toResponseDTO(user))
                 .build();
 
@@ -53,40 +51,36 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody UserLoginDTO loginDTO) {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody UserLoginDTO loginDTO) {
         log.info("POST /api/auth/login - username: {}", loginDTO.getUsername());
-
-        Map<String, Object> loginResponse = loginUseCase.login(
-                loginDTO.getUsername(),
-                loginDTO.getPassword()
-        );
-
-        AuthUser user = loginUseCase.getUserByUsername(loginDTO.getUsername());
-
-        AuthResponseDTO response = AuthResponseDTO.builder()
-                .accessToken((String) loginResponse.get("accessToken"))
-                .refreshToken((String) loginResponse.get("refreshToken"))
-                .expiresIn(((Number) loginResponse.get("expiresIn")).longValue())
-                .user(userMapper.toResponseDTO(user))
-                .build();
-
+        Map<String, Object> response = authService.login(loginDTO.getUsername(), loginDTO.getPassword());
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<Map<String, Object>> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
-        log.info("POST /api/auth/refresh-token");
+    @PostMapping("/login/remember")
+    public ResponseEntity<Map<String, Object>> loginRemember(@Valid @RequestBody UserLoginDTO loginDTO) {
+        log.info("POST /api/auth/login/remember - username: {}", loginDTO.getUsername());
+        Map<String, Object> response = authService.loginWithRememberMe(loginDTO.getUsername(), loginDTO.getPassword());
+        return ResponseEntity.ok(response);
+    }
 
-        Map<String, Object> response = refreshTokenUseCase.refreshAccessToken(request.getRefreshToken());
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO request) {
+        log.info("POST /api/auth/refresh");
+        Map<String, Object> response = authService.refreshAccessToken(request.getRefreshToken());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(@Valid @RequestBody RefreshTokenRequestDTO request) {
+    public ResponseEntity<Map<String, String>> logout(@Valid @RequestBody LogoutRequestDTO request) {
         log.info("POST /api/auth/logout");
-
-        refreshTokenUseCase.revokeRefreshToken(request.getRefreshToken());
-        
+        authService.logout(request.getAccessToken(), request.getRefreshToken());
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> me(Authentication authentication) {
+        AuthUser user = authService.getUserByUsername(authentication.getName());
+        return ResponseEntity.ok(userMapper.toResponseDTO(user));
     }
 }

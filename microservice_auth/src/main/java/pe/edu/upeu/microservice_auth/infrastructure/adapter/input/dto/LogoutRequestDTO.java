@@ -2,7 +2,6 @@ package pe.edu.upeu.microservice_auth.infrastructure.adapter.input.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshTokenRequestDTO {
+public class LogoutRequestDTO {
 
-    @NotBlank(message = "Refresh token is required")
+    @JsonProperty("access_token")
+    @JsonAlias({"accessToken"})
+    private String accessToken;
+
     @JsonProperty("refresh_token")
     @JsonAlias({"refreshToken"})
     private String refreshToken;

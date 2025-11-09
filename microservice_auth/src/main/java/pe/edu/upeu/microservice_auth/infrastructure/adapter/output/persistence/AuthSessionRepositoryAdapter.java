@@ -42,4 +42,10 @@ public class AuthSessionRepositoryAdapter implements AuthSessionRepositoryPort {
     public void deleteExpiredSessions() {
         authSessionJpaRepository.deleteExpiredSessions(Instant.now());
     }
+
+    @Override
+    @Transactional
+    public void deactivateExpiredSessions(Instant now) {
+        authSessionJpaRepository.deactivateExpiredSessions(now);
+    }
 }

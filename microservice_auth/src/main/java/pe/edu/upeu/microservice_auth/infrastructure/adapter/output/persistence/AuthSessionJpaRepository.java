@@ -22,4 +22,8 @@ public interface AuthSessionJpaRepository extends JpaRepository<AuthSession, Lon
     @Modifying
     @Query("DELETE FROM AuthSession a WHERE a.expiresIn < :now")
     void deleteExpiredSessions(@Param("now") Instant now);
+
+    @Modifying
+    @Query("UPDATE AuthSession a SET a.isActive = false, a.logoutAt = :now WHERE a.expiresIn < :now AND a.isActive = true")
+    void deactivateExpiredSessions(@Param("now") Instant now);
 }

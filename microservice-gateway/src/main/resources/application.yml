@@ -7,14 +7,33 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:4200
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - Authorization
+            allowCredentials: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin Vary
       routes:
         # Auth Service Routes (includes /api/auth/users)
         - id: microservice-auth
           uri: lb://microservice-auth
           predicates:
-            - Path=/api/auth/**
+            - Path=/microservice-auth/api/auth/**
           filters:
-            - StripPrefix=2
+          - StripPrefix=1
 
         # User Profile Service Routes
         - id: ms-user

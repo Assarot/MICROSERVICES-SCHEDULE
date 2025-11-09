@@ -2,6 +2,7 @@ package pe.edu.upeu.microservice_auth.domain.port.output;
 
 import pe.edu.upeu.microservice_auth.domain.model.AuthSession;
 
+import java.time.Instant;
 import java.util.Optional;
 
 public interface AuthSessionRepositoryPort {
@@ -15,4 +16,6 @@ public interface AuthSessionRepositoryPort {
     void deleteByToken(String token);
     
     void deleteExpiredSessions();
+
+    void deactivateExpiredSessions(Instant now);
 }
