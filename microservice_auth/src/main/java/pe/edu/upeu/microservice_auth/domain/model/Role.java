@@ -27,6 +27,7 @@ public class Role {
     private Boolean isActive;
 
     @ManyToMany(mappedBy = "roles")
+    @Builder.Default
     private Set<AuthUser> users = new HashSet<>();
 
     @Override

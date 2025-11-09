@@ -25,9 +25,24 @@ public class RefreshToken {
     @Column(name = "expiry_date", nullable = false)
     private Instant expiryDate;
 
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+
+    @Column(name = "revoked_at")
+    private Instant revokedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_auth_user", nullable = false)
     private AuthUser authUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_auth_session")
+    private AuthSession authSession;
 
     public boolean isExpired() {
         return Instant.now().isAfter(this.expiryDate);

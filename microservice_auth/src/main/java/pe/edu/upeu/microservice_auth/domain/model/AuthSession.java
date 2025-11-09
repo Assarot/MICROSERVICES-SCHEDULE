@@ -25,6 +25,17 @@ public class AuthSession {
     @Column(name = "expires_in", nullable = false)
     private Instant expiresIn;
 
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
+
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    private Instant createdAt = Instant.now();
+
+    @Column(name = "logout_at")
+    private Instant logoutAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_auth_user", nullable = false)
     private AuthUser authUser;

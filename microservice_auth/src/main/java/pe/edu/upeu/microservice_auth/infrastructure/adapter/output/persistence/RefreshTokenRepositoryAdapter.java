@@ -26,6 +26,11 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     }
 
     @Override
+    public Optional<RefreshToken> findActiveByRefreshToken(String token) {
+        return refreshTokenJpaRepository.findActiveByRefreshToken(token);
+    }
+
+    @Override
     @Transactional
     public void deleteByAuthUserId(Long userId) {
         refreshTokenJpaRepository.deleteByAuthUser_IdAuthUser(userId);
@@ -41,5 +46,17 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     @Transactional
     public void deleteExpiredTokens() {
         refreshTokenJpaRepository.deleteExpiredTokens(Instant.now());
+    }
+
+    @Override
+    @Transactional
+    public void deactivateByRefreshToken(String token) {
+        refreshTokenJpaRepository.deactivateByRefreshToken(token, Instant.now());
+    }
+
+    @Override
+    @Transactional
+    public void deactivateExpiredTokens() {
+        refreshTokenJpaRepository.deactivateExpiredTokens(Instant.now());
     }
 }

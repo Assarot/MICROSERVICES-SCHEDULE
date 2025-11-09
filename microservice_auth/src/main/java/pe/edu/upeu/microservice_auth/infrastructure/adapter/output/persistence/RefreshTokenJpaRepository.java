@@ -14,6 +14,9 @@ import java.util.Optional;
 public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, Long> {
     
     Optional<RefreshToken> findByRefreshToken(String token);
+
+    @Query("SELECT rt FROM RefreshToken rt WHERE rt.refreshToken = :token AND rt.isActive = true")
+    Optional<RefreshToken> findActiveByRefreshToken(@Param("token") String token);
     
     void deleteByAuthUser_IdAuthUser(Long userId);
     
@@ -22,4 +25,12 @@ public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, L
     @Modifying
     @Query("DELETE FROM RefreshToken rt WHERE rt.expiryDate < :now")
     void deleteExpiredTokens(@Param("now") Instant now);
+
+    @Modifying
+    @Query("UPDATE RefreshToken rt SET rt.isActive = false, rt.revokedAt = :now WHERE rt.refreshToken = :token AND rt.isActive = true")
+    void deactivateByRefreshToken(@Param("token") String token, @Param("now") Instant now);
+
+    @Modifying
+    @Query("UPDATE RefreshToken rt SET rt.isActive = false, rt.revokedAt = :now WHERE rt.expiryDate < :now AND rt.isActive = true")
+    void deactivateExpiredTokens(@Param("now") Instant now);
 }

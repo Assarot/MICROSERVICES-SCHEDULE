@@ -9,10 +9,16 @@ public interface RefreshTokenRepositoryPort {
     RefreshToken save(RefreshToken refreshToken);
     
     Optional<RefreshToken> findByRefreshToken(String token);
+
+    Optional<RefreshToken> findActiveByRefreshToken(String token);
     
     void deleteByAuthUserId(Long userId);
     
     void deleteByRefreshToken(String token);
     
     void deleteExpiredTokens();
+
+    void deactivateByRefreshToken(String token);
+
+    void deactivateExpiredTokens();
 }

@@ -7,18 +7,41 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:4200
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - Authorization
+            allowCredentials: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin Vary
       routes:
         # Auth Service Routes (includes /api/auth/users)
         - id: microservice-auth
           uri: lb://microservice-auth
           predicates:
-            - Path=/api/auth/**
+            - Path=/microservice-auth/api/auth/**
+          filters:
+          - StripPrefix=1
 
         # User Profile Service Routes
         - id: ms-user
           uri: lb://ms-user
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=2
 
         # Course Management Service Routes
         - id: ms-course-management
@@ -33,18 +56,24 @@ spring:
           uri: lb://microservice_schedule
           predicates:
             - Path=/api/schedules/**
+          filters:
+            - StripPrefix=2
 
         # Inventory Service Routes
         - id: microservice-inventory
           uri: lb://microservice-inventory
           predicates:
             - Path=/api/inventory/**
+          filters:
+            - StripPrefix=2
 
         # Incident Service Routes
         - id: ms-incident
           uri: lb://ms-incident
           predicates:
             - Path=/api/incidents/**
+          filters:
+            - StripPrefix=2
 
         # Environment Service Routes
         - id: ms-enviroment

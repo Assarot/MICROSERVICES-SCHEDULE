@@ -17,7 +17,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080",
+      "value": "http://localhost:8081",
       "type": "string"
     },
     {
@@ -44,8 +44,8 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken || jsonData.access_token);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken || jsonData.refresh_token);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -80,8 +80,8 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "    pm.collectionVariables.set('accessToken', jsonData.access_token || jsonData.accessToken);",
+                  "    if (jsonData.refresh_token || jsonData.refreshToken) { pm.collectionVariables.set('refreshToken', jsonData.refresh_token || jsonData.refreshToken); }",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -108,6 +108,39 @@
           }
         },
         {
+          "name": "Login Remember",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', jsonData.access_token || jsonData.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', jsonData.refresh_token || jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login/remember",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login", "remember"]
+            }
+          }
+        },
+        {
           "name": "Refresh Token",
           "event": [
             {
@@ -116,8 +149,8 @@
                 "exec": [
                   "if (pm.response.code === 200) {",
                   "    var jsonData = pm.response.json();",
-                  "    pm.collectionVariables.set('accessToken', jsonData.accessToken);",
-                  "    pm.collectionVariables.set('refreshToken', jsonData.refreshToken);",
+                  "    pm.collectionVariables.set('accessToken', jsonData.access_token || jsonData.accessToken);",
+                  "    if (jsonData.refresh_token || jsonData.refreshToken) { pm.collectionVariables.set('refreshToken', jsonData.refresh_token || jsonData.refreshToken); }",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -134,12 +167,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/auth/refresh-token",
+              "raw": "{{baseUrl}}/api/auth/refresh",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "refresh-token"]
+              "path": ["api", "auth", "refresh"]
             }
           }
         },
@@ -155,12 +188,23 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+              "raw": "{\n  \"access_token\": \"{{accessToken}}\",\n  \"refresh_token\": \"{{refreshToken}}\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/logout",
               "host": ["{{baseUrl}}"],
               "path": ["api", "auth", "logout"]
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
             }
           }
         }
@@ -184,9 +228,9 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/users",
+              "raw": "{{baseUrl}}/api/auth/users",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
+              "path": ["api", "auth", "users"]
             }
           }
         },
@@ -205,9 +249,9 @@
             },
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/users/1",
+              "raw": "{{baseUrl}}/api/auth/users/1",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "1"]
+              "path": ["api", "auth", "users", "1"]
             }
           }
         },
@@ -236,9 +280,9 @@
               "raw": "{\n  \"username\": \"updateduser\",\n  \"isActive\": true,\n  \"userProfileId\": 5\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/2",
+              "raw": "{{baseUrl}}/api/auth/users/2",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "2"]
+              "path": ["api", "auth", "users", "2"]
             }
           }
         },
@@ -257,9 +301,9 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/users/2",
+              "raw": "{{baseUrl}}/api/auth/users/2",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "2"]
+              "path": ["api", "auth", "users", "2"]
             }
           }
         },
@@ -278,9 +322,9 @@
             },
             "method": "POST",
             "url": {
-              "raw": "{{baseUrl}}/api/users/2/roles/MODERATOR",
+              "raw": "{{baseUrl}}/api/auth/users/2/roles/MODERATOR",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "2", "roles", "MODERATOR"]
+              "path": ["api", "auth", "users", "2", "roles", "MODERATOR"]
             }
           }
         },
@@ -299,9 +343,9 @@
             },
             "method": "DELETE",
             "url": {
-              "raw": "{{baseUrl}}/api/users/2/roles/MODERATOR",
+              "raw": "{{baseUrl}}/api/auth/users/2/roles/MODERATOR",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "users", "2", "roles", "MODERATOR"]
+              "path": ["api", "auth", "users", "2", "roles", "MODERATOR"]
             }
           }
         }
