@@ -26,10 +26,6 @@ public class AuthUser {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "failed_logins_attempts", nullable = false)
-    @Builder.Default
-    private Integer failedLoginsAttempts = 0;
-
     @Column(name = "is_active", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
@@ -48,10 +44,6 @@ public class AuthUser {
 
     @OneToMany(mappedBy = "authUser", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private Set<RefreshToken> refreshTokens = new HashSet<>();
-
-    @OneToMany(mappedBy = "authUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private Set<AuthSession> authSessions = new HashSet<>();
 
     public void addRole(Role role) {
@@ -62,14 +54,6 @@ public class AuthUser {
     public void removeRole(Role role) {
         this.roles.remove(role);
         role.getUsers().remove(this);
-    }
-
-    public void incrementFailedAttempts() {
-        this.failedLoginsAttempts++;
-    }
-
-    public void resetFailedAttempts() {
-        this.failedLoginsAttempts = 0;
     }
 
     @Override
