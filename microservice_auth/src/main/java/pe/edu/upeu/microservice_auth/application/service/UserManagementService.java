@@ -30,6 +30,13 @@ public class UserManagementService implements UserManagementUseCase {
     }
 
     @Override
+    public AuthUser getUserByProfileId(Long profileId) {
+        log.info("Fetching user by profile id: {}", profileId);
+        return userRepositoryPort.findByUserProfileId(profileId)
+                .orElseThrow(() -> new UserNotFoundException(profileId));
+    }
+
+    @Override
     public List<AuthUser> getAllUsers() {
         log.info("Fetching all users");
         return userRepositoryPort.findAll();

@@ -13,6 +13,8 @@ public interface UserRepositoryPort {
     
     Optional<AuthUser> findByUsername(String username);
     
+    Optional<AuthUser> findByUserProfileId(Long userProfileId);
+    
     List<AuthUser> findAll();
     
     void deleteById(Long id);

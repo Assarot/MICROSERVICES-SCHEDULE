@@ -40,6 +40,16 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/by-profile/{profileId}")
+    public ResponseEntity<UserResponseDTO> getUserByProfileId(@PathVariable Long profileId) {
+        log.info("GET /api/auth/users/by-profile/{}", profileId);
+
+        AuthUser user = userManagementUseCase.getUserByProfileId(profileId);
+        UserResponseDTO response = userMapper.toResponseDTO(user);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRegisterDTO registerDTO) {
