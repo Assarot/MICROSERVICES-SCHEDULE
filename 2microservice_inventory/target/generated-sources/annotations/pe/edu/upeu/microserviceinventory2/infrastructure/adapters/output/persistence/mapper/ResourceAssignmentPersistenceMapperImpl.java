@@ -17,7 +17,7 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-11T13:34:47-0500",
+    date = "2025-11-11T21:39:32-0500",
     comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251023-0518, environment: Java 21.0.8 (Eclipse Adoptium)"
 )
 @Component
