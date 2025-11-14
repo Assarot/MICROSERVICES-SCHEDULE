@@ -8,13 +8,14 @@ import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {CourseAssignmentPersistenceMapper.class,
-        TeacherPersistenceMapper.class})
+@Mapper(componentModel = "spring", uses = {TeacherPersistenceMapper.class})
 public interface CourseAssignmentPersistenceMapper {
     @Mapping(target = "teacher", source = "teacher", qualifiedByName = "mapTeacherToEntity")
+    @Mapping(target = "courseAssignmentCourse", ignore = true)
     CourseAssignmentEntity toCourseAssignmentEntity(CourseAssignment courseAssignment);
 
     @Mapping(target = "teacher", source = "teacher", qualifiedByName = "mapTeacherToDomain")
+    @Mapping(target = "courseAssignmentCourse", ignore = true)
     CourseAssignment toCourseAssignment(CourseAssignmentEntity entity);
 
     List<CourseAssignment> toCourseAssignmentList(List<CourseAssignmentEntity> entityList);

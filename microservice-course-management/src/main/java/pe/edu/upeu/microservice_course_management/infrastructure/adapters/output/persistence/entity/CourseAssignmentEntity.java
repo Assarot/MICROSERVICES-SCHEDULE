@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignmentCourse;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "courses-assignment")
+@Table(name = "course_assignment")
 public class CourseAssignmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +25,7 @@ public class CourseAssignmentEntity {
     @JoinColumn(name = "id_teacher", nullable = false)
     private TeacherEntity teacher;
 
-    @OneToMany(mappedBy = "courseAssignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "courseAssignment", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<CourseAssignmentCourseEntity> courseAssignmentCourse;
 }

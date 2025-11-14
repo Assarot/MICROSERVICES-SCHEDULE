@@ -1,0 +1,489 @@
+{
+  "info": {
+    "name": "Course Management Microservice - Fixed",
+    "description": "Endpoints corregidos para probar el microservicio de gestión de cursos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Faculty",
+      "item": [
+        {
+          "name": "GET All Faculties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/faculty/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["faculty", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "GET Faculty by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/faculty/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["faculty", "v1", "api", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Faculty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Facultad de Ingeniería\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/faculty/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["faculty", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Faculty",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Facultad de Ingeniería Actualizada\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/faculty/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["faculty", "v1", "api", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Faculty",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/faculty/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["faculty", "v1", "api", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Professional School",
+      "item": [
+        {
+          "name": "GET All Professional Schools",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/professional-school/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["professional-school", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Professional School",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ingeniería de Sistemas\",\n  \"idFaculty\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/professional-school/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["professional-school", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Cycle",
+      "item": [
+        {
+          "name": "GET All Cycles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/cycle/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["cycle", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Cycle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ciclo I\",\n  \"idProfessionalSchool\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/cycle/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["cycle", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Group",
+      "item": [
+        {
+          "name": "GET All Groups",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/group/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["group", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"groupNumber\": \"A\",\n  \"capacity\": 30,\n  \"idCycle\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/group/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["group", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Course Type",
+      "item": [
+        {
+          "name": "GET All Course Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/course-type/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course-type", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Course Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Obligatorio\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/course-type/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course-type", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Plan",
+      "item": [
+        {
+          "name": "GET All Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/plan/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["plan", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Plan 2024-1\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/plan/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["plan", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Teacher",
+      "item": [
+        {
+          "name": "GET All Teachers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/teacher/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["teacher", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Juan\",\n  \"lastName\": \"Pérez\",\n  \"email\": \"juan.perez@upeu.edu.pe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/teacher/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["teacher", "v1", "api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Course",
+      "item": [
+        {
+          "name": "GET All Courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/course/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "GET Course by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/course/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course", "v1", "api", "1"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Course",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Programación I\",\n  \"code\": \"PRO001\",\n  \"description\": \"Introducción a la programación\",\n  \"duration\": 120,\n  \"theoreticalHours\": 60,\n  \"practicalHours\": 60,\n  \"totalHours\": \"PT120H\",\n  \"idCourseType\": 1,\n  \"idPlan\": 1,\n  \"idGroup\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/course/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "PUT Update Course",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Programación I Actualizado\",\n  \"code\": \"PRO001\",\n  \"description\": \"Introducción a la programación actualizada\",\n  \"duration\": 120,\n  \"theoreticalHours\": 60,\n  \"practicalHours\": 60,\n  \"totalHours\": \"PT120H\",\n  \"idCourseType\": 1,\n  \"idPlan\": 1,\n  \"idGroup\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/course/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course", "v1", "api", "1"]
+            }
+          }
+        },
+        {
+          "name": "DELETE Course",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/course/v1/api/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course", "v1", "api", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Course Assignment",
+      "item": [
+        {
+          "name": "GET All Course Assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/course-assignment/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course-assignment", "v1", "api"]
+            }
+          }
+        },
+        {
+          "name": "POST Create Course Assignment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idTeacher\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/course-assignment/v1/api",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["course-assignment", "v1", "api"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

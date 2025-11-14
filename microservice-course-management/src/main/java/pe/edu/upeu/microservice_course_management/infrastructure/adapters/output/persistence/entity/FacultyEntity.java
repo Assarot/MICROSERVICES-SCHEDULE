@@ -23,7 +23,7 @@ public class FacultyEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "faculty", cascade  = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "faculty", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<ProfessionalSchoolEntity> professionalSchoolEntity;
 }

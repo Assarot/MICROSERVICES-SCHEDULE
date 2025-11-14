@@ -24,7 +24,7 @@ public class PlanEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<CourseEntity> courses;
 }

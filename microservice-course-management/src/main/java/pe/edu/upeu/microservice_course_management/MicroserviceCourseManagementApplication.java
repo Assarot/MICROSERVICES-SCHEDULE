@@ -64,6 +64,7 @@ public class MicroserviceCourseManagementApplication implements CommandLineRunne
 
 
 		CourseAssignmentEntity courseAssignment1 = new CourseAssignmentEntity(null,teacher1,new ArrayList<>());
+		courseAssignment1 = courseAssignmentRepository.save(courseAssignment1);
 
         CourseAssignmentCourseEntity courseAssignmentCourse1 = new CourseAssignmentCourseEntity(null, course1, courseAssignment1);
 

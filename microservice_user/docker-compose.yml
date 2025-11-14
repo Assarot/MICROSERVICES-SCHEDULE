@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Base de datos PostgreSQL
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: ms-user-postgres
     environment:
       POSTGRES_DB: ms_user_db
@@ -12,7 +12,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
       - ms-user-network
     healthcheck:

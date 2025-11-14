@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres-course:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres-course-db
     environment:
       POSTGRES_DB: course_db

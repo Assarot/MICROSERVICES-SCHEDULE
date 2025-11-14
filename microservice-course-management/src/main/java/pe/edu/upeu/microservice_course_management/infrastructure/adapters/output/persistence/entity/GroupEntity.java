@@ -29,7 +29,7 @@ public class GroupEntity {
     @JoinColumn(name = "cycle_id")
     private CycleEntity cycle;
 
-    @OneToMany(mappedBy = "group",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "group", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<CourseEntity> courses;
 }

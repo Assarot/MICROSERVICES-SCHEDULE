@@ -27,7 +27,7 @@ public class TeacherEntity {
     @Column(name = "email")
     private String email;
 
-    @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teacher", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<CourseAssignmentEntity> courseAssignments;
 }

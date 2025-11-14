@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:16
     container_name: ms_auth_postgres
     environment:
       POSTGRES_DB: ms_auth_db

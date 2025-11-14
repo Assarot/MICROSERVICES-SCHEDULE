@@ -28,7 +28,7 @@ public class CycleEntity {
     @JoinColumn(name = "id_professional_school")
     private ProfessionalSchoolEntity professionalSchool;
 
-    @OneToMany(mappedBy = "cycle", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "cycle", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     @JsonIgnore
     private List<GroupEntity> groups;
 }
