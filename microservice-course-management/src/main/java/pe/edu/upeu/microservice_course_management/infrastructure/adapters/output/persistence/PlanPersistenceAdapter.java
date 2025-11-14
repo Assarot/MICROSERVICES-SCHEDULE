@@ -18,7 +18,7 @@ public class PlanPersistenceAdapter implements PlanPersistencePort {
     private final PlanPersistenceMapper mapper;
 
     @Override
-    public Optional<Plan> findById(long id) {
+    public Optional<Plan> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toPlan);
     }

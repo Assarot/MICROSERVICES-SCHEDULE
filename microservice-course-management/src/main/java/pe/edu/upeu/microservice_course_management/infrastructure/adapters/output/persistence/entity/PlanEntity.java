@@ -1,10 +1,14 @@
 package pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.edu.upeu.microservice_course_management.domain.model.Course;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +23,8 @@ public class PlanEntity {
     private Long idPlan;
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CourseEntity> courses;
 }

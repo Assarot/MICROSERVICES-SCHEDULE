@@ -1,10 +1,13 @@
 package pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +28,8 @@ public class GroupEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cycle_id")
     private CycleEntity cycle;
+
+    @OneToMany(mappedBy = "group",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CourseEntity> courses;
 }

@@ -11,34 +11,13 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {CourseAssignmentPersistenceMapper.class,
         TeacherPersistenceMapper.class})
 public interface CourseAssignmentPersistenceMapper {
-    @Mapping(target = "course", source = "course", qualifiedByName = "mapCourseToEntity")
     @Mapping(target = "teacher", source = "teacher", qualifiedByName = "mapTeacherToEntity")
     CourseAssignmentEntity toCourseAssignmentEntity(CourseAssignment courseAssignment);
 
-    @Mapping(target = "course", source = "course", qualifiedByName = "mapCourseToDomain")
     @Mapping(target = "teacher", source = "teacher", qualifiedByName = "mapTeacherToDomain")
     CourseAssignment toCourseAssignment(CourseAssignmentEntity entity);
+
     List<CourseAssignment> toCourseAssignmentList(List<CourseAssignmentEntity> entityList);
-
-    // Course
-
-    @Named("mapCourseToEntity")
-    default CourseEntity mapCourseToEntity(Course course) {
-        if (course == null) return null;
-        CourseEntity ce = new CourseEntity();
-        ce.setIdCourse(course.getIdCourse());
-        ce.setName(course.getName());
-        return ce;
-    }
-
-    @Named("mapCourseToDomain")
-    default Course mapCourseToDomain(CourseEntity entity) {
-        if (entity == null) return null;
-        Course c = new Course();
-        c.setIdCourse(entity.getIdCourse());
-        c.setName(entity.getName());
-        return c;
-    }
 
     // Teacher
 

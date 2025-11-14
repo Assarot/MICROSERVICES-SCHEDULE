@@ -1,10 +1,14 @@
 package pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.Duration;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,21 +28,17 @@ public class CourseEntity {
     @Column(name = "description")
     private String description;
     @Column(name = "duration")
-    private int duration;
-    @Column(name = "credit_value")
-    private int creditValue;
+    private Duration duration;
     @Column(name = "theoretical_hours")
-    private int theoreticalHours;
+    private Duration theoreticalHours;
     @Column(name = "practical_hours")
-    private int practicalHours;
+    private Duration practicalHours;
+    @Column(name = "total_hours")
+    private Duration totalHours;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_course_type", nullable = false)
     private CourseTypeEntity courseType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_course_mode", nullable = false)
-    private CourseModeEntity courseMode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_plan", nullable = false)
@@ -47,4 +47,8 @@ public class CourseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_group", nullable = false)
     private GroupEntity group;
+
+    @OneToMany(mappedBy = "courseAssignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CourseAssignmentCourseEntity> courseAssignmentCourse;
 }

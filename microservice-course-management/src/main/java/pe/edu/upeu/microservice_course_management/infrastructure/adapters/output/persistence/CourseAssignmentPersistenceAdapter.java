@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.CourseAssignmentPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignment;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CourseAssignmentPersistenceMapper;
-import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CourseModePersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CourseAssignmentRepository;
-import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CourseModeRepository;
 
 import java.util.List;
 import java.util.Optional;

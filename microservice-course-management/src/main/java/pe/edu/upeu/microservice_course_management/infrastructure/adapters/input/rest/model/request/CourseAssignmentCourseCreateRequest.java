@@ -8,9 +8,9 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseAssignmentCreateRequest {
-    @NotNull(message = "Field IdCourseAssignment cannot be null")
+public class CourseAssignmentCourseCreateRequest {
+    @NotNull(message = "Field IdCourse cannot be empty or null")
+    private Long idCourse;
+    @NotNull(message = "Field IdCourseAssignment cannot be empty or null")
     private Long idCourseAssignment;
-    @NotNull(message = "Field IdTeacher cannot be null")
-    private Long idTeacher;
 }

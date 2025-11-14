@@ -18,7 +18,7 @@ public class TeacherPersistenceAdapter implements TeacherPersistencePort {
     private final TeacherPersistenceMapper mapper;
 
     @Override
-    public Optional<Teacher> findById(long id) {
+    public Optional<Teacher> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toTeacher);
     }

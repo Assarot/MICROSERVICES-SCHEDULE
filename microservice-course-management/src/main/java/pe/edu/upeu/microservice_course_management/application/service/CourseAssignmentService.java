@@ -35,7 +35,7 @@ public class CourseAssignmentService implements CourseAssignmentServicePort {
     public CourseAssignment update(Long id, CourseAssignment courseAssignment) {
         return persistencePort.findById(id)
                 .map(saveCourseAssignment -> {
-                    saveCourseAssignment.setCourse(courseAssignment.getCourse());
+                    saveCourseAssignment.setCourseAssignmentCourse(courseAssignment.getCourseAssignmentCourse());
                     saveCourseAssignment.setTeacher(courseAssignment.getTeacher());
                     return persistencePort.save(saveCourseAssignment);
                 }).orElseThrow(CourseAssignmentNotFoundException::new);

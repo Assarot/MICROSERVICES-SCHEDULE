@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeacherPersistencePort {
-    Optional<Teacher> findById(long id);
+    Optional<Teacher> findById(Long id);
     List<Teacher> findAll();
     Teacher save(Teacher teacher);
     void deleteById(Long id);

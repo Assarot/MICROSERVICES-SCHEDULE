@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FacultyPersistencePort {
-    Optional<Faculty> findById(long id);
+    Optional<Faculty> findById(Long id);
     List<Faculty> findAll();
     Faculty save(Faculty faculty);
     void deleteById(Long id);

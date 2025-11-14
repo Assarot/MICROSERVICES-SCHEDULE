@@ -9,19 +9,16 @@ import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {CourseTypePersistenceMapper.class,
-        CourseModePersistenceMapper.class,
         GroupPersistenceMapper.class,
         PlanPersistenceMapper.class})
 public interface CoursePersistenceMapper {
 
     @Mapping(target = "courseType", source = "courseType", qualifiedByName = "mapCourseTypeToEntity")
-    @Mapping(target = "courseMode", source = "courseMode", qualifiedByName = "mapCourseModeToEntity")
     @Mapping(target = "plan", source = "plan", qualifiedByName = "mapPlanToEntity")
     @Mapping(target = "group", source = "group", qualifiedByName = "mapGroupToEntity")
     CourseEntity toCourseEntity(Course course);
 
     @Mapping(target = "courseType", source = "courseType", qualifiedByName = "mapCourseTypeToDomain")
-    @Mapping(target = "courseMode", source = "courseMode", qualifiedByName = "mapCourseModeToDomain")
     @Mapping(target = "plan", source = "plan", qualifiedByName = "mapPlanToDomain")
     @Mapping(target = "group", source = "group", qualifiedByName = "mapGroupToDomain")
     Course toCourse(CourseEntity entity);
@@ -45,26 +42,6 @@ public interface CoursePersistenceMapper {
         ct.setIdCourseType(entity.getIdCourseType());
         ct.setName(entity.getName());
         return ct;
-    }
-
-    //CourseMode
-
-    @Named("mapCourseModeToEntity")
-    default CourseModeEntity mapCourseModeToEntity(CourseMode courseMode) {
-        if (courseMode == null) return null;
-        CourseModeEntity cme = new CourseModeEntity();
-        cme.setIdCourseMode(courseMode.getIdCourseMode());
-        cme.setName(courseMode.getName());
-        return cme;
-    }
-
-    @Named("mapCourseModeToDomain")
-    default CourseMode mapCourseModeToDomain(CourseModeEntity entity) {
-        if (entity == null) return null;
-        CourseMode cm = new CourseMode();
-        cm.setIdCourseMode(entity.getIdCourseMode());
-        cm.setName(entity.getName());
-        return cm;
     }
 
     // Plan

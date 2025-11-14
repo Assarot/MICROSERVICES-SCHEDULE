@@ -1,10 +1,13 @@
 package pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +22,8 @@ public class FacultyEntity {
     private Long idFaculty;
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "faculty", cascade  = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ProfessionalSchoolEntity> professionalSchoolEntity;
 }

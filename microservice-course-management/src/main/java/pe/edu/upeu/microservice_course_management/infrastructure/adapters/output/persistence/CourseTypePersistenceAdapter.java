@@ -18,7 +18,7 @@ public class CourseTypePersistenceAdapter implements CourseTypePersistencePort {
     private final CourseTypePersistenceMapper mapper;
 
     @Override
-    public Optional<CourseType> findById(long id) {
+    public Optional<CourseType> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toCourseType);
     }

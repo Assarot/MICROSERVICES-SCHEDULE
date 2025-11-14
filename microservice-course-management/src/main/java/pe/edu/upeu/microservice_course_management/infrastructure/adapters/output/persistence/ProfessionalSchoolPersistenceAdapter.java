@@ -21,7 +21,7 @@ public class ProfessionalSchoolPersistenceAdapter implements ProfessionalSchoolP
     private final FacultyRepository facultyRepository;
 
     @Override
-    public Optional<ProfessionalSchool> findById(long id) {
+    public Optional<ProfessionalSchool> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toProfessionalSchool);
     }

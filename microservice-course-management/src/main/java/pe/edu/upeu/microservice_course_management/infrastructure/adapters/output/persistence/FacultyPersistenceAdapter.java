@@ -18,7 +18,7 @@ public class FacultyPersistenceAdapter implements FacultyPersistencePort {
     private final FacultyPersistenceMapper mapper;
 
     @Override
-    public Optional<Faculty> findById(long id) {
+    public Optional<Faculty> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toFaculty);
     }

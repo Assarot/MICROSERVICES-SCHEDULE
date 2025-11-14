@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlanPersistencePort {
-    Optional<Plan> findById(long id);
+    Optional<Plan> findById(Long id);
     List<Plan> findAll();
     Plan save(Plan plan);
     void deleteById(Long id);
