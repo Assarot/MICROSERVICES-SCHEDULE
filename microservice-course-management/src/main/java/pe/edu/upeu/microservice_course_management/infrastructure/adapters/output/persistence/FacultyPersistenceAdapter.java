@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.FacultyPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.Faculty;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.FacultyEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.FacultyPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.FacultyRepository;
 
@@ -30,7 +31,14 @@ public class FacultyPersistenceAdapter implements FacultyPersistencePort {
 
     @Override
     public Faculty save(Faculty faculty) {
-        return mapper.toFaculty(repository.save(mapper.toFacultyEntity(faculty)));
+        if (faculty.getIdFaculty() == null) {
+            FacultyEntity entity = mapper.toFacultyEntity(faculty);
+            return mapper.toFaculty(repository.save(entity));
+        }
+        FacultyEntity entity = repository.findById(faculty.getIdFaculty())
+                .orElseThrow();
+        entity.setName(faculty.getName());
+        return mapper.toFaculty(repository.save(entity));
     }
 
     @Override

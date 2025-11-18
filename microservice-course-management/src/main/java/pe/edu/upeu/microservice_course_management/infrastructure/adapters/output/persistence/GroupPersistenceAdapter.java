@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.GroupPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.Group;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.GroupEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.GroupPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.GroupRepository;
 
@@ -30,9 +31,16 @@ public class GroupPersistenceAdapter implements GroupPersistencePort {
 
     @Override
     public Group save(Group group) {
-        var entity = mapper.toGroupEntity(group);
-        var savedEntity = repository.save(entity);
-        return mapper.toGroup(savedEntity);
+        if (group.getIdGroup()==null) {
+            GroupEntity entity = mapper.toGroupEntity(group);
+            return mapper.toGroup(repository.save(entity));
+        }
+        GroupEntity entity = repository.findById(group.getIdGroup())
+                .orElseThrow();
+        entity.setCapacity(group.getCapacity());
+        entity.setGroupNumber(group.getGroupNumber());
+        entity.setCycle(mapper.mapCycleToEntity(group.getCycle()));
+        return mapper.toGroup(repository.save(entity));
     }
 
     @Override

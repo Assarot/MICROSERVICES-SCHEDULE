@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.CourseAssignmentPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignment;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseAssignmentEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CourseAssignmentPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CourseAssignmentRepository;
 
@@ -30,7 +31,20 @@ public class CourseAssignmentPersistenceAdapter implements CourseAssignmentPersi
 
     @Override
     public CourseAssignment save(CourseAssignment courseAssignment) {
-        return mapper.toCourseAssignment(repository.save(mapper.toCourseAssignmentEntity(courseAssignment)));
+        if (courseAssignment.getIdCourseAssignment() == null) {
+            CourseAssignmentEntity entity = mapper.toCourseAssignmentEntity(courseAssignment);
+            return mapper.toCourseAssignment(repository.save(entity));
+        }
+
+        // Update
+        CourseAssignmentEntity entity = repository.findById(courseAssignment.getIdCourseAssignment())
+                .orElseThrow(); // o tu excepción
+
+        // Solo actualizas lo que cambió (teacher)
+        entity.setTeacher(mapper.mapTeacherToEntity(courseAssignment.getTeacher()));
+
+        // NO tocas courseAssignmentCourse: Hibernate mantiene su colección
+        return mapper.toCourseAssignment(repository.save(entity));
     }
 
     @Override

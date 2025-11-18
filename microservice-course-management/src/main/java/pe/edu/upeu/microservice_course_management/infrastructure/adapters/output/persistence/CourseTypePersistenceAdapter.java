@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.CourseTypePersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseType;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseTypeEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CourseTypePersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CourseTypeRepository;
 
@@ -30,7 +31,14 @@ public class CourseTypePersistenceAdapter implements CourseTypePersistencePort {
 
     @Override
     public CourseType save(CourseType courseType) {
-        return mapper.toCourseType(repository.save(mapper.toCourseTypeEntity(courseType)));
+        if (courseType.getIdCourseType() == null) {
+            CourseTypeEntity entity = mapper.toCourseTypeEntity(courseType);
+            return mapper.toCourseType(repository.save(entity));
+        };
+        CourseTypeEntity entity = repository.findById(courseType.getIdCourseType())
+                .orElseThrow();
+        entity.setName(courseType.getName());
+        return mapper.toCourseType(repository.save(entity));
     }
 
     @Override

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.ProfessionalSchoolPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.ProfessionalSchool;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.ProfessionalSchoolEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.ProfessionalSchoolPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CycleRepository;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.FacultyRepository;
@@ -33,9 +34,15 @@ public class ProfessionalSchoolPersistenceAdapter implements ProfessionalSchoolP
 
     @Override
     public ProfessionalSchool save(ProfessionalSchool professionalSchool) {
-        var entity = mapper.toProfessionalSchoolEntity(professionalSchool);
-        var savedEntity = repository.save(entity);
-        return mapper.toProfessionalSchool(savedEntity);
+        if (professionalSchool.getIdProfessionalSchool() == null) {
+            ProfessionalSchoolEntity entity = mapper.toProfessionalSchoolEntity(professionalSchool);
+            return mapper.toProfessionalSchool(repository.save(entity));
+        }
+        ProfessionalSchoolEntity entity = repository.findById(professionalSchool.getIdProfessionalSchool())
+                .orElseThrow();
+        entity.setName(professionalSchool.getName());
+        entity.setFaculty(mapper.mapFacultyToEntity(professionalSchool.getFaculty()));
+        return mapper.toProfessionalSchool(repository.save(entity));
     }
 
     @Override

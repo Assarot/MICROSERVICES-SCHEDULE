@@ -15,6 +15,9 @@ public interface CourseAssignmentRestMapper {
 
     @Mapping(target = "teacher", source = "idTeacher", qualifiedByName = "mapIdToTeacher")
     CourseAssignment toCourseAssignment(CourseAssignmentCreateRequest request);
+
+    @Mapping(target = "idCourseAssignment", source = "idCourseAssignment")
+    @Mapping(target = "teacher", source = "teacher")
     CourseAssignmentResponse toCourseAssignmentResponse(CourseAssignment courseAssignment);
     List<CourseAssignmentResponse> toCourseAssignmentResponseList(List<CourseAssignment> courseAssignmentList);
 

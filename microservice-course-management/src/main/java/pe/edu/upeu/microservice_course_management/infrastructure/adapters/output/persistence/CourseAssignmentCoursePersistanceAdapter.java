@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.CourseAssignmentCoursePersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignmentCourse;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseAssignmentCourseEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CourseAssignmentCoursePersistanceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CourseAssignmentCourseRepository;
 
@@ -31,7 +32,15 @@ public class CourseAssignmentCoursePersistanceAdapter implements CourseAssignmen
 
     @Override
     public CourseAssignmentCourse save(CourseAssignmentCourse courseAssignmentCourse) {
-        return mapper.toCourseAssignmentCourse(repository.save(mapper.toCourseAssignmentCourseToEntity(courseAssignmentCourse)));
+        if (courseAssignmentCourse.getIdCourseAssignmentCourse() == null) {
+            CourseAssignmentCourseEntity entity = mapper.toCourseAssignmentCourseToEntity(courseAssignmentCourse);
+            return mapper.toCourseAssignmentCourse(repository.save(entity));
+        }
+        CourseAssignmentCourseEntity entity = repository.findById(courseAssignmentCourse.getIdCourseAssignmentCourse())
+                .orElseThrow();
+        entity.setCourseAssignment(mapper.mapCourseAssignmentToEntity(courseAssignmentCourse.getCourseAssignment()));
+        entity.setCourse(mapper.mapCourseToEntity(courseAssignmentCourse.getCourse()));
+        return mapper.toCourseAssignmentCourse(repository.save(entity));
     }
 
     @Override

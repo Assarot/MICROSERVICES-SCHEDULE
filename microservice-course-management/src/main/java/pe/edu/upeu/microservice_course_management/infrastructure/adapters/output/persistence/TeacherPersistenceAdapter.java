@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.TeacherPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.Teacher;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.TeacherEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.TeacherPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.TeacherRepository;
 
@@ -30,7 +31,16 @@ public class TeacherPersistenceAdapter implements TeacherPersistencePort {
 
     @Override
     public Teacher save(Teacher teacher) {
-        return mapper.toTeacher(repository.save(mapper.toTeacherEntity(teacher)));
+        if (teacher.getIdTeacher() == null) {
+            TeacherEntity entity = mapper.toTeacherEntity(teacher);
+            return mapper.toTeacher(repository.save(entity));
+        }
+        TeacherEntity entity = repository.findById(teacher.getIdTeacher())
+                .orElseThrow();
+        entity.setName(teacher.getName());
+        entity.setLastName(teacher.getLastName());
+        entity.setEmail(teacher.getEmail());
+        return mapper.toTeacher(repository.save(entity));
     }
 
     @Override
