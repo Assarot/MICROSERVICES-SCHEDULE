@@ -24,8 +24,9 @@ public class MicroserviceCourseManagementApplication implements CommandLineRunne
 	private final PlanRepository planRepository;
 	private final CourseAssignmentRepository courseAssignmentRepository;
 	private final TeacherRepository teacherRepository;
+    private final CourseAssignmentCourseRepository courseAssignmentCourseRepository;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		SpringApplication.run(MicroserviceCourseManagementApplication.class, args);
 	}
 
@@ -64,9 +65,10 @@ public class MicroserviceCourseManagementApplication implements CommandLineRunne
 
 
 		CourseAssignmentEntity courseAssignment1 = new CourseAssignmentEntity(null,teacher1,new ArrayList<>());
+        courseAssignment1 =  courseAssignmentRepository.save(courseAssignment1);
 
         CourseAssignmentCourseEntity courseAssignmentCourse1 = new CourseAssignmentCourseEntity(null, course1, courseAssignment1);
-
+        courseAssignmentCourse1 = courseAssignmentCourseRepository.save(courseAssignmentCourse1);
 	}
 
 

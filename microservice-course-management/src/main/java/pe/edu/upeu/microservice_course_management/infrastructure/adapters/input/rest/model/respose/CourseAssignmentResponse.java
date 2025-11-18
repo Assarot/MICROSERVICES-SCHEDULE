@@ -10,5 +10,6 @@ import pe.edu.upeu.microservice_course_management.domain.model.Teacher;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseAssignmentResponse {
+    private Long idCourseAssignment ;
     private Teacher teacher;
 }
