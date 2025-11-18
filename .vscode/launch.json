@@ -19,7 +19,8 @@
             "mainClass": "pe.edu.upeu.microservice_user.MicroserviceUserApplication",
             "projectName": "microservice_user",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=58733 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=microservice_user"
         },
         {
             "type": "java",
@@ -29,7 +30,8 @@
             "mainClass": "pe.edu.upeu.microservice_gateway.MicroserviceGatewayApplication",
             "projectName": "microservice-gateway",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53546 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=microservice-gateway"
         },
         {
             "type": "java",
@@ -39,7 +41,8 @@
             "mainClass": "pe.edu.upeu.microservice_auth.MicroserviceAuthApplication",
             "projectName": "microservice_auth",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=59770 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=microservice_auth"
         },
         {
             "type": "java",
@@ -48,6 +51,16 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "pe.edu.upeu.microserviceinventory2.MicroserviceInventory2Application",
             "projectName": "2microservice_inventory",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-MicroserviceEnviromentApplication<microservice-enviroment>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "pe.edu.upeu.microserviceenviroment.MicroserviceEnviromentApplication",
+            "projectName": "microservice-enviroment",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

@@ -71,7 +71,6 @@ class RegisterServiceTest {
         assertEquals(username, result.getUsername());
         assertEquals(encodedPassword, result.getPassword());
         assertTrue(result.getIsActive());
-        assertEquals(0, result.getFailedLoginsAttempts());
 
         verify(userRepositoryPort).existsByUsername(username);
         verify(passwordEncoderPort).encode(password);

@@ -30,6 +30,11 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
+    public Optional<AuthUser> findByUserProfileId(Long userProfileId) {
+        return userJpaRepository.findByIdUserProfile(userProfileId);
+    }
+
+    @Override
     public List<AuthUser> findAll() {
         return userJpaRepository.findAll();
     }

@@ -33,7 +33,7 @@ spring:
           predicates:
             - Path=/microservice-auth/api/auth/**
           filters:
-          - StripPrefix=1
+          - StripPrefix=0
 
         # User Profile Service Routes
         - id: ms-user
@@ -41,7 +41,7 @@ spring:
           predicates:
             - Path=/api/users/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=0
 
         # Course Management Service Routes
         - id: ms-course-management

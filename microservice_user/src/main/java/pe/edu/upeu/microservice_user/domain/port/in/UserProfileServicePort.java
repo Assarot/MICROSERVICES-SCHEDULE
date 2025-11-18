@@ -1,6 +1,7 @@
 package pe.edu.upeu.microservice_user.domain.port.in;
 
 import pe.edu.upeu.microservice_user.domain.model.UserProfile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,14 @@ public interface UserProfileServicePort {
      * @return perfil actualizado
      */
     UserProfile updateUserProfile(Long id, UserProfile userProfile);
+
+    /**
+     * Actualiza solo la foto de perfil subiéndola a Cloudinary
+     * @param id identificador del perfil
+     * @param file archivo de imagen
+     * @return perfil actualizado con la nueva URL de foto
+     */
+    UserProfile updateProfilePicture(Long id, MultipartFile file);
     
     /**
      * Obtiene un perfil por su ID

@@ -33,7 +33,7 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     @Override
     @Transactional
     public void deleteByAuthUserId(Long userId) {
-        refreshTokenJpaRepository.deleteByAuthUser_IdAuthUser(userId);
+        refreshTokenJpaRepository.deleteByAuthSession_AuthUser_IdAuthUser(userId);
     }
 
     @Override

@@ -11,7 +11,6 @@ import pe.edu.upeu.microservice_auth.domain.port.input.RefreshTokenUseCase;
 import pe.edu.upeu.microservice_auth.domain.port.output.JwtServicePort;
 import pe.edu.upeu.microservice_auth.domain.port.output.RefreshTokenRepositoryPort;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +36,10 @@ public class RefreshTokenService implements RefreshTokenUseCase {
             throw new InvalidTokenException("Refresh token expired");
         }
 
-        AuthUser user = refreshToken.getAuthUser();
+        AuthUser user = refreshToken.getAuthSession() != null ? refreshToken.getAuthSession().getAuthUser() : null;
+        if (user == null) {
+            throw new InvalidTokenException("Refresh token not bound to a session");
+        }
 
         if (!user.getIsActive()) {
             log.warn("Inactive user tried to refresh token: {}", user.getUsername());
@@ -47,18 +49,13 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         // Generate new access token
         String newAccessToken = jwtServicePort.generateAccessToken(user);
 
-        // Optional: Implement refresh token rotation
-        String newRefreshToken = jwtServicePort.generateRefreshToken(user);
-        refreshToken.setRefreshToken(newRefreshToken);
-        refreshToken.setExpiryDate(Instant.now().plusMillis(jwtServicePort.getRefreshTokenExpiration()));
-        refreshTokenRepositoryPort.save(refreshToken);
-
+        // Non-rotating policy: keep the same refresh token unchanged
         log.info("Access token refreshed successfully for user: {}", user.getUsername());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("accessToken", newAccessToken);
-        response.put("refreshToken", newRefreshToken);
-        response.put("expiresIn", jwtServicePort.getAccessTokenExpiration() / 1000);
+        response.put("access_token", newAccessToken);
+        response.put("refresh_token", refreshTokenValue);
+        response.put("expires_in", jwtServicePort.getAccessTokenExpiration() / 1000);
 
         return response;
     }

@@ -8,6 +8,8 @@ public interface UserManagementUseCase {
     
     AuthUser getUserById(Long id);
     
+    AuthUser getUserByProfileId(Long profileId);
+    
     List<AuthUser> getAllUsers();
     
     AuthUser updateUser(Long id, AuthUser user);

@@ -18,7 +18,7 @@ public interface RefreshTokenJpaRepository extends JpaRepository<RefreshToken, L
     @Query("SELECT rt FROM RefreshToken rt WHERE rt.refreshToken = :token AND rt.isActive = true")
     Optional<RefreshToken> findActiveByRefreshToken(@Param("token") String token);
     
-    void deleteByAuthUser_IdAuthUser(Long userId);
+    void deleteByAuthSession_AuthUser_IdAuthUser(Long userId);
     
     void deleteByRefreshToken(String token);
     

@@ -20,7 +20,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"names\": \"Juan Carlos\",\n  \"lastName\": \"García López\",\n  \"email\": \"nuevo.usuario@email.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 123, Lima\",\n  \"dob\": \"1990-05-15\",\n  \"profilePicture\": \"https://via.placeholder.com/150\",\n  \"isActive\": true\n}"
+              "raw": "{\n  \"names\": \"Juan Carlos\",\n  \"lastName\": \"García López\",\n  \"email\": \"juan.garcia@example.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 123, Lima\",\n  \"dob\": \"1990-05-15\",\n  \"isActive\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/user-profiles",
@@ -83,7 +83,7 @@
           "response": []
         },
         {
-          "name": "Actualizar Perfil",
+          "name": "Actualizar Perfil (campos básicos)",
           "request": {
             "method": "PUT",
             "header": [
@@ -94,12 +94,35 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"names\": \"Juan Carlos Actualizado\",\n  \"lastName\": \"García López\",\n  \"email\": \"juan.garcia.actualizado@email.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 456, Lima\",\n  \"dob\": \"1990-05-15\",\n  \"profilePicture\": \"https://via.placeholder.com/150\",\n  \"isActive\": true\n}"
+              "raw": "{\n  \"names\": \"Juan Carlos Actualizado\",\n  \"lastName\": \"García López\",\n  \"email\": \"juan.garcia@example.com\",\n  \"phoneNumber\": \"+51987654321\",\n  \"address\": \"Av. Principal 456, Lima\",\n  \"dob\": \"1990-05-15\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/v1/user-profiles/1",
               "host": ["{{base_url}}"],
               "path": ["api", "v1", "user-profiles", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Foto de Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/user-profiles/1/profile-picture",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "user-profiles", "1", "profile-picture"]
             }
           },
           "response": []
@@ -145,11 +168,30 @@
         }
       ]
     }
+    ,
+    {
+      "name": "Auth User",
+      "item": [
+        {
+          "name": "Obtener AuthUser por ProfileId",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/auth/by-profile/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "auth", "by-profile", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
   ],
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:8080",
+      "value": "http://localhost:8082",
       "type": "string"
     }
   ]

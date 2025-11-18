@@ -39,6 +39,13 @@ spring:
 server:
   port: ${SERVER_PORT:8082}
 
+# Cloudinary Configuration
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
+  api_key: ${CLOUDINARY_API_KEY:986587784683781}
+  api_secret: ${CLOUDINARY_API_SECRET:-qFeYvgzbbF2GebrQjxPwhlYmKs}
+  default_profile_picture: ${DEFAULT_PROFILE_PICTURE_URL:https://res.cloudinary.com/dbqfw5na3/image/upload/v1762870218/profileDefault_ai8ba9.jpg}
+
 # Eureka Client Configuration
 eureka:
   client:

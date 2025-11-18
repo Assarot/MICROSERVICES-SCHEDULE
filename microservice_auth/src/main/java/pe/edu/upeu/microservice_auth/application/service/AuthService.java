@@ -64,10 +64,9 @@ public class AuthService {
                 .build();
         session = authSessionRepositoryPort.save(session);
 
-        String refreshTokenStr = UUID.randomUUID().toString();
+        String refreshTokenStr = jwtServicePort.generateRefreshToken(user);
         RefreshToken refreshToken = RefreshToken.builder()
                 .refreshToken(refreshTokenStr)
-                .authUser(user)
                 .authSession(session)
                 .expiryDate(Instant.now().plusMillis(jwtServicePort.getRefreshTokenExpiration()))
                 .isActive(true)
@@ -93,7 +92,9 @@ public class AuthService {
             throw new InvalidTokenException("Refresh token expired");
         }
 
-        AuthUser user = rt.getAuthUser();
+        AuthUser user = Optional.ofNullable(rt.getAuthSession())
+                .map(AuthSession::getAuthUser)
+                .orElseThrow(() -> new InvalidTokenException("Refresh token not bound to a session"));
         if (!Boolean.TRUE.equals(user.getIsActive())) {
             throw new InvalidTokenException("User inactive");
         }
@@ -136,12 +137,8 @@ public class AuthService {
             throw new InvalidCredentialsException("User account is inactive");
         }
         if (!passwordEncoderPort.matches(password, user.getPassword())) {
-            user.incrementFailedAttempts();
-            userRepositoryPort.save(user);
             throw new InvalidCredentialsException();
         }
-        user.resetFailedAttempts();
-        userRepositoryPort.save(user);
         return user;
     }
 
