@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.PlanPersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.Plan;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.PlanEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.PlanPersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.PlanRepository;
 
@@ -18,7 +19,7 @@ public class PlanPersistenceAdapter implements PlanPersistencePort {
     private final PlanPersistenceMapper mapper;
 
     @Override
-    public Optional<Plan> findById(long id) {
+    public Optional<Plan> findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toPlan);
     }
@@ -30,7 +31,14 @@ public class PlanPersistenceAdapter implements PlanPersistencePort {
 
     @Override
     public Plan save(Plan plan) {
-        return mapper.toPlan(repository.save(mapper.toPlanEntity(plan)));
+        if (plan.getIdPlan() == null) {
+            PlanEntity entity = mapper.toPlanEntity(plan);
+            return mapper.toPlan(repository.save(entity));
+        }
+        PlanEntity entity = repository.findById(plan.getIdPlan())
+                .orElseThrow();
+        entity.setName(plan.getName());
+        return mapper.toPlan(repository.save(entity));
     }
 
     @Override

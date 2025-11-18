@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProfessionalSchoolPersistencePort {
-    Optional<ProfessionalSchool> findById(long id);
+    Optional<ProfessionalSchool> findById(Long id);
     List<ProfessionalSchool> findAll();
     ProfessionalSchool save(ProfessionalSchool professionalSchool);
     void deleteById(Long id);

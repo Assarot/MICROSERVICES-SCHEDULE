@@ -2,6 +2,8 @@ package pe.edu.upeu.microservice_course_management.domain.model;
 
 import lombok.*;
 
+import java.time.Duration;
+
 @Builder
 @Getter
 @Setter
@@ -12,13 +14,11 @@ public class Course {
     private String name;
     private String code;
     private String description;
-    private int duration;
-    private int creditValue;
-    private int theoreticalHours;
-    private int practicalHours;
+    private Duration duration;
+    private Duration theoreticalHours;
+    private Duration practicalHours;
+    private Duration totalHours;
     private CourseType courseType;
-    private CourseMode courseMode;
     private Plan plan;
     private Group group;
-
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_course_management.application.ports.output.CyclePersistencePort;
 import pe.edu.upeu.microservice_course_management.domain.model.Cycle;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CycleEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.mapper.CyclePersistenceMapper;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.repository.CycleRepository;
 
@@ -30,9 +31,15 @@ public class CyclePersistenceAdapter implements CyclePersistencePort {
 
     @Override
     public Cycle save(Cycle cycle) {
-        var entity = mapper.toCycleEntity(cycle);
-        var savedEntity = repository.save(entity);
-        return mapper.toCycle(savedEntity);
+        if (cycle.getIdCycle() == null){
+            CycleEntity entity = mapper.toCycleEntity(cycle);
+            return mapper.toCycle(repository.save(entity));
+        }
+        CycleEntity entity = repository.findById(cycle.getIdCycle())
+                .orElseThrow();
+        entity.setName(cycle.getName());
+        entity.setProfessionalSchool(mapper.mapProfessionalSchoolToEntity(cycle.getProfessionalSchool()));
+        return mapper.toCycle(repository.save(entity));
     }
 
     @Override

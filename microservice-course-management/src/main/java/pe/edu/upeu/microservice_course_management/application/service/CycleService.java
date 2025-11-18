@@ -36,6 +36,7 @@ public class CycleService implements CycleServicePort {
         return persistencePort.finById(id)
                 .map(saveCycle -> {
                     saveCycle.setName(cycle.getName());
+                    saveCycle.setProfessionalSchool(cycle.getProfessionalSchool());
                     return persistencePort.save(saveCycle);
                 }).orElseThrow(CycleNotFoundException::new);
     }

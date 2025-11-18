@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CourseTypePersistencePort {
-    Optional<CourseType> findById(long id);
+    Optional<CourseType> findById(Long id);
     List<CourseType> findAll();
     CourseType save(CourseType courseType);
     void deleteById(Long id);

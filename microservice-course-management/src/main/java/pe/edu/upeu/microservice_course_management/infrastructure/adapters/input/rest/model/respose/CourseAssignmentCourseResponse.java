@@ -2,14 +2,15 @@ package pe.edu.upeu.microservice_course_management.infrastructure.adapters.input
 
 import lombok.*;
 import pe.edu.upeu.microservice_course_management.domain.model.Course;
-import pe.edu.upeu.microservice_course_management.domain.model.Teacher;
+import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignment;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseAssignmentResponse {
-    private Long idCourseAssignment ;
-    private Teacher teacher;
+public class CourseAssignmentCourseResponse {
+    private Long idCourseAssignmentCourse;
+    private Course course;
+    private CourseAssignment courseAssignment;
 }

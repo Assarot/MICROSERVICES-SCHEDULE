@@ -47,41 +47,41 @@ spring:
         - id: ms-course-management
           uri: lb://ms-course-management
           predicates:
-            - Path=/api/courses/**
+            - Path=/courses/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         # Schedule Service Routes
         - id: microservice_schedule
           uri: lb://microservice_schedule
           predicates:
-            - Path=/api/schedules/**
+            - Path=/schedules/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         # Inventory Service Routes
         - id: microservice-inventory
           uri: lb://microservice-inventory
           predicates:
-            - Path=/api/inventory/**
+            - Path=/inventory/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         # Incident Service Routes
         - id: ms-incident
           uri: lb://ms-incident
           predicates:
-            - Path=/api/incidents/**
+            - Path=/incidents/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         # Environment Service Routes
         - id: ms-enviroment
           uri: lb://ms-enviroment
           predicates:
-            - Path=/api/environments/**
+            - Path=/environments/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
 server:
   port: ${SERVER_PORT:8080}

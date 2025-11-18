@@ -33,8 +33,8 @@ public class TypeAcademicSpaceService implements TypeAcademicSpaceServicePort {
     public TypeAcademicSpace update(Long id, TypeAcademicSpace typeAcademicSpace) {
         return typeAcademicSpacePersistancePort.findById(id)
                 .map(savedTypeAcademicSpace -> {
-                    savedTypeAcademicSpace.setName(savedTypeAcademicSpace.getName());
-                    savedTypeAcademicSpace.setIsActive(savedTypeAcademicSpace.getIsActive());
+                    savedTypeAcademicSpace.setName(typeAcademicSpace.getName());
+                    savedTypeAcademicSpace.setIsActive(typeAcademicSpace.getIsActive());
                     return typeAcademicSpacePersistancePort.save(savedTypeAcademicSpace);
                 }).orElseThrow(TypeAcademicSpaceNotFoundException::new);
     }

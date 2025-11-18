@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseAssignment {
-    private Long idAssignment;
-    private Course course;
+    private Long idCourseAssignment;
     private Teacher teacher;
 }
