@@ -8,11 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "course-asignment-course")
+@Table(name = "course_asignment_course")
 public class CourseAssignmentCourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCourseAsignmentCourse;
+    private Long idCourseAssignmentCourse;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_course", nullable = false)

@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseAssignmentCourseResponse {
-    private Long idCourseAssignmentCourse;
     private Long idCourse;
     private Long idCourseAssignment;
 }

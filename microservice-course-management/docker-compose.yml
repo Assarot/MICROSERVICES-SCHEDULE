@@ -11,7 +11,7 @@ services:
     ports:
       - "5439:5432"
     volumes:
-      - postgres-course-data:/var/lib/postgresql
+      - postgres-course-data:/var/lib/postgresql/data
     networks:
       - microservices-network
     healthcheck:

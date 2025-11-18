@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "courses-assignment")
+@Table(name = "course_assignment")
 public class CourseAssignmentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

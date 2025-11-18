@@ -48,7 +48,7 @@ public class CourseEntity {
     @JoinColumn(name = "id_group", nullable = false)
     private GroupEntity group;
 
-    @OneToMany(mappedBy = "courseAssignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<CourseAssignmentCourseEntity> courseAssignmentCourse;
 }
