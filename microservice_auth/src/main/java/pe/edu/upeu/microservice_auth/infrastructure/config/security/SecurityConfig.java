@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/login/remember").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
+                        .requestMatchers("/api/auth/users/by-profile/**").permitAll()
                         .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/actuator/**").authenticated()

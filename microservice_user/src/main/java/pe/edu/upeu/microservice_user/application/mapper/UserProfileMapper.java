@@ -3,6 +3,7 @@ package pe.edu.upeu.microservice_user.application.mapper;
 import org.springframework.stereotype.Component;
 import pe.edu.upeu.microservice_user.application.dto.UserProfileRequestDto;
 import pe.edu.upeu.microservice_user.application.dto.UserProfileResponseDto;
+import pe.edu.upeu.microservice_user.application.dto.UserProfileUpdateRequestDto;
 import pe.edu.upeu.microservice_user.domain.model.UserProfile;
 
 import java.time.LocalDateTime;
@@ -34,6 +35,24 @@ public class UserProfileMapper {
                 .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    /**
+     * Convierte de UpdateRequestDto a entidad de dominio parcial para actualización
+     */
+    public UserProfile toDomain(UserProfileUpdateRequestDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return UserProfile.builder()
+                .names(dto.getNames())
+                .lastName(dto.getLastName())
+                .email(dto.getEmail())
+                .phoneNumber(dto.getPhoneNumber())
+                .address(dto.getAddress())
+                .dob(dto.getDob())
                 .build();
     }
     
@@ -89,6 +108,23 @@ public class UserProfileMapper {
         userProfile.setDob(dto.getDob());
         userProfile.setProfilePicture(dto.getProfilePicture());
         userProfile.setIsActive(dto.getIsActive());
+        userProfile.setUpdatedAt(LocalDateTime.now());
+    }
+
+    /**
+     * Actualiza una entidad existente con datos del UpdateRequestDto sin modificar isActive ni profilePicture
+     */
+    public void updateDomainFromUpdateDto(UserProfile userProfile, UserProfileUpdateRequestDto dto) {
+        if (userProfile == null || dto == null) {
+            return;
+        }
+
+        userProfile.setNames(dto.getNames());
+        userProfile.setLastName(dto.getLastName());
+        userProfile.setEmail(dto.getEmail());
+        userProfile.setPhoneNumber(dto.getPhoneNumber());
+        userProfile.setAddress(dto.getAddress());
+        userProfile.setDob(dto.getDob());
         userProfile.setUpdatedAt(LocalDateTime.now());
     }
 }

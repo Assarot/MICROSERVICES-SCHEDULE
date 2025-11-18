@@ -7,8 +7,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.microservice_auth.domain.model.AuthUser;
 import pe.edu.upeu.microservice_auth.domain.port.input.UserManagementUseCase;
+import pe.edu.upeu.microservice_auth.domain.port.input.RegisterUseCase;
 import pe.edu.upeu.microservice_auth.infrastructure.adapter.input.dto.UserResponseDTO;
+import pe.edu.upeu.microservice_auth.infrastructure.adapter.input.dto.UserRegisterDTO;
 import pe.edu.upeu.microservice_auth.infrastructure.adapter.input.mapper.UserMapper;
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserManagementUseCase userManagementUseCase;
+    private final RegisterUseCase registerUseCase;
     private final UserMapper userMapper;
 
     @GetMapping
@@ -34,6 +38,31 @@ public class UserController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/by-profile/{profileId}")
+    public ResponseEntity<UserResponseDTO> getUserByProfileId(@PathVariable Long profileId) {
+        log.info("GET /api/auth/users/by-profile/{}", profileId);
+
+        AuthUser user = userManagementUseCase.getUserByProfileId(profileId);
+        UserResponseDTO response = userMapper.toResponseDTO(user);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRegisterDTO registerDTO) {
+        log.info("POST /api/auth/users - create user: {}", registerDTO.getUsername());
+
+        AuthUser user = registerUseCase.register(
+                registerDTO.getUsername(),
+                registerDTO.getPassword(),
+                registerDTO.getUserProfileId()
+        );
+
+        UserResponseDTO response = userMapper.toResponseDTO(user);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping("/{id}")

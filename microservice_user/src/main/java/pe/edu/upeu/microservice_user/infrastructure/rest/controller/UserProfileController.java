@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pe.edu.upeu.microservice_user.application.dto.UserProfileRequestDto;
 import pe.edu.upeu.microservice_user.application.dto.UserProfileResponseDto;
+import pe.edu.upeu.microservice_user.application.dto.UserProfileUpdateRequestDto;
 import pe.edu.upeu.microservice_user.application.mapper.UserProfileMapper;
 import pe.edu.upeu.microservice_user.domain.exception.UserProfileNotFoundException;
 import pe.edu.upeu.microservice_user.domain.model.UserProfile;
@@ -51,7 +54,7 @@ public class UserProfileController {
      * GET /api/v1/user-profiles/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserProfileResponseDto> getUserProfileById(@PathVariable Long id) {
+    public ResponseEntity<UserProfileResponseDto> getUserProfileById(@PathVariable("id") Long id) {
         
         log.info("GET /api/v1/user-profiles/{} - Consultando perfil", id);
         
@@ -67,7 +70,7 @@ public class UserProfileController {
      * GET /api/v1/user-profiles/email/{email}
      */
     @GetMapping("/email/{email}")
-    public ResponseEntity<UserProfileResponseDto> getUserProfileByEmail(@PathVariable String email) {
+    public ResponseEntity<UserProfileResponseDto> getUserProfileByEmail(@PathVariable("email") String email) {
         
         log.info("GET /api/v1/user-profiles/email/{} - Consultando perfil por email", email);
         
@@ -109,20 +112,36 @@ public class UserProfileController {
     }
     
     /**
-     * Actualizar un perfil existente
+     * Actualizar un perfil existente (sin isActive ni profilePicture)
      * PUT /api/v1/user-profiles/{id}
      */
     @PutMapping("/{id}")
     public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-            @PathVariable Long id,
-            @Valid @RequestBody UserProfileRequestDto requestDto) {
-        
-        log.info("PUT /api/v1/user-profiles/{} - Actualizando perfil", id);
-        
+            @PathVariable("id") Long id,
+            @Valid @RequestBody UserProfileUpdateRequestDto requestDto) {
+
+        log.info("PUT /api/v1/user-profiles/{} - Actualizando perfil (campos básicos)", id);
+
         UserProfile userProfile = mapper.toDomain(requestDto);
         UserProfile updatedProfile = userProfileService.updateUserProfile(id, userProfile);
         UserProfileResponseDto responseDto = mapper.toResponseDto(updatedProfile);
-        
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    /**
+     * Actualiza solo la foto de perfil subiéndola a Cloudinary
+     * PUT /api/v1/user-profiles/{id}/profile-picture
+     */
+    @PutMapping(path = "/{id}/profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserProfileResponseDto> updateProfilePicture(
+            @PathVariable("id") Long id,
+            @RequestPart("file") MultipartFile file) {
+
+        log.info("PUT /api/v1/user-profiles/{}/profile-picture - Actualizando foto de perfil", id);
+
+        UserProfile updated = userProfileService.updateProfilePicture(id, file);
+        UserProfileResponseDto responseDto = mapper.toResponseDto(updated);
         return ResponseEntity.ok(responseDto);
     }
     
@@ -131,7 +150,7 @@ public class UserProfileController {
      * DELETE /api/v1/user-profiles/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUserProfile(@PathVariable("id") Long id) {
         
         log.info("DELETE /api/v1/user-profiles/{} - Eliminando perfil", id);
         
@@ -145,7 +164,7 @@ public class UserProfileController {
      * PATCH /api/v1/user-profiles/{id}/deactivate
      */
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<Void> deactivateUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> deactivateUserProfile(@PathVariable("id") Long id) {
         
         log.info("PATCH /api/v1/user-profiles/{}/deactivate - Desactivando perfil", id);
         
@@ -159,7 +178,7 @@ public class UserProfileController {
      * PATCH /api/v1/user-profiles/{id}/activate
      */
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<Void> activateUserProfile(@PathVariable Long id) {
+    public ResponseEntity<Void> activateUserProfile(@PathVariable("id") Long id) {
         
         log.info("PATCH /api/v1/user-profiles/{}/activate - Activando perfil", id);
         

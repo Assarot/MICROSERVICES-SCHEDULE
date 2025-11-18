@@ -37,7 +37,6 @@ public class RegisterService implements RegisterUseCase {
                 .password(encodedPassword)
                 .idUserProfile(userProfileId)
                 .isActive(true)
-                .failedLoginsAttempts(0)
                 .build();
 
         // Assign default role (USER) if exists

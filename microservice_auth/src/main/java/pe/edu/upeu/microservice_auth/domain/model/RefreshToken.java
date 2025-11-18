@@ -37,10 +37,6 @@ public class RefreshToken {
     private Instant revokedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_auth_user", nullable = false)
-    private AuthUser authUser;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_auth_session")
     private AuthSession authSession;
 
