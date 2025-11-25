@@ -63,9 +63,9 @@ spring:
         - id: microservice-inventory
           uri: lb://microservice-inventory
           predicates:
-            - Path=/inventory/**
+            - Path=/api/inventory/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
 
         # Incident Service Routes
         - id: ms-incident
