@@ -41,10 +41,10 @@ server:
 
 # Cloudinary Configuration
 cloudinary:
-  cloud_name: ${CLOUDINARY_CLOUD_NAME:dbqfw5na3}
-  api_key: ${CLOUDINARY_API_KEY:986587784683781}
-  api_secret: ${CLOUDINARY_API_SECRET:-qFeYvgzbbF2GebrQjxPwhlYmKs}
-  default_profile_picture: ${DEFAULT_PROFILE_PICTURE_URL:https://res.cloudinary.com/dbqfw5na3/image/upload/v1762870218/profileDefault_ai8ba9.jpg}
+  cloud_name: ${CLOUDINARY_CLOUD_NAME:diyjoltuf}
+  api_key: ${CLOUDINARY_API_KEY:699915861721535}
+  api_secret: ${CLOUDINARY_API_SECRET:Cids6m4131L7zgB-xzSwLDavkpg}
+  default_profile_picture: ${DEFAULT_PROFILE_PICTURE_URL:https://res.cloudinary.com/diyjoltuf/image/upload/v1764176345/profileDefault_ai8ba9_v2qipf.jpg}
 
 # Eureka Client Configuration
 eureka:

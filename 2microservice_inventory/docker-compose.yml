@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres-inventory:
+    image: postgres:latest
+    container_name: postgres-inventory-db
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres-inventory-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d inventory_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-inventory-data:
+
+networks:
+  microservices-network:
+    driver: bridge
