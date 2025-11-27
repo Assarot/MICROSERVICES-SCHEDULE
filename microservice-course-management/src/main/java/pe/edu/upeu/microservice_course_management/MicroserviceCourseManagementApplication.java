@@ -36,7 +36,7 @@ public class MicroserviceCourseManagementApplication implements CommandLineRunne
 		FacultyEntity faculty1 = new FacultyEntity(null, "Ciencias de la Salud", new ArrayList<>());
 		faculty1 = facultyRepository.save(faculty1);
 
-		ProfessionalSchoolEntity professionalSchool1 = new ProfessionalSchoolEntity(null,"NutryBaby",faculty1, new ArrayList<>());
+		ProfessionalSchoolEntity professionalSchool1 = new ProfessionalSchoolEntity(null,"Nutrición",faculty1, new ArrayList<>());
 		professionalSchool1 = professionalSchoolRepository.save(professionalSchool1);
 
 		CycleEntity cycle1 = new CycleEntity(null,"Ciclo I", professionalSchool1, new ArrayList<>());
