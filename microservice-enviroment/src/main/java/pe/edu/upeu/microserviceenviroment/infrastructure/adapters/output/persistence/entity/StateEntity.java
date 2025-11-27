@@ -16,7 +16,7 @@ public class StateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_state")
-    private long idState;
+    private Long idState;
     @Column(name = "name")
     private String name;
     @Column(name = "is_active")
