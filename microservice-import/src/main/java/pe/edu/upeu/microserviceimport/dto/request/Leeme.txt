@@ -1,0 +1,1 @@
+Todo lo que es control de respuesta de api directa.
