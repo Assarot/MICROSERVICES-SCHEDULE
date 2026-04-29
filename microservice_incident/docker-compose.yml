@@ -11,9 +11,9 @@ services:
     ports:
       - "5437:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
-      - incident_network
+      - microservices-network
 
   # app:
   #   build:
@@ -38,5 +38,5 @@ volumes:
   postgres_data:
 
 networks:
-  incident_network:
+  microservices-network:
     driver: bridge

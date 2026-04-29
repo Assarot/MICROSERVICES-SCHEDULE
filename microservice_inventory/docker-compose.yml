@@ -11,7 +11,7 @@ services:
     ports:
       - "5438:5432"
     volumes:
-      - postgres-inventory-data:/var/lib/postgresql/data
+      - postgres-inventory-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:

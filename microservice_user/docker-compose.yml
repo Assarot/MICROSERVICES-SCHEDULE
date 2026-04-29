@@ -12,7 +12,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
       - ms-user-network
     healthcheck:
@@ -56,7 +56,7 @@ services:
   #   restart: unless-stopped
 
 networks:
-  ms-user-network:
+  microservices-network:
     driver: bridge
 
 volumes:
