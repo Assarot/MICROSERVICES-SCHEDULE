@@ -6,7 +6,7 @@ import pe.edu.upeu.microserviceimport.dto.WeekDayDTO;
 
 import java.util.List;
 
-@FeignClient(name = "microservice-schedule", contextId = "weekDayClient")
+@FeignClient(name = "MICROSERVICE-SCHEDULE", contextId = "weekDayClient")
 public interface WeekDayClient {
 
     @GetMapping("/api/v1/week-days")

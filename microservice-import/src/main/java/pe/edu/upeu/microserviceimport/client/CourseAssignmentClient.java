@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import pe.edu.upeu.microserviceimport.dto.CourseAssignmentDTO;
 
-@FeignClient(name = "microservice-course-management", contextId = "courseAssignmentClient", path = "/api/v1/course-assignments")
+@FeignClient(name = "MS-COURSE-MANAGEMENT", contextId = "courseAssignmentClient", path = "/api/v1/course-assignments")
 public interface CourseAssignmentClient {
 
     @PostMapping

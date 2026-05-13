@@ -10,6 +10,8 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.text.Normalizer;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Service
@@ -72,7 +74,8 @@ public class ScheduleOrchestratorService {
 
         Map<Long, String> weekDayIds = loadWeekDayIds();
         Set<String> occupiedSlots = loadExistingOccupiedSlots(weekDayIds);
-        Map<String, TeacherDTO> teachersByEmail = loadExistingTeachersByEmail();
+        Map<String, TeacherDTO> teachersByKey = loadExistingTeachersByKey();
+        Map<String, CourseResponseDTO> existingCoursesByCode = loadExistingCoursesByCode();
 
         // Paso 3: Agrupar cursos por ciclo y grupo
         log.info("Paso 3: Agrupando cursos por ciclo y grupo...");
@@ -96,12 +99,25 @@ public class ScheduleOrchestratorService {
                 try {
                     // Crear curso
                     CreateCourseDTO courseDTO = convertirACreateCourseDTO(curso);
+                    String generatedCode = normalizeText(courseDTO.getCode());
+
+                    if (existingCoursesByCode.containsKey(generatedCode)) {
+                        log.info("✓ Curso duplicado omitido: {}", curso.getNombreCurso());
+                        continue;
+                    }
+
                     CourseResponseDTO cursoCreado = courseManagementClient.createCourse(courseDTO);
                     cursosCreados++;
                     log.info("✓ Curso creado: {} (ID: {})", curso.getNombreCurso(), cursoCreado.getIdCourse());
+                    existingCoursesByCode.put(generatedCode, cursoCreado);
 
                     // Obtener o crear asignación de docente
-                    Long idCourseAssignment = obtenerOCrearCourseAssignment(curso, cursoCreado.getIdCourse(), teachersByEmail);
+                    Long idCourseAssignment = obtenerOCrearCourseAssignment(curso, cursoCreado.getIdCourse(), teachersByKey);
+
+                    if (idCourseAssignment == null) {
+                        log.warn("No se asignó docente para el curso {}, se omite el horario", curso.getNombreCurso());
+                        continue;
+                    }
 
                     // Asignar horario sin conflictos
                     boolean horarioAsignado = asignarHorarioSinConflictos(
@@ -157,35 +173,26 @@ public class ScheduleOrchestratorService {
     }
 
     private String generarCodigoCurso(CargaPsicoExcelDTO curso) {
-        return String.format("PSI-%d-%d-%s",
+        String slug = slugify(curso.getNombreCurso());
+        String digest = shortDigest(buildCourseKey(curso));
+        return String.format("PSI-%d-%d-%s-%s",
                 curso.getCiclo(),
                 curso.getGrupo(),
-                curso.getNombreCurso().substring(0, Math.min(3, curso.getNombreCurso().length())).toUpperCase()
-        );
+                slug,
+                digest);
     }
 
-    private Long obtenerOCrearCourseAssignment(CargaPsicoExcelDTO curso, Long idCourse, Map<String, TeacherDTO> teachersByEmail) {
+    private Long obtenerOCrearCourseAssignment(CargaPsicoExcelDTO curso, Long idCourse, Map<String, TeacherDTO> teachersByKey) {
         if (curso.getDocente() == null || curso.getDocente().isBlank()) {
             log.warn("Curso {} sin docente asignado", curso.getNombreCurso());
             return null;
         }
 
-        String email = generarEmailDocente(curso.getDocente());
-        TeacherDTO teacher = teachersByEmail.get(email.toLowerCase());
+        TeacherDTO teacher = findTeacherByAcademicName(teachersByKey, curso.getDocente());
 
         if (teacher == null) {
-            String[] nombreParts = curso.getDocente().trim().split("\\s+");
-            String primerNombre = nombreParts.length > 0 ? nombreParts[0] : "Docente";
-            String apellido = nombreParts.length > 1 ? String.join(" ", Arrays.copyOfRange(nombreParts, 1, nombreParts.length)) : "Sin Apellido";
-
-            TeacherDTO teacherRequest = TeacherDTO.builder()
-                    .name(primerNombre)
-                    .lastName(apellido)
-                    .email(email)
-                    .build();
-
-            teacher = teacherClient.createTeacher(teacherRequest);
-            teachersByEmail.put(email.toLowerCase(), teacher);
+            log.warn("Docente no encontrado en catálogo maestro: {}", curso.getDocente());
+            return null;
         }
 
         CourseAssignmentDTO assignmentDTO = CourseAssignmentDTO.builder()
@@ -203,12 +210,6 @@ public class ScheduleOrchestratorService {
         }
 
         return assignment.getIdCourseAssignment();
-    }
-
-    private String generarEmailDocente(String nombreDocente) {
-        return nombreDocente.toLowerCase()
-                .replaceAll("\\s+", ".")
-                .replaceAll("[áéíóú]", "a") + "@upeu.edu.pe";
     }
 
     private boolean asignarHorarioSinConflictos(
@@ -305,22 +306,44 @@ public class ScheduleOrchestratorService {
         }
     }
 
-    private Map<String, TeacherDTO> loadExistingTeachersByEmail() {
+    private Map<String, TeacherDTO> loadExistingTeachersByKey() {
         try {
             List<TeacherDTO> teachers = teacherClient.getAllTeachers();
             if (teachers == null) {
                 return new HashMap<>();
             }
 
-            return teachers.stream()
-                    .filter(teacher -> teacher.getEmail() != null)
+            Map<String, TeacherDTO> teachersByKey = new HashMap<>();
+            for (TeacherDTO teacher : teachers) {
+                teachersByKey.put(buildTeacherKey(teacher.getName(), teacher.getLastName()), teacher);
+                teachersByKey.put(buildTeacherKey(teacher.getLastName(), teacher.getName()), teacher);
+                teachersByKey.put(normalizeText(teacher.getName()), teacher);
+                teachersByKey.put(normalizeText(teacher.getLastName()), teacher);
+            }
+
+            return teachersByKey;
+        } catch (Exception e) {
+            log.warn("No se pudieron cargar docentes existentes: {}", e.getMessage());
+            return new HashMap<>();
+        }
+    }
+
+    private Map<String, CourseResponseDTO> loadExistingCoursesByCode() {
+        try {
+            List<CourseResponseDTO> courses = courseManagementClient.getAllCourses();
+            if (courses == null) {
+                return new HashMap<>();
+            }
+
+            return courses.stream()
+                    .filter(course -> course.getCode() != null)
                     .collect(Collectors.toMap(
-                            teacher -> teacher.getEmail().toLowerCase(),
-                            teacher -> teacher,
+                            course -> normalizeText(course.getCode()),
+                            course -> course,
                             (existing, replacement) -> existing,
                             HashMap::new));
         } catch (Exception e) {
-            log.warn("No se pudieron cargar docentes existentes: {}", e.getMessage());
+            log.warn("No se pudieron cargar cursos existentes: {}", e.getMessage());
             return new HashMap<>();
         }
     }
@@ -401,6 +424,76 @@ public class ScheduleOrchestratorService {
 
         String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
         return normalized.replaceAll("\\p{M}", "").trim().toUpperCase();
+    }
+
+    private String buildTeacherKeyFromAcademicName(String academicTeacherName) {
+        return normalizeText(academicTeacherName);
+    }
+
+    private TeacherDTO findTeacherByAcademicName(Map<String, TeacherDTO> teachersByKey, String academicTeacherName) {
+        for (String candidateKey : buildTeacherLookupKeys(academicTeacherName)) {
+            TeacherDTO teacher = teachersByKey.get(candidateKey);
+            if (teacher != null) {
+                return teacher;
+            }
+        }
+
+        return null;
+    }
+
+    private List<String> buildTeacherLookupKeys(String academicTeacherName) {
+        String normalized = normalizeText(academicTeacherName);
+        if (normalized.isBlank()) {
+            return List.of();
+        }
+
+        String[] parts = normalized.split("\\s+");
+        Set<String> keys = new LinkedHashSet<>();
+        keys.add(normalized);
+
+        if (parts.length == 1) {
+            return new ArrayList<>(keys);
+        }
+
+        String firstPart = parts[0];
+        String remainder = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
+        keys.add(buildTeacherKey(firstPart, remainder));
+        keys.add(buildTeacherKey(remainder, firstPart));
+
+        return new ArrayList<>(keys);
+    }
+
+    private String buildTeacherKey(String name, String lastName) {
+        return normalizeText((name == null ? "" : name) + " " + (lastName == null ? "" : lastName));
+    }
+
+    private String buildCourseKey(CargaPsicoExcelDTO curso) {
+        return String.join("|",
+                normalizeText(curso.getNombreCurso()),
+                String.valueOf(curso.getCiclo()),
+                String.valueOf(curso.getGrupo()),
+                normalizeText(curso.getPlan()));
+    }
+
+    private String slugify(String value) {
+        String normalized = normalizeText(value);
+        return normalized.replaceAll("[^A-Z0-9]+", "-")
+                .replaceAll("^-+|-+$", "")
+                .substring(0, Math.min(18, normalized.replaceAll("[^A-Z0-9]+", "-").replaceAll("^-+|-+$", "").length()));
+    }
+
+    private String shortDigest(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder();
+            for (int i = 0; i < 3; i++) {
+                hex.append(String.format("%02X", hash[i]));
+            }
+            return hex.toString();
+        } catch (Exception e) {
+            return Integer.toHexString(value.hashCode()).toUpperCase();
+        }
     }
 
     private String buildSlotKey(Long weekDayId, LocalTime startTime, LocalTime endTime, Long academicSpaceId) {

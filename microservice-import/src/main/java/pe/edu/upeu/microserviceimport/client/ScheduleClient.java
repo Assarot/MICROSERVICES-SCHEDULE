@@ -9,7 +9,7 @@ import pe.edu.upeu.microserviceimport.dto.CreateScheduleDTO;
 
 import java.util.List;
 
-@FeignClient(name = "microservice-schedule", contextId = "scheduleClient")
+@FeignClient(name = "MICROSERVICE-SCHEDULE", contextId = "scheduleClient")
 public interface ScheduleClient {
 
     @PostMapping("/api/v1/schedules")

@@ -1,0 +1,11 @@
+Nombre	Apellido	Email
+Juan	Pérez	juan.perez@upeu.edu.pe
+María	García López	maria.garcia@upeu.edu.pe
+Juan Tomás	Pérez Del Aguila	juan.tomas@upeu.edu.pe
+Carlos	Rodríguez	carlos.rodriguez@upeu.edu.pe
+Ana	Martínez Gómez	ana.martinez@upeu.edu.pe
+Roberto	López Flores	roberto.lopez@upeu.edu.pe
+Sofia	Díaz	sofia.diaz@upeu.edu.pe
+Luis	Fernández	luis.fernandez@upeu.edu.pe
+Patricia	Sánchez	patricia.sanchez@upeu.edu.pe
+Miguel	Quispe Condori	miguel.quispe@upeu.edu.pe

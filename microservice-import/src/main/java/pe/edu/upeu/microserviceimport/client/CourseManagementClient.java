@@ -10,11 +10,16 @@ import pe.edu.upeu.microserviceimport.dto.CourseAssignmentDTO;
 import pe.edu.upeu.microserviceimport.dto.CourseResponseDTO;
 import pe.edu.upeu.microserviceimport.dto.CreateCourseDTO;
 
-@FeignClient(name = "microservice-course-management", contextId = "courseManagementClient")
+import java.util.List;
+
+@FeignClient(name = "MS-COURSE-MANAGEMENT", contextId = "courseManagementClient")
 public interface CourseManagementClient {
 
     @PostMapping("/course/v1/api")
     CourseResponseDTO createCourse(@RequestBody CreateCourseDTO courseDTO);
+
+    @GetMapping("/course/v1/api")
+    List<CourseResponseDTO> getAllCourses();
 
     @GetMapping("/course/v1/api/{id}")
     CourseResponseDTO getCourseById(@PathVariable("id") Long id);

@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.Normalizer;
 
 /**
  * Servicio para cargar docentes desde Excel
@@ -32,7 +33,7 @@ public class TeacherLoadService {
      * Formato esperado: Nombre | Apellido | Email
      */
     public void cargarMaestros(InputStream is) {
-        Map<String, TeacherDTO> existingTeachersByEmail = loadExistingTeachersByEmail();
+        Map<String, TeacherDTO> existingTeachersByKey = loadExistingTeachersByKey();
 
         try (Workbook workbook = new XSSFWorkbook(is)) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -46,6 +47,7 @@ public class TeacherLoadService {
                     String nombre = getCellValue(row.getCell(0));
                     String apellido = getCellValue(row.getCell(1));
                     String email = getCellValue(row.getCell(2));
+                    String teacherKey = buildTeacherKey(nombre, apellido);
 
                     if (!email.isEmpty()) {
                         TeacherDTO teacher = TeacherDTO.builder()
@@ -54,9 +56,10 @@ public class TeacherLoadService {
                                 .email(email)
                                 .build();
 
-                        if (!existingTeachersByEmail.containsKey(email.toLowerCase())) {
+                        if (!existingTeachersByKey.containsKey(teacherKey) && !existingTeachersByKey.containsKey(email.toLowerCase())) {
                             teacherClient.createTeacher(teacher);
-                            existingTeachersByEmail.put(email.toLowerCase(), teacher);
+                            existingTeachersByKey.put(teacherKey, teacher);
+                            existingTeachersByKey.put(email.toLowerCase(), teacher);
                             docentes++;
                             log.info("✓ Docente cargado: {} {}", nombre, apellido);
                         } else {
@@ -74,7 +77,7 @@ public class TeacherLoadService {
         }
     }
 
-    private Map<String, TeacherDTO> loadExistingTeachersByEmail() {
+    private Map<String, TeacherDTO> loadExistingTeachersByKey() {
         Map<String, TeacherDTO> teachers = new HashMap<>();
         try {
             List<TeacherDTO> existingTeachers = teacherClient.getAllTeachers();
@@ -83,12 +86,26 @@ public class TeacherLoadService {
                     if (teacher.getEmail() != null) {
                         teachers.put(teacher.getEmail().toLowerCase(), teacher);
                     }
+                    teachers.put(buildTeacherKey(teacher.getName(), teacher.getLastName()), teacher);
                 }
             }
         } catch (Exception e) {
             log.warn("No fue posible cargar docentes existentes: {}", e.getMessage());
         }
         return teachers;
+    }
+
+    public static String buildTeacherKey(String name, String lastName) {
+        return normalizeText((name == null ? "" : name) + " " + (lastName == null ? "" : lastName));
+    }
+
+    public static String normalizeText(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "").trim().toUpperCase();
     }
 
     private String getCellValue(org.apache.poi.ss.usermodel.Cell cell) {
