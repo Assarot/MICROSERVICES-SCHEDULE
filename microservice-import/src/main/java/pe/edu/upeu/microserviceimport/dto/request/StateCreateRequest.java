@@ -1,9 +1,13 @@
 package pe.edu.upeu.microserviceimport.dto.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StateCreateRequest {
     @NotBlank(message = "Field name cannot be empty or null")
     private String name;

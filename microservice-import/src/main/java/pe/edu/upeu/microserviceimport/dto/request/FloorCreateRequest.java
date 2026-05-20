@@ -1,7 +1,11 @@
 package pe.edu.upeu.microserviceimport.dto.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import jakarta.validation.constraints.NotNull;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class FloorCreateRequest {
     @NotNull(message = "Field floor_number cannot be empty or null")
     private int floorNumber;

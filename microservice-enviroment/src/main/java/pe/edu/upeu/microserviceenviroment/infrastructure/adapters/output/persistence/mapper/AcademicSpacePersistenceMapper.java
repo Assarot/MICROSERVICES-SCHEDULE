@@ -57,6 +57,8 @@ public interface AcademicSpacePersistenceMapper {
         if (entity == null) return null;
         TypeAcademicSpace domain = new TypeAcademicSpace();
         domain.setIdTypeAcademicSpace(entity.getIdTypeAcademicSpace());
+        domain.setName(entity.getName());
+        domain.setIsActive(entity.getIsActive());
         return domain;
     }
 
@@ -65,6 +67,8 @@ public interface AcademicSpacePersistenceMapper {
         if (entity == null) return null;
         State domain = new State();
         domain.setIdState(entity.getIdState());
+        domain.setName(entity.getName());
+        domain.setIsActive(entity.getIsActive());
         return domain;
     }
 
@@ -73,6 +77,15 @@ public interface AcademicSpacePersistenceMapper {
         if (entity == null) return null;
         Floor domain = new Floor();
         domain.setIdFloor(entity.getIdFloor());
+        domain.setFloorNumber(entity.getFloorNumber());
+        domain.setIsActive(entity.getIsActive());
+        if (entity.getBuildingEntity() != null) {
+            pe.edu.upeu.microserviceenviroment.domain.model.Building building = new pe.edu.upeu.microserviceenviroment.domain.model.Building();
+            building.setIdBuilding(entity.getBuildingEntity().getIdBuilding());
+            building.setName(entity.getBuildingEntity().getName());
+            building.setIsActive(entity.getBuildingEntity().getIsActive());
+            domain.setBuilding(building);
+        }
         return domain;
     }
 }

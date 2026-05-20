@@ -194,6 +194,7 @@ public class ScheduleOrchestratorService {
     }
 
     private CreateCourseDTO convertirACreateCourseDTO(CargaPsicoExcelDTO cursoExcel) {
+        long groupId = (cursoExcel.getGrupo() != null && cursoExcel.getGrupo() > 0) ? cursoExcel.getGrupo() : 1L;
         return CreateCourseDTO.builder()
                 .name(cursoExcel.getNombreCurso())
                 .code(generarCodigoCurso(cursoExcel))
@@ -205,7 +206,7 @@ public class ScheduleOrchestratorService {
             .totalHours(java.time.Duration.ofHours(cursoExcel.getTotalHoras() != null ? cursoExcel.getTotalHoras() : 0))
                 .idCourseType(1L) // Predeterminado
                 .idPlan(1L) // Debería ser dinámico según plan
-                .idGroup(Long.valueOf(cursoExcel.getGrupo()))
+                .idGroup(groupId)
                 .build();
     }
 
@@ -228,8 +229,14 @@ public class ScheduleOrchestratorService {
         TeacherDTO teacher = findTeacherByAcademicName(teachersByKey, curso.getDocente());
 
         if (teacher == null) {
-            log.warn("Docente no encontrado en catálogo maestro: {}", curso.getDocente());
-            return null;
+            log.warn("Docente no encontrado en catálogo maestro, auto-creando docente: {}", curso.getDocente());
+            TeacherDTO newTeacher = TeacherDTO.builder()
+                    .name(curso.getDocente())
+                    .lastName("-")
+                    .email(curso.getDocente().replaceAll("\\s+", "").toLowerCase() + "@upeu.edu.pe")
+                    .build();
+            teacher = teacherClient.createTeacher(newTeacher);
+            teachersByKey.put(buildTeacherKeyFromAcademicName(curso.getDocente()), teacher);
         }
 
         CourseAssignmentDTO assignmentDTO = CourseAssignmentDTO.builder()

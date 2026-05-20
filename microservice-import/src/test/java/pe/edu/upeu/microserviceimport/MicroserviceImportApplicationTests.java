@@ -94,13 +94,13 @@ class MicroserviceImportApplicationTests {
                 .idAcademicSpace(1L)
                 .spaceName("AULA 101")
                 .capacity(40)
-                .typeAcademicSpace("AULA")
+                .typeAcademicSpace(pe.edu.upeu.microserviceimport.dto.TypeAcademicSpaceDTO.builder().name("AULA").build())
                 .build());
         espacios.add(AcademicSpaceDTO.builder()
                 .idAcademicSpace(2L)
                 .spaceName("AULA 102")
                 .capacity(40)
-                .typeAcademicSpace("AULA")
+                .typeAcademicSpace(pe.edu.upeu.microserviceimport.dto.TypeAcademicSpaceDTO.builder().name("AULA").build())
                 .build());
 
         when(environmentClient.getAllAcademicSpaces()).thenReturn(espacios);
