@@ -22,6 +22,17 @@ public class ScheduleService implements ScheduleUseCase {
         return repositoryPort.save(schedule);
     }
 
+    public boolean existsConflict(Long idAcademicSpace, Long idWeekName, java.time.LocalTime start, java.time.LocalTime end) {
+        var schedules = repositoryPort.findByAcademicSpaceAndWeekDay(idAcademicSpace, idWeekName);
+        for (var s : schedules) {
+            if (s.getStartTime() == null || s.getEndTime() == null) continue;
+            if (start.isBefore(s.getEndTime()) && end.isAfter(s.getStartTime())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Optional<Schedule> findById(Long id) {

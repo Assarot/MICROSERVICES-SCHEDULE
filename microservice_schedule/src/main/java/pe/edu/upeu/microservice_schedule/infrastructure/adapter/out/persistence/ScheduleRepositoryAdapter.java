@@ -39,6 +39,13 @@ public class ScheduleRepositoryAdapter implements ScheduleRepositoryPort {
     }
 
     @Override
+    public List<Schedule> findByAcademicSpaceAndWeekDay(Long idAcademicSpace, Long idWeekName) {
+        return jpaRepository.findByIdAcademicSpaceAndIdWeekName(idAcademicSpace, idWeekName).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         jpaRepository.deleteById(id);
     }

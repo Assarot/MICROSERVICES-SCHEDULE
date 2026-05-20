@@ -9,6 +9,7 @@ public interface ScheduleRepositoryPort {
     Schedule save(Schedule schedule);
     Optional<Schedule> findById(Long id);
     List<Schedule> findAll();
+    List<Schedule> findByAcademicSpaceAndWeekDay(Long idAcademicSpace, Long idWeekName);
     void deleteById(Long id);
     boolean existsById(Long id);
 }

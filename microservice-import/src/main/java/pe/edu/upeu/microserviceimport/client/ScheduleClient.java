@@ -20,4 +20,7 @@ public interface ScheduleClient {
 
     @GetMapping("/api/v1/schedules")
     List<CreateScheduleDTO> getAllSchedules();
+
+    @PostMapping("/api/v1/schedules/auto-assign")
+    pe.edu.upeu.microserviceimport.dto.response.AutoAssignResponse autoAssign(@RequestBody pe.edu.upeu.microserviceimport.dto.request.AutoAssignRequest request);
 }

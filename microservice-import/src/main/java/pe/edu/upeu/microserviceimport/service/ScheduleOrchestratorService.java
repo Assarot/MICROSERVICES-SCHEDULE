@@ -95,6 +95,9 @@ public class ScheduleOrchestratorService {
 
             log.info("Procesando grupo: {}", grupoKey);
 
+            // Collect courses to auto-assign after creating them
+            List<pe.edu.upeu.microserviceimport.dto.request.CourseToAssignRequest> toAssign = new ArrayList<>();
+
             for (CargaPsicoExcelDTO curso : cursosDelGrupo) {
                 try {
                     // Crear curso
@@ -119,24 +122,58 @@ public class ScheduleOrchestratorService {
                         continue;
                     }
 
-                    // Asignar horario sin conflictos
-                    boolean horarioAsignado = asignarHorarioSinConflictos(
-                            cursoCreado,
-                            idCourseAssignment,
-                            espacios,
-                            scheduleTracker,
-                        curso,
-                        weekDayIds
-                    );
+                    // Prepare candidate academic spaces for this course
+                    List<AcademicSpaceDTO> espaciosPreferidos = filtrarEspaciosPorPreferencia(espacios, curso.getAmbienteEspecializado());
+                    List<Long> candidateIds = espaciosPreferidos.stream()
+                            .filter(e -> e.getCapacity() >= (curso.getAforoPorCursoGrupo() != null ? curso.getAforoPorCursoGrupo() : 30))
+                            .map(AcademicSpaceDTO::getIdAcademicSpace)
+                            .collect(Collectors.toList());
 
-                    if (horarioAsignado) {
-                        horariosAsignados++;
+                    if (candidateIds.isEmpty()) {
+                        log.warn("No hay espacios candidatos para curso {}", curso.getNombreCurso());
+                    } else {
+                        pe.edu.upeu.microserviceimport.dto.request.CourseToAssignRequest cta = pe.edu.upeu.microserviceimport.dto.request.CourseToAssignRequest.builder()
+                                .idCourseAssignment(idCourseAssignment)
+                                .capacityRequired(curso.getAforoPorCursoGrupo() != null ? curso.getAforoPorCursoGrupo() : 30)
+                                .preferredType(curso.getAmbienteEspecializado())
+                                .candidateAcademicSpaceIds(candidateIds)
+                                .build();
+                        toAssign.add(cta);
                     }
 
                 } catch (Exception e) {
                     log.error("Error al procesar curso {}: {}", curso.getNombreCurso(), e.getMessage());
                 }
             }
+
+            // After creating all courses in the group, call schedule auto-assign
+            if (!toAssign.isEmpty()) {
+                pe.edu.upeu.microserviceimport.dto.request.AutoAssignRequest req = pe.edu.upeu.microserviceimport.dto.request.AutoAssignRequest.builder()
+                        .courses(toAssign)
+                        .startTimes(Arrays.stream(START_TIMES).map(LocalTime::toString).collect(Collectors.toList()))
+                        .durationMinutes(SLOT_DURATION_MINUTES)
+                        .weekDayIds(Arrays.stream(DAYS_OF_WEEK).map(d -> resolveWeekDayId(weekDayIds, d)).filter(Objects::nonNull).collect(Collectors.toList()))
+                        .build();
+
+                try {
+                    var assignResp = scheduleClient.autoAssign(req);
+                    if (assignResp != null && assignResp.getAssigned() != null) {
+                        horariosAsignados += assignResp.getAssigned().size();
+                        // mark occupied slots
+                        for (var a : assignResp.getAssigned()) {
+                            java.time.LocalTime s = java.time.LocalTime.parse(a.getStartTime());
+                            java.time.LocalTime e = java.time.LocalTime.parse(a.getEndTime());
+                            scheduleTracker.markSlotAsOccupied(buildSlotKey(a.getWeekDayId(), s, e, a.getIdAcademicSpace()));
+                        }
+                    }
+                    if (assignResp != null && assignResp.getFailedCourseAssignmentIds() != null && !assignResp.getFailedCourseAssignmentIds().isEmpty()) {
+                        log.warn("Cursos sin asignar en grupo {}: {}", grupoKey, assignResp.getFailedCourseAssignmentIds());
+                    }
+                } catch (Exception ex) {
+                    log.error("Error al llamar auto-assign: {}", ex.getMessage());
+                }
+            }
+
         }
 
         log.info("========== PROCESO COMPLETADO ==========");
