@@ -10,8 +10,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.input.rest.mod
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-20T01:30:11-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.2 (Amazon.com Inc.)"
+    date = "2026-05-20T12:05:18-0500",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
 )
 @Component
 public class ResourceRestMapperImpl implements ResourceRestMapper {
@@ -25,10 +25,10 @@ public class ResourceRestMapperImpl implements ResourceRestMapper {
         Resource.ResourceBuilder resource = Resource.builder();
 
         resource.code( request.getCode() );
-        resource.stock( request.getStock() );
-        resource.observation( request.getObservation() );
         resource.idResourceType( request.getIdResourceType() );
         resource.idState( request.getIdState() );
+        resource.observation( request.getObservation() );
+        resource.stock( request.getStock() );
 
         return resource.build();
     }
@@ -41,13 +41,13 @@ public class ResourceRestMapperImpl implements ResourceRestMapper {
 
         ResourceResponse resourceResponse = new ResourceResponse();
 
-        resourceResponse.setIdResource( model.getIdResource() );
         resourceResponse.setCode( model.getCode() );
-        resourceResponse.setStock( model.getStock() );
-        resourceResponse.setResourcePhotoUrl( model.getResourcePhotoUrl() );
+        resourceResponse.setIdResource( model.getIdResource() );
         resourceResponse.setObservation( model.getObservation() );
+        resourceResponse.setResourcePhotoUrl( model.getResourcePhotoUrl() );
         resourceResponse.setResourceType( model.getResourceType() );
         resourceResponse.setState( model.getState() );
+        resourceResponse.setStock( model.getStock() );
 
         return resourceResponse;
     }

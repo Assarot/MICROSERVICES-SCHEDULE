@@ -9,8 +9,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-20T01:30:11-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.2 (Amazon.com Inc.)"
+    date = "2026-05-20T12:05:18-0500",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
 )
 @Component
 public class CategoryResourcePersistenceMapperImpl implements CategoryResourcePersistenceMapper {
@@ -24,8 +24,8 @@ public class CategoryResourcePersistenceMapperImpl implements CategoryResourcePe
         CategoryResourceEntity.CategoryResourceEntityBuilder categoryResourceEntity = CategoryResourceEntity.builder();
 
         categoryResourceEntity.idCategoryResource( model.getIdCategoryResource() );
-        categoryResourceEntity.name( model.getName() );
         categoryResourceEntity.isActive( model.getIsActive() );
+        categoryResourceEntity.name( model.getName() );
 
         return categoryResourceEntity.build();
     }
@@ -39,8 +39,8 @@ public class CategoryResourcePersistenceMapperImpl implements CategoryResourcePe
         CategoryResource.CategoryResourceBuilder categoryResource = CategoryResource.builder();
 
         categoryResource.idCategoryResource( entity.getIdCategoryResource() );
-        categoryResource.name( entity.getName() );
         categoryResource.isActive( entity.getIsActive() );
+        categoryResource.name( entity.getName() );
 
         return categoryResource.build();
     }

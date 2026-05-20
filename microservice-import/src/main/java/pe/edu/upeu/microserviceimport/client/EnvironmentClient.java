@@ -18,7 +18,7 @@ import pe.edu.upeu.microserviceimport.dto.request.TypeAcademicSpaceCreateRequest
 
 import java.util.List;
 
-@FeignClient(name = "MS-ENVIROMENT", contextId = "environmentClient")
+@FeignClient(name = "ms-enviroment", url = "${environment.client.url:http://localhost:8087}", contextId = "environmentClient")
 public interface EnvironmentClient {
 
     // Estados
@@ -43,8 +43,8 @@ public interface EnvironmentClient {
     BuildingDTO createBuilding(@RequestBody BuildingCreateRequest buildingRequest);
 
     // Pisos
-    @GetMapping("/v1/api/floor/building/{buildingId}")
-    List<FloorDTO> getFloorsByBuilding(@PathVariable("buildingId") Long buildingId);
+    @GetMapping("/v1/api/floor")
+    List<FloorDTO> getAllFloors();
 
     @PostMapping("/v1/api/floor")
     FloorDTO createFloor(@RequestBody FloorCreateRequest floorRequest);

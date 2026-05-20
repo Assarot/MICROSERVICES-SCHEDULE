@@ -42,8 +42,11 @@ public class PrimaryDataImportService {
     }
 
     public PrimaryDataImportResult importPrimaryData(MultipartFile file) throws IOException {
+        log.info("Iniciando importPrimaryData file='{}' size={} bytes", file.getOriginalFilename(), file.getSize());
         try (InputStream inputStream = file.getInputStream();
              Workbook workbook = WorkbookFactory.create(inputStream)) {
+
+            log.info("Workbook sheets={}", workbook.getNumberOfSheets());
 
             Map<String, StateDTO> states = new HashMap<>();
             Map<String, TypeAcademicSpaceDTO> types = new HashMap<>();
@@ -57,15 +60,27 @@ public class PrimaryDataImportService {
             int floorsCreated = 0;
             int academicSpacesCreated = 0;
 
-            // Procesar todas las hojas
-            for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+                // Procesar todas las hojas
+                for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
                 Sheet sheet = workbook.getSheetAt(sheetIndex);
                 String sheetName = sheet.getSheetName().toLowerCase().trim();
 
-                if (sheetName.contains("básico") || sheetName.contains("basico") || sheetName.contains("datos") || sheetIndex == 0) {
-                    // Hoja de datos básicos (Estados, Tipos, Edificios, Pisos)
-                    log.info("Procesando hoja de datos básicos: {}", sheet.getSheetName());
-                    Map<String, Integer> headerIndex = buildHeaderIndex(sheet.getRow(0));
+                // Construir índice de headers temprano para identificar el tipo de hoja
+                Map<String, Integer> headerIndex = buildHeaderIndex(sheet.getRow(0));
+                log.debug("Sheet[{}] headers={}", sheetIndex, headerIndex);
+                boolean looksLikeAcademic = headerIndex.containsKey(normalizeHeader("spacename"))
+                    || headerIndex.containsKey(normalizeHeader("academicspace"))
+                    || headerIndex.containsKey(normalizeHeader("ambiente"))
+                    || headerIndex.containsKey(normalizeHeader("espacio"));
+                boolean looksLikeBasic = headerIndex.containsKey(normalizeHeader("state"))
+                    || headerIndex.containsKey(normalizeHeader("typeacademicspace"))
+                    || headerIndex.containsKey(normalizeHeader("building"))
+                    || headerIndex.containsKey(normalizeHeader("floornumber"));
+
+                // Priorizar detección por encabezados; como fallback usar nombre de la hoja o la primera hoja
+                if (looksLikeBasic || sheetName.contains("básico") || sheetName.contains("basico") || sheetName.contains("datos") || sheetIndex == 0) {
+                    // Hoja de datos básicos (estados, tipos, edificios, pisos)
+                    log.info("Procesando hoja de DATOS BÁSICOS: {}", sheet.getSheetName());
                     if (!headerIndex.isEmpty()) {
                         Map<String, StateDTO> existingStates = loadExistingStates();
                         Map<String, TypeAcademicSpaceDTO> existingTypes = loadExistingTypes();
@@ -87,7 +102,20 @@ public class PrimaryDataImportService {
                             Integer floorNumber = getCellIntValue(row, headerIndex, "floornumber", "floor", "piso", "pisonumero");
                             Character floorActive = getCellCharValue(row, headerIndex, "flooractive", "floorisactive", "pisoactivo");
                             String floorBuildingName = getCellValue(row, headerIndex, "floorbuilding", "buildingforfloor", "edificiopiso");
-
+                            log.debug("Row[{}] extracted: state='{}' stateActive='{}' type='{}' typeActive='{}' building='{}' floor='{}' floorBuilding='{}'", rowIndex, stateName, stateActive, typeName, typeActive, buildingName, floorNumber, floorBuildingName);
+                            // Evitar filas que contengan tokens de cabecera o valores literales "null"
+                            if (stateName != null && (looksLikeHeaderToken(stateName) || "null".equalsIgnoreCase(stateName))) {
+                                log.warn("Skipping header-like or invalid state row[{}] state='{}'", rowIndex, stateName);
+                                continue;
+                            }
+                            if (typeName != null && (looksLikeHeaderToken(typeName) || "null".equalsIgnoreCase(typeName))) {
+                                log.warn("Skipping header-like or invalid type row[{}] type='{}'", rowIndex, typeName);
+                                continue;
+                            }
+                            if (buildingName != null && (looksLikeHeaderToken(buildingName) || "null".equalsIgnoreCase(buildingName))) {
+                                log.warn("Skipping header-like or invalid building row[{}] building='{}'", rowIndex, buildingName);
+                                continue;
+                            }
                             if (!stateName.isBlank()) {
                                 StateDTO state = createOrUpdateState(existingStates, stateName, stateActive);
                                 if (state != null && state.getIdState() != null && !existingStates.containsKey(normalizeKey(stateName))) {
@@ -139,10 +167,9 @@ public class PrimaryDataImportService {
                         floors.putAll(existingFloors);
                     }
 
-                } else if (sheetName.contains("ambiente") || sheetName.contains("espacio") || sheetName.contains("academic")) {
+                } else if (looksLikeAcademic || sheetName.contains("ambiente") || sheetName.contains("espacio") || sheetName.contains("academic")) {
                     // Hoja de ambientes académicos
-                    log.info("Procesando hoja de ambientes académicos: {}", sheet.getSheetName());
-                    Map<String, Integer> headerIndex = buildHeaderIndex(sheet.getRow(0));
+                    log.info("Procesando hoja de AMBIENTES ACADÉMICOS: {}", sheet.getSheetName());
                     if (!headerIndex.isEmpty()) {
                         Map<String, AcademicSpaceDTO> existingAcademicSpaces = loadExistingAcademicSpaces();
 
@@ -160,7 +187,24 @@ public class PrimaryDataImportService {
                             String typeName = getCellValue(row, headerIndex, "type", "typename", "tipo", "tipoacademico");
                             String buildingName = getCellValue(row, headerIndex, "building", "buildingname", "edificio");
                             Integer floorNumber = getCellIntValue(row, headerIndex, "floor", "floornumber", "piso");
-
+                            log.debug("Row[{}] extracted: space='{}' observation='{}' location='{}' capacity='{}' state='{}' type='{}' building='{}' floor='{}'", rowIndex, spaceName, observation, location, capacity, stateName, typeName, buildingName, floorNumber);
+                                // Evitar filas que contienen tokens de cabecera o valores literales "null"
+                                if (spaceName != null && (looksLikeHeaderToken(spaceName) || "null".equalsIgnoreCase(spaceName))) {
+                                    log.warn("Skipping header-like or invalid space row[{}] space='{}'", rowIndex, spaceName);
+                                    continue;
+                                }
+                                if (stateName != null && (looksLikeHeaderToken(stateName) || "null".equalsIgnoreCase(stateName))) {
+                                    log.warn("Skipping header-like or invalid state row[{}] state='{}'", rowIndex, stateName);
+                                    continue;
+                                }
+                                if (typeName != null && (looksLikeHeaderToken(typeName) || "null".equalsIgnoreCase(typeName))) {
+                                    log.warn("Skipping header-like or invalid type row[{}] type='{}'", rowIndex, typeName);
+                                    continue;
+                                }
+                                if (buildingName != null && (looksLikeHeaderToken(buildingName) || "null".equalsIgnoreCase(buildingName))) {
+                                    log.warn("Skipping header-like or invalid building row[{}] building='{}'", rowIndex, buildingName);
+                                    continue;
+                                }
                             if (!spaceName.isBlank()) {
                                 AcademicSpaceDTO academicSpace = createOrUpdateAcademicSpace(
                                     existingAcademicSpaces, spaceName, observation, location, capacity,
@@ -239,15 +283,15 @@ public class PrimaryDataImportService {
 
     private Map<String, FloorDTO> loadExistingFloors(Map<String, BuildingDTO> buildings) {
         Map<String, FloorDTO> map = new HashMap<>();
-        for (BuildingDTO building : buildings.values()) {
-            if (building.getIdBuilding() != null) {
-                List<FloorDTO> buildingFloors = environmentClient.getFloorsByBuilding(building.getIdBuilding());
-                for (FloorDTO floor : buildingFloors) {
-                    if (floor != null && floor.getBuilding() != null) {
-                        map.put(buildingFloorKey(floor.getBuilding(), floor.getFloorNumber()), floor);
-                    }
+        try {
+            List<FloorDTO> allFloors = environmentClient.getAllFloors();
+            for (FloorDTO floor : allFloors) {
+                if (floor != null && floor.getBuilding() != null) {
+                    map.put(buildingFloorKey(floor.getBuilding(), floor.getFloorNumber()), floor);
                 }
             }
+        } catch (Exception e) {
+            log.error("Error loading existing floors: {}", e.getMessage());
         }
         return map;
     }
@@ -269,6 +313,15 @@ public class PrimaryDataImportService {
         return normalized.replaceAll("\\p{C}", "");
     }
 
+    private String safe(String input, int maxLen) {
+        String s = sanitize(input);
+        if (s.length() > maxLen) {
+            log.warn("Truncating input '{}' to {} chars", s, maxLen);
+            return s.substring(0, maxLen);
+        }
+        return s;
+    }
+
     private StateDTO createOrUpdateState(Map<String, StateDTO> states, String name, Character isActive) {
         String key = normalizeKey(name);
         StateDTO existing = states.get(key);
@@ -277,13 +330,25 @@ public class PrimaryDataImportService {
             char active = isActive == null ? 'A' : isActive;
             StateCreateRequest stateRequest = new StateCreateRequest(cleanName, active);
             log.debug("POST /v1/api/state payload: name='{}' isActive='{}'", cleanName, active);
-            return environmentClient.createState(stateRequest);
+            try {
+                return environmentClient.createState(stateRequest);
+            } catch (Exception e) {
+                log.error("Error creating state payload={} error={}", stateRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return null;
+            }
         }
         if (isActive != null && existing.getIsActive() != isActive) {
             String cleanName = sanitize(existing.getName());
             StateCreateRequest stateRequest = new StateCreateRequest(cleanName, isActive);
             log.debug("POST /v1/api/state payload (update): name='{}' isActive='{}'", cleanName, isActive);
-            return environmentClient.createState(stateRequest);
+            try {
+                return environmentClient.createState(stateRequest);
+            } catch (Exception e) {
+                log.error("Error updating state payload={} error={}", stateRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return existing;
+            }
         }
         return existing;
     }
@@ -292,12 +357,25 @@ public class PrimaryDataImportService {
         String key = normalizeKey(name);
         TypeAcademicSpaceDTO existing = types.get(key);
         if (existing == null) {
-            TypeAcademicSpaceCreateRequest typeRequest = new TypeAcademicSpaceCreateRequest(name.trim(), isActive == null ? 'A' : isActive);
-            return environmentClient.createTypeAcademicSpace(typeRequest);
+            String cleanName = safe(name, 100);
+            TypeAcademicSpaceCreateRequest typeRequest = new TypeAcademicSpaceCreateRequest(cleanName, isActive == null ? 'A' : isActive);
+            try {
+                return environmentClient.createTypeAcademicSpace(typeRequest);
+            } catch (Exception e) {
+                log.error("Error creating type payload={} error={}", typeRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return null;
+            }
         }
         if (isActive != null && existing.getIsActive() != isActive) {
-            TypeAcademicSpaceCreateRequest typeRequest = new TypeAcademicSpaceCreateRequest(existing.getName(), isActive);
-            return environmentClient.createTypeAcademicSpace(typeRequest);
+            TypeAcademicSpaceCreateRequest typeRequest = new TypeAcademicSpaceCreateRequest(safe(existing.getName(), 100), isActive);
+            try {
+                return environmentClient.createTypeAcademicSpace(typeRequest);
+            } catch (Exception e) {
+                log.error("Error updating type payload={} error={}", typeRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return existing;
+            }
         }
         return existing;
     }
@@ -306,12 +384,25 @@ public class PrimaryDataImportService {
         String key = normalizeKey(name);
         BuildingDTO existing = buildings.get(key);
         if (existing == null) {
-            BuildingCreateRequest buildingRequest = new BuildingCreateRequest(name.trim(), isActive == null ? 'A' : isActive);
-            return environmentClient.createBuilding(buildingRequest);
+            String cleanName = safe(name, 150);
+            BuildingCreateRequest buildingRequest = new BuildingCreateRequest(cleanName, isActive == null ? 'A' : isActive);
+            try {
+                return environmentClient.createBuilding(buildingRequest);
+            } catch (Exception e) {
+                log.error("Error creating building payload={} error={}", buildingRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return null;
+            }
         }
         if (isActive != null && existing.getIsActive() != isActive) {
-            BuildingCreateRequest buildingRequest = new BuildingCreateRequest(existing.getName(), isActive);
-            return environmentClient.createBuilding(buildingRequest);
+            BuildingCreateRequest buildingRequest = new BuildingCreateRequest(safe(existing.getName(), 150), isActive);
+            try {
+                return environmentClient.createBuilding(buildingRequest);
+            } catch (Exception e) {
+                log.error("Error updating building payload={} error={}", buildingRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return existing;
+            }
         }
         return existing;
     }
@@ -321,11 +412,23 @@ public class PrimaryDataImportService {
         FloorDTO existing = floors.get(key);
         if (existing == null) {
             FloorCreateRequest floorRequest = new FloorCreateRequest(floorNumber, isActive == null ? 'A' : isActive, building.getIdBuilding());
-            return environmentClient.createFloor(floorRequest);
+            try {
+                return environmentClient.createFloor(floorRequest);
+            } catch (Exception e) {
+                log.error("Error creating floor payload={} error={}", floorRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return null;
+            }
         }
         if (isActive != null && existing.getIsActive() != isActive) {
             FloorCreateRequest floorRequest = new FloorCreateRequest(existing.getFloorNumber(), isActive, building.getIdBuilding());
-            return environmentClient.createFloor(floorRequest);
+            try {
+                return environmentClient.createFloor(floorRequest);
+            } catch (Exception e) {
+                log.error("Error updating floor payload={} error={}", floorRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return existing;
+            }
         }
         return existing;
     }
@@ -354,16 +457,27 @@ public class PrimaryDataImportService {
         }
 
         if (existing == null) {
+            String cleanSpaceName = safe(spaceName, 200);
+            String cleanObservation = observation != null ? safe(observation, 500) : "";
+            String cleanLocation = location != null ? safe(location, 200) : "";
+            int effectiveCapacity = (capacity != null && capacity > 0 && capacity <= 1000) ? capacity : 30;
+
             AcademicSpaceCreateRequest spaceRequest = new AcademicSpaceCreateRequest(
-                spaceName.trim(),
-                observation != null ? observation.trim() : "",
-                location != null ? location.trim() : "",
-                capacity != null ? capacity : 30,
+                cleanSpaceName,
+                cleanObservation,
+                cleanLocation,
+                effectiveCapacity,
                 state != null ? state.getIdState() : null,
                 floor != null ? floor.getIdFloor() : null,
                 type != null ? type.getIdTypeAcademicSpace() : null
             );
-            return environmentClient.createAcademicSpace(spaceRequest);
+            try {
+                return environmentClient.createAcademicSpace(spaceRequest);
+            } catch (Exception e) {
+                log.error("Error creating academic space payload={} error={}", spaceRequest, e.toString());
+                log.debug("Exception details: ", e);
+                return null;
+            }
         }
 
         // Para actualizaciones, por ahora solo devolvemos el existente
@@ -376,7 +490,8 @@ public class PrimaryDataImportService {
     }
 
     private String buildingFloorKey(BuildingDTO building, int floorNumber) {
-        return normalizeKey(building.getName()) + "|" + floorNumber;
+        String bname = building != null && building.getName() != null ? building.getName() : "";
+        return normalizeKey(bname) + "|" + floorNumber;
     }
 
     private boolean isRowEmpty(Row row) {
@@ -408,10 +523,56 @@ public class PrimaryDataImportService {
 
     private Character getCellCharValue(Row row, Map<String, Integer> headerIndex, String... keys) {
         String value = getCellValue(row, headerIndex, keys);
-        if (value.isBlank()) {
+        return normalizeActive(value);
+    }
+
+    private Character normalizeActive(String raw) {
+        if (raw == null) return null;
+        String v = sanitize(raw).trim();
+        if (v.isBlank()) return null;
+        String lower = v.toLowerCase();
+        if (lower.equals("activo") || lower.equals("a") || lower.equals("1") || lower.equals("s") || lower.equals("si")) return 'A';
+        if (lower.equals("inactivo") || lower.equals("i") || lower.equals("0") || lower.equals("no")) return 'I';
+        // If single character, use it uppercased
+        if (v.length() == 1) {
+            char c = v.charAt(0);
+            if (Character.isLetter(c)) return Character.toUpperCase(c);
             return null;
         }
-        return Character.toUpperCase(value.trim().charAt(0));
+        // Unknown formats -> null (will be handled by caller)
+        return null;
+    }
+
+    private boolean looksLikeHeaderToken(String value) {
+        if (value == null) return false;
+        String s = value.trim().toLowerCase();
+        if (s.isBlank()) return false;
+        switch (s) {
+            case "spacename":
+            case "academicspace":
+            case "ambiente":
+            case "espacio":
+            case "state":
+            case "statename":
+            case "estado":
+            case "type":
+            case "typename":
+            case "typeacademicspace":
+            case "building":
+            case "buildingname":
+            case "edificio":
+            case "floor":
+            case "floornumber":
+            case "piso":
+            case "location":
+            case "ubicacion":
+            case "capacity":
+            case "aforo":
+            case "observation":
+                return true;
+            default:
+                return false;
+        }
     }
 
     private Integer getCellIntValue(Row row, Map<String, Integer> headerIndex, String... keys) {
@@ -422,6 +583,7 @@ public class PrimaryDataImportService {
         try {
             return (int) Double.parseDouble(value.replace(',', '.'));
         } catch (NumberFormatException e) {
+            log.debug("Invalid integer value '{}' for keys {}", value, (Object) keys);
             return null;
         }
     }
@@ -430,12 +592,9 @@ public class PrimaryDataImportService {
         if (cell == null) {
             return "";
         }
-        String rawValue = "";
-
-        if (rawValue != null) {
-            return rawValue.replace("\u0000", "").trim();
-        }
-        return "";
+        String rawValue = dataFormatter.formatCellValue(cell);
+        if (rawValue == null) return "";
+        return rawValue.replace("\u0000", "").trim();
     }
 
     private String normalizeHeader(String header) {

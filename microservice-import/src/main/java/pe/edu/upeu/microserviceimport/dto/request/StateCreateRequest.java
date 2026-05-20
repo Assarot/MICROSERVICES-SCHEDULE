@@ -1,5 +1,6 @@
 package pe.edu.upeu.microserviceimport.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -7,11 +8,11 @@ public class StateCreateRequest {
     @NotBlank(message = "Field name cannot be empty or null")
     private String name;
     @NotNull(message = "Field is_active cannot be empty or null")
-    private char isActive;
+    private Character isActive;
 
     public StateCreateRequest() {}
 
-    public StateCreateRequest(String name, char isActive) {
+    public StateCreateRequest(String name, Character isActive) {
         this.name = name;
         this.isActive = isActive;
     }
@@ -24,11 +25,11 @@ public class StateCreateRequest {
         this.name = name;
     }
 
-    public char getIsActive() {
+    public Character getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(char isActive) {
+    public void setIsActive(Character isActive) {
         this.isActive = isActive;
     }
 }

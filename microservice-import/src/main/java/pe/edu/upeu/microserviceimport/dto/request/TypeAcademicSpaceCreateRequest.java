@@ -7,11 +7,11 @@ public class TypeAcademicSpaceCreateRequest {
     @NotBlank(message = "Field name cannot be empty or null")
     private String name;
     @NotNull(message = "Field is_active cannot be empty or null")
-    private char isActive;
+    private Character isActive;
 
     public TypeAcademicSpaceCreateRequest() {}
 
-    public TypeAcademicSpaceCreateRequest(String name, char isActive) {
+    public TypeAcademicSpaceCreateRequest(String name, Character isActive) {
         this.name = name;
         this.isActive = isActive;
     }
@@ -24,11 +24,11 @@ public class TypeAcademicSpaceCreateRequest {
         this.name = name;
     }
 
-    public char getIsActive() {
+    public Character getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(char isActive) {
+    public void setIsActive(Character isActive) {
         this.isActive = isActive;
     }
 }

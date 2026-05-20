@@ -6,13 +6,13 @@ public class FloorCreateRequest {
     @NotNull(message = "Field floor_number cannot be empty or null")
     private int floorNumber;
     @NotNull(message = "Field is_active cannot be empty or null")
-    private char isActive;
+    private Character isActive;
     @NotNull(message = "Field id_building cannot be empty or null")
     private Long idBuilding;
 
     public FloorCreateRequest() {}
 
-    public FloorCreateRequest(int floorNumber, char isActive, Long idBuilding) {
+    public FloorCreateRequest(int floorNumber, Character isActive, Long idBuilding) {
         this.floorNumber = floorNumber;
         this.isActive = isActive;
         this.idBuilding = idBuilding;
@@ -26,11 +26,11 @@ public class FloorCreateRequest {
         this.floorNumber = floorNumber;
     }
 
-    public char getIsActive() {
+    public Character getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(char isActive) {
+    public void setIsActive(Character isActive) {
         this.isActive = isActive;
     }
 

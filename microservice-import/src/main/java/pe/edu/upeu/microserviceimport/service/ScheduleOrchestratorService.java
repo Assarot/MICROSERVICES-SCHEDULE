@@ -434,7 +434,7 @@ public class ScheduleOrchestratorService {
     }
 
     private boolean matchesPreference(AcademicSpaceDTO espacio, String preference) {
-        return containsIgnoreCase(espacio.getTypeAcademicSpace(), preference)
+        return (espacio.getTypeAcademicSpace() != null && containsIgnoreCase(espacio.getTypeAcademicSpace().getName(), preference))
                 || containsIgnoreCase(espacio.getObservation(), preference)
                 || containsIgnoreCase(espacio.getLocation(), preference)
                 || containsIgnoreCase(espacio.getSpaceName(), preference);

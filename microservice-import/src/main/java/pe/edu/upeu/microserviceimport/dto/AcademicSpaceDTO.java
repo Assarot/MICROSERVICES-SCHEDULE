@@ -15,8 +15,7 @@ public class AcademicSpaceDTO {
     private String observation;
     private String location;
     private Integer capacity;
-    private Long idState;
-    private Long idFloor;
-    private Long idTypeAcademicSpace;
-    private String typeAcademicSpace;
+    private StateDTO state;
+    private FloorDTO floor;
+    private TypeAcademicSpaceDTO typeAcademicSpace;
 }
