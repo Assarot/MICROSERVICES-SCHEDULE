@@ -12,7 +12,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - postgres-user-data:/var/lib/postgresql/data
+      - postgres-user-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:
@@ -32,7 +32,7 @@ services:
     ports:
       - "5436:5432"
     volumes:
-      - postgres-schedule-data:/var/lib/postgresql/data
+      - postgres-schedule-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:
@@ -52,7 +52,7 @@ services:
     ports:
       - "5438:5432"
     volumes:
-      - postgres-inventory-data:/var/lib/postgresql/data
+      - postgres-inventory-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:
@@ -72,7 +72,7 @@ services:
     ports:
       - "5437:5432"
     volumes:
-      - postgres-incident-data:/var/lib/postgresql/data
+      - postgres-incident-data:/var/lib/postgresql
     networks:
       - microservices-network
 
@@ -87,7 +87,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - postgres-auth-data:/var/lib/postgresql/data
+      - postgres-auth-data:/var/lib/postgresql
     networks:
       - microservices-network
     restart: unless-stopped
@@ -108,7 +108,7 @@ services:
     ports:
       - "5440:5432"
     volumes:
-      - postgres-enviroment-data:/var/lib/postgresql/data
+      - postgres-enviroment-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:
@@ -128,7 +128,7 @@ services:
     ports:
       - "5439:5432"
     volumes:
-      - postgres-course-data:/var/lib/postgresql/data
+      - postgres-course-data:/var/lib/postgresql
     networks:
       - microservices-network
     healthcheck:
