@@ -19,7 +19,8 @@ public class CorsConfig {
         // Permitir orígenes específicos (Angular y otros)
         corsConfig.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200",      // Angular desarrollo
-            "http://localhost:8080"       // Gateway (para pruebas)
+            "http://localhost:8080",       // Gateway (para pruebas)
+            "http://146.181.39.73"         // Front en producción
         ));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
