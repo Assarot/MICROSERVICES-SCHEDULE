@@ -20,22 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ms-enviroment:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: ms-enviroment
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8087:8087"
-  #   depends_on:
-  #     postgres-enviroment:
-  #       condition: service_healthy
-  #   networks:
-  #     - microservices-network
-  #   restart: unless-stopped
-
 volumes:
   postgres-enviroment-data:
 

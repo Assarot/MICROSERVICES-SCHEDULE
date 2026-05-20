@@ -23,6 +23,7 @@ import pe.edu.upeu.microserviceimport.dto.request.StateCreateRequest;
 import pe.edu.upeu.microserviceimport.dto.request.TypeAcademicSpaceCreateRequest;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -261,15 +262,27 @@ public class PrimaryDataImportService {
         return map;
     }
 
+    private String sanitize(String input) {
+        if (input == null) return "";
+        String normalized = Normalizer.normalize(input.trim(), Normalizer.Form.NFC);
+        // Remove control characters
+        return normalized.replaceAll("\\p{C}", "");
+    }
+
     private StateDTO createOrUpdateState(Map<String, StateDTO> states, String name, Character isActive) {
         String key = normalizeKey(name);
         StateDTO existing = states.get(key);
         if (existing == null) {
-            StateCreateRequest stateRequest = new StateCreateRequest(name.trim(), isActive == null ? 'A' : isActive);
+            String cleanName = sanitize(name);
+            char active = isActive == null ? 'A' : isActive;
+            StateCreateRequest stateRequest = new StateCreateRequest(cleanName, active);
+            log.debug("POST /v1/api/state payload: name='{}' isActive='{}'", cleanName, active);
             return environmentClient.createState(stateRequest);
         }
         if (isActive != null && existing.getIsActive() != isActive) {
-            StateCreateRequest stateRequest = new StateCreateRequest(existing.getName(), isActive);
+            String cleanName = sanitize(existing.getName());
+            StateCreateRequest stateRequest = new StateCreateRequest(cleanName, isActive);
+            log.debug("POST /v1/api/state payload (update): name='{}' isActive='{}'", cleanName, isActive);
             return environmentClient.createState(stateRequest);
         }
         return existing;

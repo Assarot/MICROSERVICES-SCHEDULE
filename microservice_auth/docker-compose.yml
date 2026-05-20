@@ -21,23 +21,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Uncomment to run the application with Docker
-  # microservice-auth:
-  #   build: .
-  #   container_name: ms_auth_app
-  #   environment:
-  #     DB_URL: jdbc:postgresql://postgres:5432/ms_auth_db
-  #     DB_USERNAME: postgres
-  #     DB_PASSWORD: postgres
-  #     JWT_SECRET: mySecretKeyForJWTTokenGenerationPleaseChangeThisInProduction123456789
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   networks:
-  #     - microservice-network
-  #   restart: unless-stopped
 
 volumes:
   postgres_data:

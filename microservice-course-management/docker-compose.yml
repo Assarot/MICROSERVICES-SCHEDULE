@@ -20,22 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ms-course-management:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: ms-course-management
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8083:8083"
-  #   depends_on:
-  #     postgres-course:
-  #       condition: service_healthy
-  #   networks:
-  #     - microservices-network
-  #   restart: unless-stopped
-
 volumes:
   postgres-course-data:
 

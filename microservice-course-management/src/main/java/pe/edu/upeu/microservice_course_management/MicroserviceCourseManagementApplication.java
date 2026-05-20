@@ -56,7 +56,7 @@ public class MicroserviceCourseManagementApplication implements CommandLineRunne
 		GroupEntity group1 = new GroupEntity(null, "1",25, cycle1, new ArrayList<>());
 		group1 = groupRepository.save(group1);
 
-		CourseEntity course1 = new CourseEntity(null,"Progrmación","202310615","20 y pasas", Duration.ofMinutes(300),Duration.ofMinutes(180),Duration.ofHours(180),Duration.ofHours(360),courseType1,plan1,group1, new ArrayList<>());
+		CourseEntity course1 = new CourseEntity(null,"Programación","202310615","20 y pasas", Duration.ofMinutes(300),Duration.ofMinutes(180),Duration.ofHours(180),Duration.ofHours(360),courseType1,plan1,group1, new ArrayList<>());
 		course1 = courseRepository.save(course1);
 
 
