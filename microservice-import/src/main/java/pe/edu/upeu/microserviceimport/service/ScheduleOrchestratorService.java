@@ -194,7 +194,6 @@ public class ScheduleOrchestratorService {
     }
 
     private CreateCourseDTO convertirACreateCourseDTO(CargaPsicoExcelDTO cursoExcel) {
-        long groupId = (cursoExcel.getGrupo() != null && cursoExcel.getGrupo() > 0) ? cursoExcel.getGrupo() : 1L;
         return CreateCourseDTO.builder()
                 .name(cursoExcel.getNombreCurso())
                 .code(generarCodigoCurso(cursoExcel))
@@ -206,7 +205,7 @@ public class ScheduleOrchestratorService {
             .totalHours(java.time.Duration.ofHours(cursoExcel.getTotalHoras() != null ? cursoExcel.getTotalHoras() : 0))
                 .idCourseType(1L) // Predeterminado
                 .idPlan(1L) // Debería ser dinámico según plan
-                .idGroup(groupId)
+                .idGroup(1L) // Mapeado a 1L por defecto para evitar errores de Foreign Key en BD
                 .build();
     }
 
