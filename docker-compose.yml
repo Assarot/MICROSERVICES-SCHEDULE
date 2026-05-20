@@ -1,116 +1,7 @@
 version: '3.8'
 
 services:
-  postgres-enviroment:
-    image: postgres:latest
-    container_name: postgres-enviroment-db
-    environment:
-      POSTGRES_DB: enviroment_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5440:5432"
-    volumes:
-      - postgres-enviroment-data:/var/lib/postgresql
-    networks:
-      - microservices-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d enviroment_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres-course:
-    image: postgres:latest
-    container_name: postgres-course-db
-    environment:
-      POSTGRES_DB: course_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5439:5432"
-    volumes:
-      - postgres-course-data:/var/lib/postgresql
-    networks:
-      - microservices-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d course_db" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres-auth:
-    image: postgres:latest
-    container_name: ms_auth_postgres
-    environment:
-      POSTGRES_DB: ms_auth_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data_auth:/var/lib/postgresql
-    networks:
-      - microservice-network
-    restart: unless-stopped
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres-incident:
-    image: postgres:latest
-    container_name: incident_postgres
-    environment:
-      POSTGRES_DB: incident_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5437:5432"
-    volumes:
-      - postgres_data_incident:/var/lib/postgresql
-    networks:
-      - microservices-network
-
-  postgres-inventory:
-    image: postgres:latest
-    container_name: postgres-inventory-db
-    environment:
-      POSTGRES_DB: inventory_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5438:5432"
-    volumes:
-      - postgres-inventory-data:/var/lib/postgresql
-    networks:
-      - microservices-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d inventory_db" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  postgres-schedule:
-    image: postgres:latest
-    container_name: ms-schedule-postgres
-    environment:
-      POSTGRES_DB: schedule_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5436:5432"
-    volumes:
-      - postgres-schedule-data:/var/lib/postgresql
-    networks:
-      - microservices-network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d schedule_db" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
+  # 1. Microservicio: User
   postgres-user:
     image: postgres:latest
     container_name: ms-user-postgres
@@ -121,24 +12,142 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - postgres_data_user:/var/lib/postgresql
+      - postgres-user-data:/var/lib/postgresql/data
     networks:
       - microservices-network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # 2. Microservicio: Schedule
+  postgres-schedule:
+    image: postgres:latest
+    container_name: ms-schedule-postgres
+    environment:
+      POSTGRES_DB: schedule_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-schedule-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d schedule_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Microservicio: Inventory
+  postgres-inventory:
+    image: postgres:latest
+    container_name: postgres-inventory-db
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres-inventory-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventory_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 4. Microservicio: Incident
+  postgres-incident:
+    image: postgres:latest
+    container_name: incident_postgres
+    environment:
+      POSTGRES_DB: incident_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres-incident-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+  # 5. Microservicio: Auth
+  postgres-auth:
+    image: postgres:latest
+    container_name: ms_auth_postgres
+    environment:
+      POSTGRES_DB: ms_auth_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-auth-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 6. Microservicio: Environment
+  postgres-enviroment:
+    image: postgres:latest
+    container_name: postgres-enviroment-db
+    environment:
+      POSTGRES_DB: enviroment_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5440:5432"
+    volumes:
+      - postgres-enviroment-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d enviroment_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 7. Microservicio: Course
+  postgres-course:
+    image: postgres:latest
+    container_name: postgres-course-db
+    environment:
+      POSTGRES_DB: course_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres-course-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d course_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Declaración global de Volúmenes
 volumes:
+  postgres-user-data:
+  postgres-schedule-data:
+  postgres-inventory-data:
+  postgres-incident-data:
+  postgres-auth-data:
   postgres-enviroment-data:
   postgres-course-data:
-  postgres_data_auth:
-  postgres_data_incident:
-  postgres-inventory-data:
-  postgres-schedule-data:
-  postgres_data_user:
 
+# Declaración global de Redes
 networks:
   microservices-network:
     driver: bridge
