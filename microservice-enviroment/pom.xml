@@ -123,7 +123,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>pe.edu.upeu.microservice_enviroment.MicroserviceEnviromentApplication</mainClass>
+                    <mainClass>pe.edu.upeu.microserviceenviroment.MicroserviceEnviromentApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
