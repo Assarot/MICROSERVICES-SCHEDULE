@@ -37,9 +37,9 @@ public class ExcelUpload {
      * Endpoint para subir y procesar archivo Excel de carga psico
      * Crea cursos y asigna horarios automáticamente
      */
-    @PostMapping("/upload-carga-psico")
-    public ResponseEntity<?> uploadCargaPsico(@RequestParam("file") MultipartFile file) {
-        log.info("========== RECIBIDA SOLICITUD DE CARGA PSICO ==========");
+    @PostMapping("/upload-excel")
+    public ResponseEntity<?> uploadExcel(@RequestParam("file") MultipartFile file) {
+        log.info("========== RECIBIDA SOLICITUD DE CARGA ACADEMICA ==========");
         log.info("Archivo: {}, Tamaño: {} bytes", file.getOriginalFilename(), file.getSize());
 
         Map<String, Object> response = new HashMap<>();
@@ -56,7 +56,7 @@ public class ExcelUpload {
             scheduleOrchestratorService.processAndCreateSchedules(file.getInputStream());
 
             response.put("status", "SUCCESS");
-            response.put("message", "Carga Psico procesada exitosamente");
+            response.put("message", "Carga Academica procesada exitosamente");
             response.put("filename", file.getOriginalFilename());
             response.put("timestamp", System.currentTimeMillis());
 
@@ -77,44 +77,7 @@ public class ExcelUpload {
         }
     }
 
-    /**
-     * Endpoint para subir Excel desde recursos
-     * Para usar en pruebas con el archivo predefinido
-     */
-    @PostMapping("/process-default-excel")
-    public ResponseEntity<?> processDefaultExcel() {
-        log.info("========== PROCESANDO EXCEL PREDEFINIDO DE RECURSOS ==========");
 
-        Map<String, Object> response = new HashMap<>();
-
-        try {
-            // Obtener el archivo de recursos
-            ClassLoader classLoader = getClass().getClassLoader();
-            var inputStream = classLoader.getResourceAsStream("carga psico.xlsx");
-
-            if (inputStream == null) {
-                response.put("status", "ERROR");
-                response.put("message", "Archivo 'carga psico.xlsx' no encontrado en recursos");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            // Procesar el archivo
-            scheduleOrchestratorService.processAndCreateSchedules(inputStream);
-
-            response.put("status", "SUCCESS");
-            response.put("message", "Excel predefinido procesado exitosamente");
-            response.put("timestamp", System.currentTimeMillis());
-
-            log.info("✓ Procesamiento del Excel predefinido completado");
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            log.error("Error al procesar Excel predefinido: {}", e.getMessage(), e);
-            response.put("status", "ERROR");
-            response.put("message", "Error al procesar: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 
     /**
      * Endpoint para importar maestros desde un Excel separado.
