@@ -34,10 +34,10 @@ public class ExcelReaderService {
         try (Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            validateHeaders(sheet);
+            int headerRowIndex = validateHeaders(sheet);
 
-            // Comenzar desde la fila 1 (saltando header en fila 0)
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            // Comenzar desde la fila siguiente al encabezado detectado
+            for (int i = headerRowIndex + 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null || isRowEmpty(row)) {
                     continue;
@@ -65,18 +65,41 @@ public class ExcelReaderService {
                 return null;
             }
 
+            // Ignorar filas que son títulos de bloque por ciclo (p.ej. "CICLO I", "CICLO II")
+            String upperName = nombreCurso.trim().toUpperCase();
+            if (upperName.startsWith("CICLO") || upperName.matches("CICLO\\s*[IVXLC]+")) {
+                return null;
+            }
+
+            // Normalizar nombre eliminando sufijos de grupo/panel como " - P1 - G1", "- G2", " - Teoría G1"
+            String cleanedName = normalizeCourseName(nombreCurso);
+
+            int htVal = parseHoursCell(row.getCell(8));
+            int hpVal = parseHoursCell(row.getCell(9));
+            int totalParsed = parseHoursCell(row.getCell(10));
+            int totalFinal = totalParsed;
+            int sumHtHp = htVal + hpVal;
+            if (sumHtHp > 0) {
+                if (totalParsed != sumHtHp) {
+                    log.warn("Inconsistencia horas en fila {}: HT+HP={} pero TOTAL_HORAS={} — se usará HT+HP", row.getRowNum() + 1, sumHtHp, totalParsed);
+                }
+                totalFinal = sumHtHp;
+            } else if (totalParsed > 0) {
+                totalFinal = totalParsed;
+            }
+
             return CargaPsicoExcelDTO.builder()
                     .facultad(getCellStringValue(row.getCell(0)))
                     .escuela(getCellStringValue(row.getCell(1)))
-                    .nombreCurso(nombreCurso)
+                    .nombreCurso(cleanedName)
                     .modo(getCellStringValue(row.getCell(3)))
-                    .ciclo(getCellIntValue(row.getCell(4)))
-                    .grupo(getCellIntValue(row.getCell(5)))
+                    .ciclo(parseCicloCell(row.getCell(4)))
+                    .grupo(parseGrupoCell(row.getCell(5)))
                     .plan(getCellStringValue(row.getCell(6)))
                     .credito(getCellIntValue(row.getCell(7)))
-                    .ht(getCellIntValue(row.getCell(8)))
-                    .hp(getCellIntValue(row.getCell(9)))
-                    .totalHoras(getCellIntValue(row.getCell(10)))
+                    .ht(htVal)
+                    .hp(hpVal)
+                    .totalHoras(totalFinal)
                     .horasLectivas(getCellIntValue(row.getCell(11)))
                     .modalidad(getCellStringValue(row.getCell(12)))
                     .docente(getCellStringValue(row.getCell(13)))
@@ -87,6 +110,150 @@ public class ExcelReaderService {
             log.error("Error al mapear fila: {}", e.getMessage());
             return null;
         }
+    }
+
+    private String normalizeCourseName(String raw) {
+        if (raw == null) return "";
+        String s = raw.trim();
+        // Primero eliminar sufijos comunes entre guiones
+        String[] parts = s.split("\\s*-\\s*");
+        StringBuilder keep = new StringBuilder();
+        for (String p : parts) {
+            String up = p.trim().toUpperCase();
+            if (up.matches("G\\d+") || up.matches("P\\d+") || up.matches("GP\\d*") || up.contains("TEORIA") || up.contains("TEORÍA") || up.contains("PRAC") || up.matches("GRUPO\\s*\\d+")) {
+                break;
+            }
+            if (keep.length() > 0) keep.append(" - ");
+            keep.append(p.trim());
+        }
+
+        String cleaned = keep.toString().trim();
+        // Quitar sufijos finales como " G1", "(G2)", " GP 1", " G-1", etc.
+        cleaned = cleaned.replaceAll("\\s*\\(?(?:G|GP)\\s*-?\\s*\\d+\\)?$", "");
+        cleaned = cleaned.replaceAll("\\s*GP\\s*\\d+$", "");
+        cleaned = cleaned.replaceAll("\\s*G\\s*\\d+$", "");
+        cleaned = cleaned.replaceAll("\\s*\\(G\\s*\\d+\\)$", "");
+        // Remover palabras sueltas de modalidad que puedan quedar
+        cleaned = cleaned.replaceAll("\\bTEORÍA\\b|\\bTEORIA\\b|\\bPRÁCTICA\\b|\\bPRACTICA\\b", "");
+
+        // Quitar sufijos de rol docente que a veces aparecen en el nombre
+        // Ejemplos: "- TITULAR", "- Jefe de prácticas", "- Adjunto"
+        cleaned = cleaned.replaceAll("(?i)\\s*-\\s*(TITULAR|JEFE DE PR\\u00C1CTICAS|JEFE DE PRACTICAS|ADJUNTO|ASOCIADO|CONTRATADO)$", "");
+        cleaned = cleaned.replaceAll("(?i)\\s*\\(\\s*(TITULAR|JEFE DE PR\\u00C1CTICAS|JEFE DE PRACTICAS|ADJUNTO|ASOCIADO|CONTRATADO)\\s*\\)$", "");
+
+        // Quitar guiones o guiones finales sobrantes
+        cleaned = cleaned.replaceAll("[-\\s]+$", "");
+        return cleaned.replaceAll("\\s{2,}", " ").trim();
+    }
+
+    private Integer parseGrupoCell(Cell cell) {
+        String raw = getCellStringValue(cell);
+        if (raw == null || raw.isEmpty()) return null; // devolver null si falta grupo
+        String up = raw.trim().toUpperCase();
+        // Si el contenido indica "UNICO" dejarlo como null para indicar grupo compartido
+        if (up.contains("UNICO") || up.contains("ÚNICO") || up.equals("UNICO")) {
+            return null;
+        }
+        // Buscar dígitos dentro del texto
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)").matcher(up);
+        if (m.find()) {
+            try { return Integer.parseInt(m.group(1)); } catch (Exception ignored) {}
+        }
+        // Si contiene patrón G\d
+        m = java.util.regex.Pattern.compile("G\\s*(\\d+)").matcher(up);
+        if (m.find()) {
+            try { return Integer.parseInt(m.group(1)); } catch (Exception ignored) {}
+        }
+        return 1;
+    }
+
+    private Integer parseCicloCell(Cell cell) {
+        String raw = getCellStringValue(cell);
+        if (raw == null || raw.isEmpty()) return 1;
+        String up = raw.trim().toUpperCase();
+        // Buscar dígitos primero
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)").matcher(up);
+        if (m.find()) {
+            try { return Integer.parseInt(m.group(1)); } catch (Exception ignored) {}
+        }
+        // Buscar numerales romanos (hasta X)
+        java.util.regex.Matcher roman = java.util.regex.Pattern.compile("\\b(IX|IV|V?I{1,3})\\b").matcher(up);
+        if (roman.find()) {
+            String r = roman.group(0);
+            try {
+                int v = romanToInt(r);
+                if (v > 0) return v;
+            } catch (Exception ignored) {}
+        }
+
+        return 1;
+    }
+
+    private int romanToInt(String s) {
+        if (s == null) return 0;
+        s = s.toUpperCase().replaceAll("[^IVXLCDM]", "");
+        int[] vals = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            switch (s.charAt(i)) {
+                case 'I': vals[i] = 1; break;
+                case 'V': vals[i] = 5; break;
+                case 'X': vals[i] = 10; break;
+                case 'L': vals[i] = 50; break;
+                case 'C': vals[i] = 100; break;
+                case 'D': vals[i] = 500; break;
+                case 'M': vals[i] = 1000; break;
+                default: vals[i] = 0; break;
+            }
+        }
+        int sum = 0;
+        for (int i = 0; i < vals.length; i++) {
+            if (i + 1 < vals.length && vals[i] < vals[i+1]) {
+                sum -= vals[i];
+            } else {
+                sum += vals[i];
+            }
+        }
+        return sum;
+    }
+
+    private Integer parseHoursCell(Cell cell) {
+        String raw = getCellStringValue(cell);
+        if (raw == null || raw.isEmpty()) return 0;
+        String up = raw.trim().toLowerCase();
+        // Formato ejemplo: "0h 3m" o "3m" o "4" (horas)
+        try {
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("(?:(\\d+)\\s*h).*(?:(\\d+)\\s*m)?").matcher(up);
+            if (m.find()) {
+                int h = 0;
+                int min = 0;
+                if (m.groupCount() >= 1 && m.group(1) != null) h = Integer.parseInt(m.group(1));
+                if (m.groupCount() >= 2 && m.group(2) != null) min = Integer.parseInt(m.group(2));
+                // Convertir a horas enteras redondeando minutos
+                return h + (min >= 30 ? 1 : 0);
+            }
+            // Si es solo minutos "3m"
+            m = java.util.regex.Pattern.compile("(\\d+)\\s*m").matcher(up);
+            if (m.find()) {
+                int min = Integer.parseInt(m.group(1));
+                // Si la cifra es pequeña (p.ej. 1..6) podría estar mal etiquetada como minutos
+                if (min > 0 && min <= 6) {
+                    return min; // tratar como horas
+                }
+                // Minutos -> convertir a horas redondeando
+                return (min >= 30 ? 1 : 0);
+            }
+            // Si es número simple (horas)
+            m = java.util.regex.Pattern.compile("(\\d+)").matcher(up);
+            if (m.find()) {
+                int v = Integer.parseInt(m.group(1));
+                // Heurística: si el número es mayor que 12 es muy probable que sean minutos (p.ej. 32 -> 32 minutos)
+                if (v > 12) {
+                    return (v >= 30 ? 1 : 0);
+                }
+                return v;
+            }
+        } catch (Exception ignored) {}
+        return 0;
     }
 
     private String getCellStringValue(org.apache.poi.ss.usermodel.Cell cell) {
@@ -111,19 +278,41 @@ public class ExcelReaderService {
         }
     }
 
-    private void validateHeaders(Sheet sheet) {
-        Row headerRow = sheet.getRow(0);
-        if (headerRow == null) {
-            throw new IllegalArgumentException("El Excel no tiene fila de encabezados");
+    private int validateHeaders(Sheet sheet) {
+        // Buscar la fila de encabezados dentro de las primeras 8 filas
+        int headerRowIndex = -1;
+        for (int r = 0; r < Math.min(8, sheet.getLastRowNum() + 1); r++) {
+            Row row = sheet.getRow(r);
+            if (row == null) continue;
+            int matches = 0;
+            for (int i = 0; i < HEADERS.length; i++) {
+                String expected = HEADERS[i];
+                String actual = getCellStringValue(row.getCell(i));
+                if (actual != null && !actual.isEmpty() && expected.equalsIgnoreCase(actual)) {
+                    matches++;
+                }
+            }
+            if (matches >= Math.max(4, HEADERS.length / 2)) {
+                headerRowIndex = r;
+                break;
+            }
         }
 
+        if (headerRowIndex == -1) {
+            log.warn("No se detectó una fila de encabezados claramente; se usará la fila 0 por defecto");
+            headerRowIndex = 0;
+        }
+
+        Row headerRow = sheet.getRow(headerRowIndex);
         for (int i = 0; i < HEADERS.length; i++) {
             String expected = HEADERS[i];
             String actual = getCellStringValue(headerRow.getCell(i));
             if (!expected.equalsIgnoreCase(actual)) {
-                log.warn("Encabezado inesperado en columna {}: esperado='{}', actual='{}'", i + 1, expected, actual);
+                log.warn("Encabezado inesperado en fila {} columna {}: esperado='{}', actual='{}'", headerRowIndex + 1, i + 1, expected, actual);
             }
         }
+
+        return headerRowIndex;
     }
 
     private boolean isRowEmpty(Row row) {

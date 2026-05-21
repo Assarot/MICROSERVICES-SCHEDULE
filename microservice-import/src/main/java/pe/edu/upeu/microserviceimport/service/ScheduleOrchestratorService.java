@@ -24,6 +24,21 @@ public class ScheduleOrchestratorService {
     private CourseManagementClient courseManagementClient;
 
     @Autowired
+    private GroupClient groupClient;
+
+    @Autowired
+    private CycleClient cycleClient;
+
+    @Autowired
+    private FacultyClient facultyClient;
+
+    @Autowired
+    private ProfessionalSchoolClient professionalSchoolClient;
+
+    @Autowired
+    private PlanClient planClient;
+
+    @Autowired
     private ScheduleClient scheduleClient;
 
     @Autowired
@@ -36,7 +51,13 @@ public class ScheduleOrchestratorService {
     private CourseAssignmentCourseClient courseAssignmentCourseClient;
 
     @Autowired
+    private CourseTypeClient courseTypeClient;
+
+    @Autowired
     private WeekDayClient weekDayClient;
+
+    // Mapa temporal de capacidad por ciclo calculado desde el Excel
+    private Map<Integer, Integer> cycleCapacityMap = new HashMap<>();
 
     // Horarios predefinidos de lunes a viernes
     private static final LocalTime[] START_TIMES = {
@@ -62,6 +83,9 @@ public class ScheduleOrchestratorService {
         log.info("Paso 1: Leyendo archivo Excel...");
         List<CargaPsicoExcelDTO> cursos = excelReaderService.readExcel(excelInputStream);
         log.info("✓ {} cursos leídos del Excel", cursos.size());
+
+        // Calcular capacidad por ciclo (máximo aforo observado en el ciclo)
+        this.cycleCapacityMap = computeCycleCapacityMap(cursos);
 
         // Paso 2: Obtener espacios académicos disponibles
         log.info("Paso 2: Obteniendo espacios académicos...");
@@ -186,37 +210,222 @@ public class ScheduleOrchestratorService {
         Map<String, List<CargaPsicoExcelDTO>> agrupados = new HashMap<>();
 
         for (CargaPsicoExcelDTO curso : cursos) {
-            String key = String.format("CICLO_%d_GRUPO_%d", curso.getCiclo(), curso.getGrupo());
+            Integer grupoVal = curso.getGrupo();
+            String grupoPart = (grupoVal != null) ? String.valueOf(grupoVal) : "UNICO";
+            String key = String.format("CICLO_%d_GRUPO_%s", curso.getCiclo(), grupoPart);
             agrupados.computeIfAbsent(key, k -> new ArrayList<>()).add(curso);
         }
 
         return agrupados;
     }
 
+    private Map<Integer, Integer> computeCycleCapacityMap(List<CargaPsicoExcelDTO> cursos) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (CargaPsicoExcelDTO c : cursos) {
+            Integer ciclo = c.getCiclo() != null ? c.getCiclo() : 1;
+            Integer cap = c.getAforoPorCursoGrupo();
+            if (cap == null || cap <= 0) continue;
+            map.put(ciclo, Math.max(map.getOrDefault(ciclo, 0), cap));
+        }
+        return map;
+    }
+
     private CreateCourseDTO convertirACreateCourseDTO(CargaPsicoExcelDTO cursoExcel) {
+        Long resolvedGroupId = 1L;
+        try {
+            resolvedGroupId = getOrCreateGroupId(cursoExcel);
+        } catch (Exception e) {
+            log.warn("No se pudo resolver/crear grupo para curso {}: {}. Usando idGroup=1", cursoExcel.getNombreCurso(), e.getMessage());
+        }
+
         return CreateCourseDTO.builder()
                 .name(cursoExcel.getNombreCurso())
                 .code(generarCodigoCurso(cursoExcel))
-            .description(String.format("Ciclo: %d, Grupo: %d, Modalidad: %s, Docente: %s",
-                cursoExcel.getCiclo(), cursoExcel.getGrupo(), cursoExcel.getModalidad(), cursoExcel.getDocente()))
-            .duration(cursoExcel.getTotalHoras() != null ? cursoExcel.getTotalHoras() : 0)
-            .theoreticalHours(cursoExcel.getHt() != null ? cursoExcel.getHt() : 0)
-            .practicalHours(cursoExcel.getHp() != null ? cursoExcel.getHp() : 0)
+            .description(String.format("Ciclo: %d, Grupo: %s, Modalidad: %s, Docente: %s",
+                cursoExcel.getCiclo(), cursoExcel.getGrupo() != null ? String.valueOf(cursoExcel.getGrupo()) : "UNICO", cursoExcel.getModalidad(), cursoExcel.getDocente()))
+            .duration(cursoExcel.getTotalHoras() != null ? cursoExcel.getTotalHoras() * 60 : 0)
+            .theoreticalHours(cursoExcel.getHt() != null ? cursoExcel.getHt() * 60 : 0)
+            .practicalHours(cursoExcel.getHp() != null ? cursoExcel.getHp() * 60 : 0)
             .totalHours(java.time.Duration.ofHours(cursoExcel.getTotalHoras() != null ? cursoExcel.getTotalHoras() : 0))
-                .idCourseType(1L) // Predeterminado
-                .idPlan(1L) // Debería ser dinámico según plan
-                .idGroup(1L) // Mapeado a 1L por defecto para evitar errores de Foreign Key en BD
+                .idCourseType(getOrCreateCourseTypeId(cursoExcel))
+                .idPlan(getOrCreatePlanId(cursoExcel.getPlan())) // Resuelve o crea plan
+                .idGroup(resolvedGroupId)
                 .build();
+    }
+
+    private Long getOrCreateGroupId(CargaPsicoExcelDTO cursoExcel) {
+        // Primero resolver o crear el ciclo correspondiente; asegurar que exista la escuela profesional
+        Long idProfessionalSchool = getOrCreateProfessionalSchoolId(cursoExcel.getEscuela(), cursoExcel.getFacultad());
+        Long idCycle = getOrCreateCycleId(cursoExcel.getCiclo(), idProfessionalSchool);
+
+        // Buscar en MS-COURSE-MANAGEMENT grupos existentes
+        List<pe.edu.upeu.microserviceimport.dto.external.GroupResponseDTO> groups = groupClient.findAll();
+        String targetGroupNumber = cursoExcel.getGrupo() != null ? String.valueOf(cursoExcel.getGrupo()) : "UNICO";
+        for (pe.edu.upeu.microserviceimport.dto.external.GroupResponseDTO g : groups) {
+            if (g.getGroupNumber() != null && g.getGroupNumber().trim().equalsIgnoreCase(targetGroupNumber)) {
+                return g.getIdGroup();
+            }
+        }
+
+        // Si no existe, crear
+        // Usar aforo del curso si existe, si no usar capacidad por ciclo si está disponible
+        int capacity = 30;
+        if (cursoExcel.getAforoPorCursoGrupo() != null && cursoExcel.getAforoPorCursoGrupo() > 0) {
+            capacity = cursoExcel.getAforoPorCursoGrupo();
+        } else {
+            Integer cap = this.cycleCapacityMap.get(cursoExcel.getCiclo());
+            if (cap != null && cap > 0) capacity = cap;
+        }
+        pe.edu.upeu.microserviceimport.dto.external.GroupCreateRequestDTO req = pe.edu.upeu.microserviceimport.dto.external.GroupCreateRequestDTO.builder()
+                .groupNumber(targetGroupNumber)
+                .capacity(capacity)
+                .idCycle(idCycle)
+                .build();
+
+        var created = groupClient.createGroup(req);
+        return created != null && created.getIdGroup() != null ? created.getIdGroup() : 1L;
+    }
+
+    private Long getOrCreateCycleId(Integer cicloNumber) {
+        String name = "CICLO " + (cicloNumber != null ? cicloNumber : 1);
+        List<pe.edu.upeu.microserviceimport.dto.external.CycleResponseDTO> cycles = cycleClient.findAll();
+        for (pe.edu.upeu.microserviceimport.dto.external.CycleResponseDTO c : cycles) {
+            if (c.getName() != null && c.getName().trim().equalsIgnoreCase(name)) {
+                return c.getIdCycle();
+            }
+        }
+
+        // Crear ciclo usando la escuela profesional (si está disponible)
+        Long idProfessionalSchool = 1L; // default
+        try {
+            // Intentar inferir la escuela/profesional a partir del contexto; si el DTO contiene escuela, usarla
+            // Si no hay contexto a este punto, se usará el idProfessionalSchool por defecto
+        } catch (Exception ignored) {}
+
+        pe.edu.upeu.microserviceimport.dto.external.CycleCreateRequestDTO creq = pe.edu.upeu.microserviceimport.dto.external.CycleCreateRequestDTO.builder()
+                .name(name)
+                .idProfessionalSchool(idProfessionalSchool)
+                .build();
+
+        var created = cycleClient.createCycle(creq);
+        return created != null && created.getIdCycle() != null ? created.getIdCycle() : 1L;
+    }
+
+    private Long getOrCreateCycleId(Integer cicloNumber, Long idProfessionalSchool) {
+        String name = "CICLO " + (cicloNumber != null ? cicloNumber : 1);
+        List<pe.edu.upeu.microserviceimport.dto.external.CycleResponseDTO> cycles = cycleClient.findAll();
+        for (pe.edu.upeu.microserviceimport.dto.external.CycleResponseDTO c : cycles) {
+            if (c.getName() != null && c.getName().trim().equalsIgnoreCase(name)) {
+                return c.getIdCycle();
+            }
+        }
+
+        pe.edu.upeu.microserviceimport.dto.external.CycleCreateRequestDTO creq = pe.edu.upeu.microserviceimport.dto.external.CycleCreateRequestDTO.builder()
+                .name(name)
+                .idProfessionalSchool(idProfessionalSchool != null ? idProfessionalSchool : 1L)
+                .build();
+
+        var created = cycleClient.createCycle(creq);
+        return created != null && created.getIdCycle() != null ? created.getIdCycle() : 1L;
+    }
+
+    private Long getOrCreateFacultyId(String facultyName) {
+        if (facultyName == null || facultyName.isBlank()) return 1L;
+        try {
+            List<pe.edu.upeu.microserviceimport.dto.external.FacultyResponseDTO> list = facultyClient.findAll();
+            for (var f : list) {
+                if (f.getName() != null && f.getName().trim().equalsIgnoreCase(facultyName.trim())) {
+                    return f.getIdFaculty();
+                }
+            }
+            var created = facultyClient.create(pe.edu.upeu.microserviceimport.dto.external.FacultyCreateRequestDTO.builder().name(facultyName.trim()).build());
+            if (created != null && created.getIdFaculty() != null) return created.getIdFaculty();
+        } catch (Exception e) {
+            log.warn("No se pudo resolver/crear Faculty '{}': {}", facultyName, e.getMessage());
+        }
+        return 1L;
+    }
+
+    private Long getOrCreateProfessionalSchoolId(String schoolName, String facultyName) {
+        if (schoolName == null || schoolName.isBlank()) return 1L;
+        try {
+            List<pe.edu.upeu.microserviceimport.dto.external.ProfessionalSchoolResponseDTO> list = professionalSchoolClient.findAll();
+            for (var s : list) {
+                if (s.getName() != null && s.getName().trim().equalsIgnoreCase(schoolName.trim())) {
+                    return s.getIdProfessionalSchool();
+                }
+            }
+            Long idFaculty = getOrCreateFacultyId(facultyName);
+            var created = professionalSchoolClient.create(pe.edu.upeu.microserviceimport.dto.external.ProfessionalSchoolCreateRequestDTO.builder().name(schoolName.trim()).idFaculty(idFaculty).build());
+            if (created != null && created.getIdProfessionalSchool() != null) return created.getIdProfessionalSchool();
+        } catch (Exception e) {
+            log.warn("No se pudo resolver/crear ProfessionalSchool '{}': {}", schoolName, e.getMessage());
+        }
+        return 1L;
+    }
+
+    private Long getOrCreatePlanId(String planName) {
+        if (planName == null || planName.isBlank()) return 1L;
+        try {
+            List<pe.edu.upeu.microserviceimport.dto.external.PlanResponseDTO> list = planClient.findAll();
+            for (var p : list) {
+                if (p.getName() != null && p.getName().trim().equalsIgnoreCase(planName.trim())) {
+                    return p.getIdPlan();
+                }
+            }
+            var created = planClient.create(pe.edu.upeu.microserviceimport.dto.external.PlanCreateRequestDTO.builder().name(planName.trim()).build());
+            if (created != null && created.getIdPlan() != null) return created.getIdPlan();
+        } catch (Exception e) {
+            log.warn("No se pudo resolver/crear Plan '{}': {}", planName, e.getMessage());
+        }
+        return 1L;
+    }
+
+    private Long getOrCreateCourseTypeId(CargaPsicoExcelDTO cursoExcel) {
+        String typeName = cursoExcel.getModalidad();
+        if (typeName == null || typeName.isBlank()) {
+            typeName = cursoExcel.getModo();
+        }
+
+        if (typeName == null || typeName.isBlank() || typeName.trim().equalsIgnoreCase("Regular")) {
+            typeName = "PRESENCIAL";
+        } else {
+            String upper = typeName.trim().toUpperCase();
+            if (upper.contains("SÍNCRÓNICO") || upper.contains("SINCRONICO") || upper.contains("VIRTUAL")) {
+                typeName = "SÍNCRÓNICO";
+            } else if (upper.contains("SEMIPRESENCIAL")) {
+                typeName = "SEMIPRESENCIAL";
+            } else if (upper.contains("PRESENCIAL")) {
+                typeName = "PRESENCIAL";
+            } else {
+                typeName = "PRESENCIAL";
+            }
+        }
+
+        try {
+            List<pe.edu.upeu.microserviceimport.dto.external.CourseTypeResponseDTO> list = courseTypeClient.findAll();
+            for (var t : list) {
+                if (t.getName() != null && t.getName().trim().equalsIgnoreCase(typeName.trim())) {
+                    return t.getIdCourseType();
+                }
+            }
+            var created = courseTypeClient.create(pe.edu.upeu.microserviceimport.dto.external.CourseTypeCreateRequestDTO.builder().name(typeName.trim()).build());
+            if (created != null && created.getIdCourseType() != null) return created.getIdCourseType();
+        } catch (Exception e) {
+            log.warn("No se pudo resolver/crear CourseType '{}': {}", typeName, e.getMessage());
+        }
+        return 1L;
     }
 
     private String generarCodigoCurso(CargaPsicoExcelDTO curso) {
         String slug = slugify(curso.getNombreCurso());
         String digest = shortDigest(buildCourseKey(curso));
-        return String.format("PSI-%d-%d-%s-%s",
-                curso.getCiclo(),
-                curso.getGrupo(),
-                slug,
-                digest);
+        String grupoPart = curso.getGrupo() != null ? String.valueOf(curso.getGrupo()) : "UNICO";
+        return String.format("PSI-%d-%s-%s-%s",
+            curso.getCiclo(),
+            grupoPart,
+            slug,
+            digest);
     }
 
     private Long obtenerOCrearCourseAssignment(CargaPsicoExcelDTO curso, Long idCourse, Map<String, TeacherDTO> teachersByKey) {
@@ -228,11 +437,26 @@ public class ScheduleOrchestratorService {
         TeacherDTO teacher = findTeacherByAcademicName(teachersByKey, curso.getDocente());
 
         if (teacher == null) {
-            log.warn("Docente no encontrado en catálogo maestro, auto-creando docente: {}", curso.getDocente());
+            String docName = curso.getDocente().trim();
+            String[] parts = docName.split("\\s+");
+            String tName = docName;
+            String tLastName = ".";
+            
+            if (parts.length == 2) {
+                tLastName = parts[0];
+                tName = parts[1];
+            } else if (parts.length == 3) {
+                tLastName = parts[0] + " " + parts[1];
+                tName = parts[2];
+            } else if (parts.length >= 4) {
+                tLastName = parts[0] + " " + parts[1];
+                tName = String.join(" ", Arrays.copyOfRange(parts, 2, parts.length));
+            }
+
             TeacherDTO newTeacher = TeacherDTO.builder()
-                    .name(curso.getDocente())
-                    .lastName("-")
-                    .email(curso.getDocente().replaceAll("\\s+", "").toLowerCase() + "@upeu.edu.pe")
+                    .name(tName)
+                    .lastName(tLastName)
+                    .email(docName.replaceAll("\\s+", "").toLowerCase() + "@upeu.edu.pe")
                     .build();
             teacher = teacherClient.createTeacher(newTeacher);
             teachersByKey.put(buildTeacherKeyFromAcademicName(curso.getDocente()), teacher);
@@ -395,17 +619,33 @@ public class ScheduleOrchestratorService {
         try {
             List<WeekDayDTO> weekDays = weekDayClient.getAllWeekDays();
             Map<Long, String> weekDayIds = new HashMap<>();
-            if (weekDays != null) {
+            if (weekDays != null && !weekDays.isEmpty()) {
                 for (WeekDayDTO weekDay : weekDays) {
                     if (weekDay.getIdSchedule() != null && weekDay.getName() != null) {
                         weekDayIds.put(weekDay.getIdSchedule(), weekDay.getName().toUpperCase());
                     }
                 }
+            } else {
+                weekDayIds.put(1L, "LUNES");
+                weekDayIds.put(2L, "MARTES");
+                weekDayIds.put(3L, "MIÉRCOLES");
+                weekDayIds.put(4L, "JUEVES");
+                weekDayIds.put(5L, "VIERNES");
+                weekDayIds.put(6L, "SÁBADO");
+                weekDayIds.put(7L, "DOMINGO");
             }
             return weekDayIds;
         } catch (Exception e) {
             log.warn("No se pudieron cargar los días de semana: {}", e.getMessage());
-            return new HashMap<>();
+            Map<Long, String> fallback = new HashMap<>();
+            fallback.put(1L, "LUNES");
+            fallback.put(2L, "MARTES");
+            fallback.put(3L, "MIÉRCOLES");
+            fallback.put(4L, "JUEVES");
+            fallback.put(5L, "VIERNES");
+            fallback.put(6L, "SÁBADO");
+            fallback.put(7L, "DOMINGO");
+            return fallback;
         }
     }
 
@@ -514,7 +754,7 @@ public class ScheduleOrchestratorService {
         return String.join("|",
                 normalizeText(curso.getNombreCurso()),
                 String.valueOf(curso.getCiclo()),
-                String.valueOf(curso.getGrupo()),
+                curso.getGrupo() != null ? String.valueOf(curso.getGrupo()) : "UNICO",
                 normalizeText(curso.getPlan()));
     }
 

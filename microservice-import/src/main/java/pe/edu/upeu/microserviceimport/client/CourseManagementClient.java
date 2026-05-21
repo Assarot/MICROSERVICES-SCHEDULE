@@ -12,7 +12,7 @@ import pe.edu.upeu.microserviceimport.dto.CreateCourseDTO;
 
 import java.util.List;
 
-@FeignClient(name = "MS-COURSE-MANAGEMENT", contextId = "courseManagementClient")
+@FeignClient(name = "MS-COURSE-MANAGEMENT", url = "${ms.course-management.url:http://MS-COURSE-MANAGEMENT}", contextId = "courseManagementClient")
 public interface CourseManagementClient {
 
     @PostMapping("/course/v1/api")

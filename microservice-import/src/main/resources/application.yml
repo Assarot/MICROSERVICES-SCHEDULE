@@ -12,6 +12,9 @@ server:
   port: 8008
   servlet:
     context-path: /
+ms:
+  course-management:
+    url: http://localhost:8083
 
 eureka:
   client:

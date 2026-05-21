@@ -31,11 +31,15 @@ public class DataInitializer implements CommandLineRunner {
         Role roleAsacad = ensureRole("ASACAD");
         Role roleCoorooms = ensureRole("COOROOMS");
         Role roleAdmin = ensureRole("ADMIN");
+        Role roleTeacher = ensureRole("TEACHER");
+        Role roleUser = ensureRole("USER");
 
         // Ensure users with roles
         ensureUserWithRole("diana", "diana123", roleAsacad);
         ensureUserWithRole("pari", "pari123", roleCoorooms);
         ensureUserWithRole("admin", "admin123", roleAdmin);
+        ensureUserWithRole("tapia", "tapia123", roleTeacher);
+        ensureUserWithRole("kata", "kata123", roleUser);
 
         log.info("[DataInitializer] Initial data ready");
     }

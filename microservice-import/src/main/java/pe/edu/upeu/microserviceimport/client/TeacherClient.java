@@ -6,7 +6,7 @@ import pe.edu.upeu.microserviceimport.dto.TeacherDTO;
 
 import java.util.List;
 
-@FeignClient(name = "MS-COURSE-MANAGEMENT", contextId = "teacherClient")
+@FeignClient(name = "MS-COURSE-MANAGEMENT", url = "${ms.course-management.url:http://MS-COURSE-MANAGEMENT}", contextId = "teacherClient")
 public interface TeacherClient {
 
     @GetMapping("/teacher/v1/api")
