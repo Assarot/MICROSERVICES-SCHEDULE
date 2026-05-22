@@ -2,19 +2,20 @@
 spring:
   application:
     name: ms-user
-  
+
   # PostgreSQL Database Configuration
   datasource:
     url: jdbc:postgresql://localhost:5435/ms_user_db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
-  
+
   # JPA/Hibernate Configuration
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: create-drop
+    defer-datasource-initialization: true
     show-sql: true
     properties:
       hibernate:
@@ -22,13 +23,13 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
-  
+
   # SQL Initialization (comentar si no se desea ejecutar schema.sql y data.sql)
   sql:
     init:
       mode: always
       continue-on-error: false
-  
+
   # Jackson Configuration
   jackson:
     serialization:
