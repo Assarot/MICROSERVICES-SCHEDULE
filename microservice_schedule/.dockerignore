@@ -4,7 +4,7 @@ target/
 mvnw
 mvnw.cmd
 .git
-.gitignore
+../.gitignore
 README.md
 *.md
 .idea

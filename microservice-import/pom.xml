@@ -82,7 +82,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>pe.edu.upeu.microservice_import.MicroserviceImportApplication</mainClass>
+                    <mainClass>pe.edu.upeu.microserviceimport.MicroserviceImportApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
