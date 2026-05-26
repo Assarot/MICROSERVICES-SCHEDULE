@@ -12,6 +12,7 @@ spring:
           '[/**]':
             allowedOrigins:
               - http://localhost:4200
+              - http://146.181.39.73
             allowedMethods:
               - GET
               - POST
@@ -87,7 +88,7 @@ spring:
         - id: microservice-import
           uri: lb://microservice-import
           predicates:
-            - Path=/import/**
+            - Path=/api/v1/import/**
           filters:
             - StripPrefix=0
 
