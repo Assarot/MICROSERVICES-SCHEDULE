@@ -263,7 +263,9 @@ public class ScheduleOrchestratorService {
         String targetGroupNumber = cursoExcel.getGrupo() != null ? String.valueOf(cursoExcel.getGrupo()) : "UNICO";
         for (pe.edu.upeu.microserviceimport.dto.external.GroupResponseDTO g : groups) {
             if (g.getGroupNumber() != null && g.getGroupNumber().trim().equalsIgnoreCase(targetGroupNumber)) {
-                return g.getIdGroup();
+                if (g.getCycle() != null && Objects.equals(g.getCycle().getIdCycle(), idCycle)) {
+                    return g.getIdGroup();
+                }
             }
         }
 
@@ -391,7 +393,10 @@ public class ScheduleOrchestratorService {
             typeName = "PRESENCIAL";
         } else {
             String upper = typeName.trim().toUpperCase();
-            if (upper.contains("SÍNCRÓNICO") || upper.contains("SINCRONICO") || upper.contains("VIRTUAL")) {
+            if (upper.contains("SÍNCRÓNICO") || upper.contains("SINCRONICO") || 
+                upper.contains("SÍCRÓNICO") || upper.contains("SICRONICO") ||
+                upper.contains("SINCRO") || upper.contains("SICRO") ||
+                upper.contains("VIRTUAL") || upper.contains("VIRT")) {
                 typeName = "SÍNCRÓNICO";
             } else if (upper.contains("SEMIPRESENCIAL")) {
                 typeName = "SEMIPRESENCIAL";
@@ -416,6 +421,7 @@ public class ScheduleOrchestratorService {
         }
         return 1L;
     }
+
 
     private String generarCodigoCurso(CargaPsicoExcelDTO curso) {
         String slug = slugify(curso.getNombreCurso());
@@ -679,11 +685,42 @@ public class ScheduleOrchestratorService {
         return filtrados.isEmpty() ? espacios : filtrados;
     }
 
-    private boolean matchesPreference(AcademicSpaceDTO espacio, String preference) {
-        return (espacio.getTypeAcademicSpace() != null && containsIgnoreCase(espacio.getTypeAcademicSpace().getName(), preference))
-                || containsIgnoreCase(espacio.getObservation(), preference)
-                || containsIgnoreCase(espacio.getLocation(), preference)
-                || containsIgnoreCase(espacio.getSpaceName(), preference);
+    public boolean matchesPreference(AcademicSpaceDTO espacio, String preference) {
+        if (preference == null || preference.isBlank()) {
+            return true;
+        }
+        String normalizedPref = preference.trim().toLowerCase();
+
+        // Bidirectional contains comparison for type name
+        boolean typeMatch = false;
+        if (espacio.getTypeAcademicSpace() != null && espacio.getTypeAcademicSpace().getName() != null) {
+            String typeName = espacio.getTypeAcademicSpace().getName().toLowerCase();
+            typeMatch = typeName.contains(normalizedPref) || normalizedPref.contains(typeName);
+            // Also handle common abbreviations like "lab" matching "laboratorio"
+            if (normalizedPref.contains("lab") && typeName.contains("laboratorio")) {
+                typeMatch = true;
+            }
+        }
+
+        // Bidirectional contains comparison for space name
+        boolean nameMatch = containsIgnoreCase(espacio.getSpaceName(), normalizedPref)
+                || (espacio.getSpaceName() != null && normalizedPref.contains(espacio.getSpaceName().toLowerCase()));
+
+        // Handle common abbreviations like "lab" matching "laboratorio" in names
+        if (normalizedPref.contains("lab") && contieneLab(espacio.getSpaceName())) {
+            nameMatch = true;
+        }
+
+        return typeMatch
+                || nameMatch
+                || containsIgnoreCase(espacio.getObservation(), normalizedPref)
+                || containsIgnoreCase(espacio.getLocation(), normalizedPref);
+    }
+
+    private boolean contieneLab(String spaceName) {
+        if (spaceName == null) return false;
+        String s = spaceName.toLowerCase();
+        return s.contains("lab") || s.contains("laboratorio");
     }
 
     private boolean containsIgnoreCase(String value, String search) {

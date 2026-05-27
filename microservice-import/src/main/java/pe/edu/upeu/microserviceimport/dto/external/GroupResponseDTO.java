@@ -13,4 +13,5 @@ public class GroupResponseDTO {
     private Long idGroup;
     private String groupNumber;
     private int capacity;
+    private CycleResponseDTO cycle;
 }

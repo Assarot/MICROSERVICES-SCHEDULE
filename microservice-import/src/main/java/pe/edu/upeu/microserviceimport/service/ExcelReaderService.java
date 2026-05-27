@@ -104,7 +104,7 @@ public class ExcelReaderService {
                     .modalidad(getCellStringValue(row.getCell(12)))
                     .docente(getCellStringValue(row.getCell(13)))
                     .aforoPorCursoGrupo(getCellIntValue(row.getCell(14)))
-                    .ambienteEspecializado(getCellStringValue(row.getCell(15)))
+                    .ambienteEspecializado(getCellStringValue(row.getCell(15)).isBlank() ? "AULA" : getCellStringValue(row.getCell(15)))
                     .build();
         } catch (Exception e) {
             log.error("Error al mapear fila: {}", e.getMessage());
@@ -112,24 +112,16 @@ public class ExcelReaderService {
         }
     }
 
-    private String normalizeCourseName(String raw) {
+    public String normalizeCourseName(String raw) {
         if (raw == null) return "";
         String s = raw.trim();
-        // Primero eliminar sufijos comunes entre guiones
-        String[] parts = s.split("\\s*-\\s*");
-        StringBuilder keep = new StringBuilder();
-        for (String p : parts) {
-            String up = p.trim().toUpperCase();
-            if (up.matches("G\\d+") || up.matches("P\\d+") || up.matches("GP\\d*") || up.contains("TEORIA") || up.contains("TEORÍA") || up.contains("PRAC") || up.matches("GRUPO\\s*\\d+")) {
-                break;
-            }
-            if (keep.length() > 0) keep.append(" - ");
-            keep.append(p.trim());
+        int hyphenIndex = s.indexOf("-");
+        if (hyphenIndex != -1) {
+            s = s.substring(0, hyphenIndex).trim();
         }
 
-        String cleaned = keep.toString().trim();
         // Quitar sufijos finales como " G1", "(G2)", " GP 1", " G-1", etc.
-        cleaned = cleaned.replaceAll("\\s*\\(?(?:G|GP)\\s*-?\\s*\\d+\\)?$", "");
+        String cleaned = s.replaceAll("\\s*\\(?(?:G|GP)\\s*-?\\s*\\d+\\)?$", "");
         cleaned = cleaned.replaceAll("\\s*GP\\s*\\d+$", "");
         cleaned = cleaned.replaceAll("\\s*G\\s*\\d+$", "");
         cleaned = cleaned.replaceAll("\\s*\\(G\\s*\\d+\\)$", "");
@@ -137,7 +129,6 @@ public class ExcelReaderService {
         cleaned = cleaned.replaceAll("\\bTEORÍA\\b|\\bTEORIA\\b|\\bPRÁCTICA\\b|\\bPRACTICA\\b", "");
 
         // Quitar sufijos de rol docente que a veces aparecen en el nombre
-        // Ejemplos: "- TITULAR", "- Jefe de prácticas", "- Adjunto"
         cleaned = cleaned.replaceAll("(?i)\\s*-\\s*(TITULAR|JEFE DE PR\\u00C1CTICAS|JEFE DE PRACTICAS|ADJUNTO|ASOCIADO|CONTRATADO)$", "");
         cleaned = cleaned.replaceAll("(?i)\\s*\\(\\s*(TITULAR|JEFE DE PR\\u00C1CTICAS|JEFE DE PRACTICAS|ADJUNTO|ASOCIADO|CONTRATADO)\\s*\\)$", "");
 
@@ -171,13 +162,26 @@ public class ExcelReaderService {
         String raw = getCellStringValue(cell);
         if (raw == null || raw.isEmpty()) return 1;
         String up = raw.trim().toUpperCase();
+
+        // Spanish ordinal word mapping
+        if (up.contains("PRIMER") || up.contains("PRIME")) return 1;
+        if (up.contains("SEGUND")) return 2;
+        if (up.contains("TERCER")) return 3;
+        if (up.contains("CUART")) return 4;
+        if (up.contains("QUINT")) return 5;
+        if (up.contains("SEXT")) return 6;
+        if (up.contains("SEPTIM") || up.contains("SÉPTIM")) return 7;
+        if (up.contains("OCTAV")) return 8;
+        if (up.contains("NOVEN")) return 9;
+        if (up.contains("DECIM") || up.contains("DÉCIM")) return 10;
+
         // Buscar dígitos primero
         java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\d+)").matcher(up);
         if (m.find()) {
             try { return Integer.parseInt(m.group(1)); } catch (Exception ignored) {}
         }
         // Buscar numerales romanos (hasta X)
-        java.util.regex.Matcher roman = java.util.regex.Pattern.compile("\\b(IX|IV|V?I{1,3})\\b").matcher(up);
+        java.util.regex.Matcher roman = java.util.regex.Pattern.compile("\\b(X|IX|VIII|VII|VI|V|IV|III|II|I)\\b").matcher(up);
         if (roman.find()) {
             String r = roman.group(0);
             try {

@@ -146,4 +146,41 @@ class MicroserviceImportApplicationTests {
         log.info("✓ Propiedades correctas");
     }
 
+    @Test
+    void testNewAcademicImportFeatures() {
+        log.info("Test: Nuevas funcionalidades de importación académica y asignación");
+
+        // 1. Verificar Course Name Cleanup
+        String rawName1 = "Prácticas Pre Profesionales Supervisadas II - Jefe de Prácticas";
+        String cleaned1 = excelReaderService.normalizeCourseName(rawName1);
+        assertEquals("Prácticas Pre Profesionales Supervisadas II", cleaned1, "Debe ignorar el texto después del guión");
+
+        String rawName2 = "Psicología General - Teoría";
+        String cleaned2 = excelReaderService.normalizeCourseName(rawName2);
+        assertEquals("Psicología General", cleaned2, "Debe ignorar el texto después del guión");
+
+        // 2. Verificar Environment Preference Matching
+        AcademicSpaceDTO labSpace = AcademicSpaceDTO.builder()
+                .idAcademicSpace(5L)
+                .spaceName("LAB 201")
+                .capacity(30)
+                .typeAcademicSpace(pe.edu.upeu.microserviceimport.dto.TypeAcademicSpaceDTO.builder().name("Laboratorio").build())
+                .build();
+
+        AcademicSpaceDTO aulaSpace = AcademicSpaceDTO.builder()
+                .idAcademicSpace(6L)
+                .spaceName("AULA 101")
+                .capacity(40)
+                .typeAcademicSpace(pe.edu.upeu.microserviceimport.dto.TypeAcademicSpaceDTO.builder().name("Aula").build())
+                .build();
+
+        // Preference is "laboratorio de computo" - should match type "Laboratorio"
+        assertTrue(scheduleOrchestratorService.matchesPreference(labSpace, "laboratorio de computo"));
+        assertFalse(scheduleOrchestratorService.matchesPreference(aulaSpace, "laboratorio de computo"));
+
+        // Preference is blank/null -> matches anything
+        assertTrue(scheduleOrchestratorService.matchesPreference(aulaSpace, "aula"));
+        assertTrue(scheduleOrchestratorService.matchesPreference(aulaSpace, ""));
+    }
+
 }
