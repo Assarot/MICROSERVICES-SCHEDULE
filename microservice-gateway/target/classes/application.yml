@@ -54,7 +54,7 @@ spring:
 
         # Schedule Service Routes
         - id: microservice_schedule
-          uri: lb://microservice_schedule
+          uri: lb://microservice-schedule
           predicates:
             - Path=/schedules/**
           filters:

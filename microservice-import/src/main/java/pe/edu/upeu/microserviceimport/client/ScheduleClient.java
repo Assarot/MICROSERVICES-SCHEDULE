@@ -23,4 +23,7 @@ public interface ScheduleClient {
 
     @PostMapping("/api/v1/schedules/auto-assign")
     pe.edu.upeu.microserviceimport.dto.response.AutoAssignResponse autoAssign(@RequestBody pe.edu.upeu.microserviceimport.dto.request.AutoAssignRequest request);
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/api/v1/schedules")
+    void deleteAllSchedules();
 }

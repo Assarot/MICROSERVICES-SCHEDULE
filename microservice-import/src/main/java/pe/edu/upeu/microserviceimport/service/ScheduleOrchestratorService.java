@@ -79,6 +79,14 @@ public class ScheduleOrchestratorService {
     public void processAndCreateSchedules(java.io.InputStream excelInputStream) throws Exception {
         log.info("========== INICIANDO PROCESO DE ORQUESTACIÓN ==========");
 
+        try {
+            log.info("Limpiando todos los horarios existentes de la base de datos para una importación limpia...");
+            scheduleClient.deleteAllSchedules();
+            log.info("✓ Horarios antiguos eliminados con éxito");
+        } catch (Exception e) {
+            log.warn("No se pudieron eliminar los horarios existentes: {}", e.getMessage());
+        }
+
         // Paso 1: Leer Excel
         log.info("Paso 1: Leyendo archivo Excel...");
         List<CargaPsicoExcelDTO> cursos = excelReaderService.readExcel(excelInputStream);
@@ -128,15 +136,16 @@ public class ScheduleOrchestratorService {
                     CreateCourseDTO courseDTO = convertirACreateCourseDTO(curso);
                     String generatedCode = normalizeText(courseDTO.getCode());
 
+                    CourseResponseDTO cursoCreado;
                     if (existingCoursesByCode.containsKey(generatedCode)) {
-                        log.info("✓ Curso duplicado omitido: {}", curso.getNombreCurso());
-                        continue;
+                        log.info("✓ Curso existente recuperado: {}", curso.getNombreCurso());
+                        cursoCreado = existingCoursesByCode.get(generatedCode);
+                    } else {
+                        cursoCreado = courseManagementClient.createCourse(courseDTO);
+                        cursosCreados++;
+                        log.info("✓ Curso creado: {} (ID: {})", curso.getNombreCurso(), cursoCreado.getIdCourse());
+                        existingCoursesByCode.put(generatedCode, cursoCreado);
                     }
-
-                    CourseResponseDTO cursoCreado = courseManagementClient.createCourse(courseDTO);
-                    cursosCreados++;
-                    log.info("✓ Curso creado: {} (ID: {})", curso.getNombreCurso(), cursoCreado.getIdCourse());
-                    existingCoursesByCode.put(generatedCode, cursoCreado);
 
                     // Obtener o crear asignación de docente
                     Long idCourseAssignment = obtenerOCrearCourseAssignment(curso, cursoCreado.getIdCourse(), teachersByKey);
@@ -156,11 +165,21 @@ public class ScheduleOrchestratorService {
                     if (candidateIds.isEmpty()) {
                         log.warn("No hay espacios candidatos para curso {}", curso.getNombreCurso());
                     } else {
+                        Long resolvedTypeHourId = 1L; // default HT (Teórica)
+                        if (curso.getHp() != null && curso.getHp() > 0 && (curso.getHt() == null || curso.getHt() == 0)) {
+                            resolvedTypeHourId = 2L; // HP (Práctica)
+                        }
+                        Integer hoursRequired = (resolvedTypeHourId == 1L) ? curso.getHt() : curso.getHp();
+                        if (hoursRequired == null || hoursRequired <= 0) {
+                            hoursRequired = 2;
+                        }
                         pe.edu.upeu.microserviceimport.dto.request.CourseToAssignRequest cta = pe.edu.upeu.microserviceimport.dto.request.CourseToAssignRequest.builder()
                                 .idCourseAssignment(idCourseAssignment)
                                 .capacityRequired(curso.getAforoPorCursoGrupo() != null ? curso.getAforoPorCursoGrupo() : 30)
                                 .preferredType(curso.getAmbienteEspecializado())
                                 .candidateAcademicSpaceIds(candidateIds)
+                                .idTypeSchedule(resolvedTypeHourId)
+                                .hoursRequired(hoursRequired)
                                 .build();
                         toAssign.add(cta);
                     }
@@ -632,25 +651,25 @@ public class ScheduleOrchestratorService {
                     }
                 }
             } else {
-                weekDayIds.put(1L, "LUNES");
-                weekDayIds.put(2L, "MARTES");
-                weekDayIds.put(3L, "MIÉRCOLES");
-                weekDayIds.put(4L, "JUEVES");
-                weekDayIds.put(5L, "VIERNES");
-                weekDayIds.put(6L, "SÁBADO");
-                weekDayIds.put(7L, "DOMINGO");
+                weekDayIds.put(1L, "DOMINGO");
+                weekDayIds.put(2L, "LUNES");
+                weekDayIds.put(3L, "MARTES");
+                weekDayIds.put(4L, "MIÉRCOLES");
+                weekDayIds.put(5L, "JUEVES");
+                weekDayIds.put(6L, "VIERNES");
+                weekDayIds.put(7L, "SÁBADO");
             }
             return weekDayIds;
         } catch (Exception e) {
             log.warn("No se pudieron cargar los días de semana: {}", e.getMessage());
             Map<Long, String> fallback = new HashMap<>();
-            fallback.put(1L, "LUNES");
-            fallback.put(2L, "MARTES");
-            fallback.put(3L, "MIÉRCOLES");
-            fallback.put(4L, "JUEVES");
-            fallback.put(5L, "VIERNES");
-            fallback.put(6L, "SÁBADO");
-            fallback.put(7L, "DOMINGO");
+            fallback.put(1L, "DOMINGO");
+            fallback.put(2L, "LUNES");
+            fallback.put(3L, "MARTES");
+            fallback.put(4L, "MIÉRCOLES");
+            fallback.put(5L, "JUEVES");
+            fallback.put(6L, "VIERNES");
+            fallback.put(7L, "SÁBADO");
             return fallback;
         }
     }

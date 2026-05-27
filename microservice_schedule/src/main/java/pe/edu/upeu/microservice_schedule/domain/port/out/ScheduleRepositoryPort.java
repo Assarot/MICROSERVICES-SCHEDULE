@@ -12,4 +12,5 @@ public interface ScheduleRepositoryPort {
     List<Schedule> findByAcademicSpaceAndWeekDay(Long idAcademicSpace, Long idWeekName);
     void deleteById(Long id);
     boolean existsById(Long id);
+    void deleteAll();
 }

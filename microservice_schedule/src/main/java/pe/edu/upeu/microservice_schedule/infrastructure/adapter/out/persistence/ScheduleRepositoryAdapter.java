@@ -54,4 +54,9 @@ public class ScheduleRepositoryAdapter implements ScheduleRepositoryPort {
     public boolean existsById(Long id) {
         return jpaRepository.existsById(id);
     }
+
+    @Override
+    public void deleteAll() {
+        jpaRepository.deleteAll();
+    }
 }

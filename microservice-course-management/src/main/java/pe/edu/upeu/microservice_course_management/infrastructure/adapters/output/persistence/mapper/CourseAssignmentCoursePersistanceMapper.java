@@ -6,9 +6,11 @@ import org.mapstruct.Named;
 import pe.edu.upeu.microservice_course_management.domain.model.Course;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignment;
 import pe.edu.upeu.microservice_course_management.domain.model.CourseAssignmentCourse;
+import pe.edu.upeu.microservice_course_management.domain.model.Group;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseAssignmentCourseEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseAssignmentEntity;
 import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.CourseEntity;
+import pe.edu.upeu.microservice_course_management.infrastructure.adapters.output.persistence.entity.GroupEntity;
 
 import java.util.List;
 
@@ -52,6 +54,13 @@ public interface CourseAssignmentCoursePersistanceMapper {
         ce.setTheoreticalHours(course.getTheoreticalHours());
         ce.setPracticalHours(course.getPracticalHours());
         ce.setTotalHours(course.getTotalHours());
+        if (course.getGroup() != null) {
+            GroupEntity ge = new GroupEntity();
+            ge.setIdGroup(course.getGroup().getIdGroup());
+            ge.setGroupNumber(course.getGroup().getGroupNumber());
+            ge.setCapacity(course.getGroup().getCapacity());
+            ce.setGroup(ge);
+        }
         return ce;
     }
 
@@ -67,6 +76,13 @@ public interface CourseAssignmentCoursePersistanceMapper {
         c.setTheoreticalHours(entity.getTheoreticalHours());
         c.setPracticalHours(entity.getPracticalHours());
         c.setTotalHours(entity.getTotalHours());
+        if (entity.getGroup() != null) {
+            Group g = new Group();
+            g.setIdGroup(entity.getGroup().getIdGroup());
+            g.setGroupNumber(entity.getGroup().getGroupNumber());
+            g.setCapacity(entity.getGroup().getCapacity());
+            c.setGroup(g);
+        }
         return c;
     }
 }

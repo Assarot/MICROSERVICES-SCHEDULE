@@ -58,4 +58,10 @@ public class ScheduleController {
         useCase.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll() {
+        useCase.deleteAll();
+        return ResponseEntity.noContent().build();
+    }
 }

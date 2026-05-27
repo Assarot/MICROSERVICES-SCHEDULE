@@ -16,4 +16,6 @@ public class CourseToAssignRequest {
     private Integer capacityRequired;
     private String preferredType;
     private List<Long> candidateAcademicSpaceIds;
+    private Long idTypeSchedule;
+    private Integer hoursRequired;
 }

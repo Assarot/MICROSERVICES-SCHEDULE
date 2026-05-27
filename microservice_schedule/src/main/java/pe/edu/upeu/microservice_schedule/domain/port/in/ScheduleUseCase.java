@@ -11,4 +11,5 @@ public interface ScheduleUseCase {
     List<Schedule> findAll();
     Schedule update(Long id, Schedule schedule);
     void delete(Long id);
+    void deleteAll();
 }

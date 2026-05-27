@@ -26,11 +26,20 @@ public class AutoAssignService {
 
         // For each course, try to assign to any candidate academic space and slot
         for (var course : request.getCourses()) {
-            boolean ok = false;
             if (course.getCandidateAcademicSpaceIds() == null || course.getCandidateAcademicSpaceIds().isEmpty()) {
                 failed.add(course.getIdCourseAssignment());
                 continue;
             }
+
+            int slotsNeeded = 1;
+            if (course.getHoursRequired() != null) {
+                slotsNeeded = (int) Math.ceil((double) course.getHoursRequired() / ((double) duration / 60.0));
+            }
+            if (slotsNeeded <= 0) {
+                slotsNeeded = 1;
+            }
+
+            int slotsAssigned = 0;
 
             for (Long spaceId : course.getCandidateAcademicSpaceIds()) {
                 for (Long weekDayId : weekDayIds) {
@@ -48,7 +57,7 @@ public class AutoAssignService {
                                     .idAcademicSpace(spaceId)
                                     .idCourseAssignment(course.getIdCourseAssignment())
                                     .idWeekName(weekDayId)
-                                    .idTypeSchedule(1L)
+                                    .idTypeSchedule(course.getIdTypeSchedule() != null ? course.getIdTypeSchedule() : 1L)
                                     .build();
 
                             Schedule saved = scheduleService.create(schedule);
@@ -60,16 +69,21 @@ public class AutoAssignService {
                                     .weekDayId(weekDayId)
                                     .idSchedule(saved.getIdSchedule())
                                     .build());
-                            ok = true;
-                            break;
+                            
+                            slotsAssigned++;
+                            if (slotsAssigned >= slotsNeeded) {
+                                break;
+                            }
                         }
                     }
-                    if (ok) break;
+                    if (slotsAssigned >= slotsNeeded) break;
                 }
-                if (ok) break;
+                if (slotsAssigned >= slotsNeeded) break;
             }
 
-            if (!ok) failed.add(course.getIdCourseAssignment());
+            if (slotsAssigned == 0) {
+                failed.add(course.getIdCourseAssignment());
+            }
         }
 
         return AutoAssignResponse.builder().assigned(assigned).failedCourseAssignmentIds(failed).build();

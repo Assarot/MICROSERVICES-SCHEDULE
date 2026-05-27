@@ -61,4 +61,9 @@ public class ScheduleService implements ScheduleUseCase {
         }
         repositoryPort.deleteById(id);
     }
+
+    @Override
+    public void deleteAll() {
+        repositoryPort.deleteAll();
+    }
 }
