@@ -18,4 +18,9 @@ public class CourseToAssignRequest {
     private List<Long> candidateAcademicSpaceIds;
     private Long idTypeSchedule;
     private Integer hoursRequired;
+
+    // Campos agregados para soportar el algoritmo MRV
+    private Long idTeacher;
+    private Long idGroup;
+    private Integer priority;
 }

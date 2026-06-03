@@ -26,8 +26,8 @@ public class ExcelUpload {
     private final PrimaryDataImportService primaryDataImportService;
 
     public ExcelUpload(ScheduleOrchestratorService scheduleOrchestratorService,
-                       TeacherLoadService teacherLoadService,
-                       PrimaryDataImportService primaryDataImportService) {
+            TeacherLoadService teacherLoadService,
+            PrimaryDataImportService primaryDataImportService) {
         this.scheduleOrchestratorService = scheduleOrchestratorService;
         this.teacherLoadService = teacherLoadService;
         this.primaryDataImportService = primaryDataImportService;
@@ -35,11 +35,11 @@ public class ExcelUpload {
 
     /**
      * Endpoint para subir y procesar archivo Excel de carga psico
-     * Crea cursos y asigna horarios automáticamente
+     * Crea cursos, maestros y asignaciones únicamente (sin horarios)
      */
     @PostMapping("/upload-excel")
     public ResponseEntity<?> uploadExcel(@RequestParam("file") MultipartFile file) {
-        log.info("========== RECIBIDA SOLICITUD DE CARGA ACADEMICA ==========");
+        log.info("========== RECIBIDA SOLICITUD DE CARGA ACADEMICA (SOLO IMPORTACIÓN) ==========");
         log.info("Archivo: {}, Tamaño: {} bytes", file.getOriginalFilename(), file.getSize());
 
         Map<String, Object> response = new HashMap<>();
@@ -52,15 +52,15 @@ public class ExcelUpload {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Procesar el archivo
-            scheduleOrchestratorService.processAndCreateSchedules(file.getInputStream());
+            // Procesar el archivo (carga académica solamente)
+            scheduleOrchestratorService.processAcademicLoadOnly(file.getInputStream());
 
             response.put("status", "SUCCESS");
-            response.put("message", "Carga Academica procesada exitosamente");
+            response.put("message", "Carga Academica procesada e importada exitosamente (sin horarios)");
             response.put("filename", file.getOriginalFilename());
             response.put("timestamp", System.currentTimeMillis());
 
-            log.info("✓ Procesamiento completado exitosamente");
+            log.info("✓ Importación de carga académica completada exitosamente");
             return ResponseEntity.ok(response);
 
         } catch (IOException e) {
@@ -70,14 +70,81 @@ public class ExcelUpload {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 
         } catch (Exception e) {
-            log.error("Error en proceso de orquestación: {}", e.getMessage(), e);
+            log.error("Error en proceso de importación: {}", e.getMessage(), e);
             response.put("status", "ERROR");
             response.put("message", "Error al procesar carga: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
+    /**
+     * Endpoint para subir el archivo de carga y generar/autoasignar los horarios
+     * aplicando todas las restricciones del negocio.
+     */
+    @PostMapping("/generate-schedules")
+    public ResponseEntity<?> generateSchedules(@RequestParam("file") MultipartFile file) {
+        log.info("========== RECIBIDA SOLICITUD PARA GENERAR HORARIOS ==========");
+        log.info("Archivo: {}, Tamaño: {} bytes", file.getOriginalFilename(), file.getSize());
 
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Validar que sea un archivo Excel
+            if (!file.getOriginalFilename().endsWith(".xlsx") && !file.getOriginalFilename().endsWith(".xls")) {
+                response.put("status", "ERROR");
+                response.put("message", "El archivo debe ser Excel (.xlsx o .xls)");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Procesar y crear horarios
+            scheduleOrchestratorService.processAndCreateSchedules(file.getInputStream());
+
+            response.put("status", "SUCCESS");
+            response.put("message", "Horarios generados y autoasignados exitosamente");
+            response.put("filename", file.getOriginalFilename());
+            response.put("timestamp", System.currentTimeMillis());
+
+            log.info("✓ Generación de horarios completada exitosamente");
+            return ResponseEntity.ok(response);
+
+        } catch (IOException e) {
+            log.error("Error de I/O al generar horarios: {}", e.getMessage());
+            response.put("status", "ERROR");
+            response.put("message", "Error al leer el archivo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+        } catch (Exception e) {
+            log.error("Error en proceso de generación de horarios: {}", e.getMessage(), e);
+            response.put("status", "ERROR");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * Endpoint para autoasignar horarios basados en la carga existente en BD (sin necesidad de archivo).
+     */
+    @PostMapping("/auto-assign")
+    public ResponseEntity<?> autoAssign() {
+        log.info("========== RECIBIDA SOLICITUD PARA AUTOASIGNAR HORARIOS DESDE BD ==========");
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            scheduleOrchestratorService.autoAssignAllSchedules();
+
+            response.put("status", "SUCCESS");
+            response.put("message", "Horarios generados y autoasignados exitosamente desde la base de datos");
+            response.put("timestamp", System.currentTimeMillis());
+
+            log.info("✓ Autoasignación desde BD completada exitosamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("Error en proceso de autoasignación: {}", e.getMessage(), e);
+            response.put("status", "ERROR");
+            response.put("message", "Error al generar horarios: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 
     /**
      * Endpoint para importar maestros desde un Excel separado.
