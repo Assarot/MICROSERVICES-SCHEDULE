@@ -10,8 +10,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.input.rest.mod
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-28T23:29:48-0500",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-29T17:32:44-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
 public class ResourceAssignmentRestMapperImpl implements ResourceAssignmentRestMapper {
@@ -38,8 +38,8 @@ public class ResourceAssignmentRestMapperImpl implements ResourceAssignmentRestM
 
         ResourceAssignmentResponse resourceAssignmentResponse = new ResourceAssignmentResponse();
 
-        resourceAssignmentResponse.setIdAcademicSpace( model.getIdAcademicSpace() );
         resourceAssignmentResponse.setIdResourceAssignment( model.getIdResourceAssignment() );
+        resourceAssignmentResponse.setIdAcademicSpace( model.getIdAcademicSpace() );
         resourceAssignmentResponse.setResource( model.getResource() );
 
         return resourceAssignmentResponse;
