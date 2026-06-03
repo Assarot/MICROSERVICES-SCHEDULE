@@ -20,4 +20,5 @@ public class CourseResponseDTO {
     private Duration theoreticalHours;
     private Duration practicalHours;
     private Duration totalHours;
+    private pe.edu.upeu.microserviceimport.dto.external.GroupDTO group;
 }

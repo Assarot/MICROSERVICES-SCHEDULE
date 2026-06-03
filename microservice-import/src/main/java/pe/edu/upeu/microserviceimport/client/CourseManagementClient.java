@@ -29,4 +29,10 @@ public interface CourseManagementClient {
 
     @GetMapping("/course-assignment/v1/api/{id}")
     CourseAssignmentDTO getCourseAssignmentById(@PathVariable("id") Long id);
+
+    @GetMapping("/course-assignment-course/v1/api")
+    List<pe.edu.upeu.microserviceimport.dto.response.CourseAssignmentCourseResponseDTO> getAllCourseAssignmentCourses();
+
+    @GetMapping("/course-assignment/v1/api")
+    List<pe.edu.upeu.microserviceimport.dto.response.CourseAssignmentResponseDTO> getAllCourseAssignments();
 }

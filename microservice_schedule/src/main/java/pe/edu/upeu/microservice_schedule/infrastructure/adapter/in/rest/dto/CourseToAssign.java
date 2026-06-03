@@ -18,4 +18,7 @@ public class CourseToAssign {
     private List<Long> candidateAcademicSpaceIds; // optional - if empty, caller must provide candidates
     private Long idTypeSchedule; // optional - theory (1) or practice (2)
     private Integer hoursRequired; // optional
+    private Long idTeacher; // optional - for teacher collision validation
+    private Long idGroup; // optional - for group collision validation
+    private Integer priority; // optional - for MRV heuristic weighting
 }
