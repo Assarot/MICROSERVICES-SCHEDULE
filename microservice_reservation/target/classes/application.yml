@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: ms-reservation
+
+  datasource:
+    url: jdbc:postgresql://localhost:5441/reservation_db
+    username: admin
+    password: admin123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true  # data.sql se ejecuta DESPUÉS de que Hibernate crea las tablas
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: America/Lima
+
+# JWT Configuration — misma clave que MS-AUTH
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationPleaseChangeThisInProduction123456789}
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8088}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Eureka Client Configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+# Logging
+logging:
+  level:
+    root: INFO
+    pe.edu.upeu.microservice_reservation: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+
+# Reservation Business Rules
+reservation:
+  max-advance-days: 365
+  holidays:
+    # Feriados nacionales del Perú (formato MM-DD)
+    - "01-01"  # Año Nuevo
+    - "04-17"  # Jueves Santo
+    - "04-18"  # Viernes Santo
+    - "05-01"  # Día del Trabajo
+    - "06-29"  # San Pedro y San Pablo
+    - "07-28"  # Fiestas Patrias
+    - "07-29"  # Fiestas Patrias
+    - "08-30"  # Santa Rosa de Lima
+    - "10-08"  # Combate de Angamos
+    - "11-01"  # Todos los Santos
+    - "12-08"  # Inmaculada Concepción
+    - "12-25"  # Navidad

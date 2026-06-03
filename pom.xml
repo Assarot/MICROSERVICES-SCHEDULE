@@ -21,6 +21,7 @@
         <module>microservice-gateway</module>
         <module>microservice_inventory</module>
         <module>microservice-import</module>
+        <module>microservice_reservation</module>
     </modules>
 
     <properties>

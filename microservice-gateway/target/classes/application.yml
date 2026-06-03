@@ -9,7 +9,7 @@ spring:
           lower-case-service-id: true
       globalcors:
         corsConfigurations:
-          '[/**]':
+          "[/**]":
             allowedOrigins:
               - http://localhost:4200
               - http://146.181.39.73
@@ -34,7 +34,7 @@ spring:
           predicates:
             - Path=/microservice-auth/api/auth/**
           filters:
-          - StripPrefix=0
+            - StripPrefix=0
 
         # User Profile Service Routes
         - id: ms-user
@@ -92,9 +92,25 @@ spring:
           filters:
             - StripPrefix=0
 
+        # Reservation Service Routes
+        - id: ms-reservation
+          uri: lb://ms-reservation
+          predicates:
+            - Path=/api/reservations/**
+          filters:
+            - StripPrefix=0
+
+        # Reservation Status Routes
+        - id: ms-reservation-status
+          uri: lb://ms-reservation
+          predicates:
+            - Path=/api/reservation-status/**
+          filters:
+            - StripPrefix=0
+
 server:
   port: ${SERVER_PORT:8080}
-  address: 0.0.0.0  # Accesible desde la red local
+  address: 0.0.0.0 # Accesible desde la red local
 
 eureka:
   client:

@@ -10,8 +10,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.input.rest.mod
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-20T12:05:18-0500",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-29T17:32:44-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
 )
 @Component
 public class StateRestMapperImpl implements StateRestMapper {
@@ -24,8 +24,8 @@ public class StateRestMapperImpl implements StateRestMapper {
 
         State.StateBuilder state = State.builder();
 
-        state.isActive( request.getIsActive() );
         state.name( request.getName() );
+        state.isActive( request.getIsActive() );
 
         return state.build();
     }
@@ -39,8 +39,8 @@ public class StateRestMapperImpl implements StateRestMapper {
         StateResponse stateResponse = new StateResponse();
 
         stateResponse.setIdState( state.getIdState() );
-        stateResponse.setIsActive( state.getIsActive() );
         stateResponse.setName( state.getName() );
+        stateResponse.setIsActive( state.getIsActive() );
 
         return stateResponse;
     }
