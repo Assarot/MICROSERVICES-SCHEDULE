@@ -33,4 +33,14 @@ public interface ReservationBlockJpaRepository extends JpaRepository<Reservation
             @Param("endTime") LocalTime endTime);
 
     List<ReservationBlockEntity> findByIdAcademicSpaceAndIsActiveTrue(Long idAcademicSpace);
+
+    @Query("SELECT DISTINCT rb.idAcademicSpace FROM ReservationBlockEntity rb " +
+           "WHERE rb.blockDate = :date " +
+           "AND rb.isActive = true " +
+           "AND rb.startTime < :endTime " +
+           "AND rb.endTime > :startTime " +
+           "AND rb.idAcademicSpace IS NOT NULL")
+    List<Long> findOccupiedSpaceIds(@Param("date") LocalDate date,
+                                    @Param("startTime") LocalTime startTime,
+                                    @Param("endTime") LocalTime endTime);
 }

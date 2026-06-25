@@ -11,6 +11,11 @@ import pe.edu.upeu.microservice_schedule.infrastructure.adapter.in.rest.dto.Rese
 import pe.edu.upeu.microservice_schedule.infrastructure.adapter.in.rest.dto.ReservationBlockResponse;
 import pe.edu.upeu.microservice_schedule.infrastructure.adapter.out.persistence.entity.ReservationBlockEntity;
 import pe.edu.upeu.microservice_schedule.infrastructure.adapter.out.persistence.repository.ReservationBlockJpaRepository;
+import pe.edu.upeu.microservice_schedule.infrastructure.adapter.out.persistence.repository.ScheduleJpaRepository;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,6 +32,7 @@ import java.util.Map;
 public class ReservationBlockController {
 
     private final ReservationBlockJpaRepository reservationBlockRepository;
+    private final ScheduleJpaRepository scheduleRepository;
 
     /**
      * Bloquea un horario en un espacio académico a partir de una reserva aprobada.
@@ -75,7 +81,7 @@ public class ReservationBlockController {
      * DELETE /api/v1/schedules/reservation-blocks/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> releaseBlock(@PathVariable Long id) {
+    public ResponseEntity<Void> releaseBlock(@PathVariable("id") Long id) {
         log.info("DELETE /api/v1/schedules/reservation-blocks/{} - Liberando bloqueo", id);
 
         return reservationBlockRepository.findById(id).map(block -> {
@@ -92,10 +98,10 @@ public class ReservationBlockController {
      */
     @GetMapping("/availability")
     public ResponseEntity<Map<String, Object>> checkAvailability(
-            @RequestParam Long idAcademicSpace,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
-            @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime) {
+            @RequestParam("idAcademicSpace") Long idAcademicSpace,
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            @RequestParam("startTime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
+            @RequestParam("endTime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime) {
 
         log.info("GET /api/v1/schedules/availability - idAcademicSpace={}, date={}, start={}, end={}",
                 idAcademicSpace, date, startTime, endTime);
@@ -110,6 +116,41 @@ public class ReservationBlockController {
                 "endTime", endTime.toString(),
                 "available", !blocked
         ));
+    }
+
+    /**
+     * Retorna una lista de IDs de espacios académicos ocupados para una fecha y hora dadas.
+     * Revisa tanto bloqueos de reservas como horarios regulares.
+     * GET /api/v1/schedules/reservation-blocks/occupied-spaces
+     */
+    @GetMapping("/occupied-spaces")
+    public ResponseEntity<List<Long>> getOccupiedSpaces(
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            @RequestParam("startTime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
+            @RequestParam("endTime") @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime) {
+
+        log.info("GET /api/v1/schedules/reservation-blocks/occupied-spaces - date={}, start={}, end={}",
+                date, startTime, endTime);
+
+        Set<Long> occupiedSpaces = new HashSet<>();
+
+        // 1. Obtener los espacios ocupados por reservas en esta fecha y horario
+        List<Long> blockedByReservations = reservationBlockRepository.findOccupiedSpaceIds(date, startTime, endTime);
+        if (blockedByReservations != null) {
+            occupiedSpaces.addAll(blockedByReservations);
+        }
+
+        // 2. Obtener los espacios ocupados por horarios regulares de cursos
+        // date.getDayOfWeek().getValue() devuelve 1 para Lunes, 7 para Domingo (ISO-8601).
+        // En la BD (tabla week_day): 1=Domingo, 2=Lunes, 3=Martes... 7=Sábado.
+        int isoDay = date.getDayOfWeek().getValue();
+        Long idWeekName = (long) ((isoDay % 7) + 1);
+        List<Long> blockedBySchedules = scheduleRepository.findOccupiedSpaceIds(idWeekName, startTime, endTime);
+        if (blockedBySchedules != null) {
+            occupiedSpaces.addAll(blockedBySchedules);
+        }
+
+        return ResponseEntity.ok(occupiedSpaces.stream().collect(Collectors.toList()));
     }
 
     private ReservationBlockResponse toResponse(ReservationBlockEntity entity) {
