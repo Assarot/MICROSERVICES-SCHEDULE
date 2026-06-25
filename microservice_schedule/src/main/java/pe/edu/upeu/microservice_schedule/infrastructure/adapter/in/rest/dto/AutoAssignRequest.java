@@ -16,4 +16,16 @@ public class AutoAssignRequest {
     private List<String> startTimes; // HH:mm:ss
     private Integer durationMinutes;
     private List<Long> weekDayIds; // preferred week days (ids)
+
+    // Dynamic Activity Blocks Config
+    private Long culturaDayId;
+    private String culturaStartTime; // HH:mm:ss
+    private String culturaEndTime;   // HH:mm:ss
+
+    private Long activateDayId;
+    private String activateStartTime; // HH:mm:ss
+    private String activateEndTime;   // HH:mm:ss
+
+    // Optional limitation by Building
+    private Long idBuilding;
 }

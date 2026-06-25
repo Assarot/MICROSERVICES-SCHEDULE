@@ -29,7 +29,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<ScheduleResponse> findById(@PathVariable("id") Long id) {
         return useCase.findById(id)
                 .map(mapper::toResponse)
                 .map(ResponseEntity::ok)
@@ -46,7 +46,7 @@ public class ScheduleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponse> update(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @Valid @RequestBody ScheduleRequest request) {
         var domain = mapper.toDomain(request);
         var updated = useCase.update(id, domain);
@@ -54,7 +54,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         useCase.delete(id);
         return ResponseEntity.noContent().build();
     }

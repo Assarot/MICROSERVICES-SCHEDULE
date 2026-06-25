@@ -17,8 +17,8 @@ import pe.edu.upeu.microserviceinventory2.infrastructure.adapters.output.persist
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-29T17:32:44-0500",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.8 (Oracle Corporation)"
+    date = "2026-06-24T17:34:40-0500",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.2 (Amazon.com Inc.)"
 )
 @Component
 public class ResourceAssignmentPersistenceMapperImpl implements ResourceAssignmentPersistenceMapper {
