@@ -34,4 +34,5 @@ public class ReservationResponse {
     private Long idSchedule;
     private ReservationStatusResponse status;
     private String idempotencyKey;
+    private String changeReason;
 }

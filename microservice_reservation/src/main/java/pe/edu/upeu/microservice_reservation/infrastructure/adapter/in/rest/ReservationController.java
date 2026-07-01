@@ -41,10 +41,10 @@ public class ReservationController {
     /**
      * Crear reserva — Casos 9, 10, 11, 14, 15
      * POST /api/reservations
-     * Solo USER (estudiante) puede registrar solicitudes de reserva.
+     * USER y ADMIN pueden registrar solicitudes de reserva.
      */
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ReservationResponse> createReservation(
             @Valid @RequestBody ReservationCreateRequest request,
             HttpServletRequest httpRequest) {
@@ -53,6 +53,17 @@ public class ReservationController {
         log.info("POST /api/reservations - user={}", authenticatedUserId);
         ReservationResponse response = reservationService.createReservation(request, authenticatedUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Obtener todas las reservas
+     * GET /api/reservations
+     * Solo ADMIN puede ver todas las reservas.
+     */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
+    public ResponseEntity<List<ReservationResponse>> getAllReservations() {
+        return ResponseEntity.ok(reservationService.getAllReservations());
     }
 
     /**
@@ -146,7 +157,7 @@ public class ReservationController {
      * Solo ADMIN
      */
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
     public ResponseEntity<ReservationResponse> approveReservation(
             @PathVariable Long id,
             @Valid @RequestBody StatusChangeRequest request,
@@ -163,7 +174,7 @@ public class ReservationController {
      * Solo ADMIN
      */
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
     public ResponseEntity<ReservationResponse> rejectReservation(
             @PathVariable Long id,
             @Valid @RequestBody StatusChangeRequest request,
@@ -179,7 +190,7 @@ public class ReservationController {
      * Solo ADMIN
      */
     @PutMapping("/{id}/finish")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
     public ResponseEntity<ReservationResponse> finishReservation(
             @PathVariable Long id,
             @RequestBody(required = false) StatusChangeRequest request,
@@ -195,7 +206,7 @@ public class ReservationController {
      * Solo ADMIN
      */
     @PutMapping("/{id}/revoke")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
     public ResponseEntity<ReservationResponse> revokeReservation(
             @PathVariable Long id,
             @Valid @RequestBody StatusChangeRequest request,
@@ -206,12 +217,27 @@ public class ReservationController {
     }
 
     /**
+     * Deshacer decisión (volver a pendiente)
+     * PUT /api/reservations/{id}/revert-to-pending
+     * Solo ADMIN
+     */
+    @PutMapping("/{id}/revert-to-pending")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
+    public ResponseEntity<ReservationResponse> revertToPending(
+            @PathVariable Long id,
+            HttpServletRequest httpRequest) {
+
+        Long authenticatedUserId = getAuthenticatedUserId(httpRequest);
+        return ResponseEntity.ok(reservationService.revertToPending(id, authenticatedUserId));
+    }
+
+    /**
      * Aprobación en lote — Caso 20, 21
      * POST /api/reservations/batch-approve
      * Solo ADMIN
      */
     @PostMapping("/batch-approve")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('COOROOMS')")
     public ResponseEntity<List<BatchApproveResult>> batchApprove(
             @Valid @RequestBody BatchApproveRequest request,
             HttpServletRequest httpRequest) {

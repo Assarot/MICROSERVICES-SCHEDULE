@@ -177,6 +177,16 @@ public class ReservationService {
     // CONSULTAS — Caso 16, 12
     // ======================================================================
 
+    /**
+     * Obtener todas las reservas (Para rol ADMIN / COOROOMS)
+     */
+    public List<ReservationResponse> getAllReservations() {
+        return reservationRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
     public ReservationResponse getReservationById(Long id) {
         return toResponse(getReservationOrThrow(id));
     }
@@ -440,6 +450,41 @@ public class ReservationService {
     }
 
     // ======================================================================
+    // DESHACER DECISIÓN (VOLVER A PENDIENTE)
+    // ======================================================================
+
+    @Transactional
+    public ReservationResponse revertToPending(Long id, Long authenticatedUserProfileId) {
+        ReservationEntity reservation = getReservationOrThrow(id);
+
+        if (reservation.getStatus().getIdStatus().equals(STATUS_PENDIENTE)) {
+            throw new IllegalStateException("La reserva ya está en estado Pendiente.");
+        }
+
+        // Si estaba aprobada, liberar el bloque de horario en MS-SCHEDULE
+        if (reservation.getStatus().getIdStatus().equals(STATUS_APROBADA) && reservation.getIdSchedule() != null) {
+            try {
+                scheduleClient.releaseReservationBlock(reservation.getIdSchedule());
+                log.info("Bloqueo de horario {} liberado en MS-SCHEDULE tras deshacer decisión", reservation.getIdSchedule());
+                reservation.setIdSchedule(null); // Limpiar el idSchedule porque ya no está bloqueado
+            } catch (FeignException e) {
+                log.error("Error al liberar horario en MS-SCHEDULE: {}. Continuando.", e.getMessage());
+            }
+        }
+
+        ReservationStatusEntity previousStatus = reservation.getStatus();
+        ReservationStatusEntity newStatus = getStatusOrThrow(STATUS_PENDIENTE);
+
+        reservation.setStatus(newStatus);
+        reservation = reservationRepository.save(reservation);
+
+        saveLog(reservation, previousStatus, newStatus, "Decisión deshecha, vuelve a pendiente", authenticatedUserProfileId);
+
+        log.info("Reserva {} revertida a pendiente por admin={}", id, authenticatedUserProfileId);
+        return toResponse(reservation);
+    }
+
+    // ======================================================================
     // BATCH APPROVE — Caso 20, 21
     // ======================================================================
 
@@ -635,6 +680,14 @@ public class ReservationService {
     }
 
     private ReservationResponse toResponse(ReservationEntity entity) {
+        String latestReason = null;
+        if (entity.getStatus().getIdStatus() != 1L) { // STATUS_PENDIENTE is 1L
+            java.util.List<ReservationLogEntity> logs = logRepository.findByReservation_IdReservationOrderByChangedAtAsc(entity.getIdReservation());
+            if (!logs.isEmpty()) {
+                latestReason = logs.get(logs.size() - 1).getChangeReason();
+            }
+        }
+
         return ReservationResponse.builder()
                 .idReservation(entity.getIdReservation())
                 .startDatetime(entity.getStartDatetime())
@@ -648,6 +701,7 @@ public class ReservationService {
                 .idSchedule(entity.getIdSchedule())
                 .status(toStatusResponse(entity.getStatus()))
                 .idempotencyKey(entity.getIdempotencyKey())
+                .changeReason(latestReason)
                 .build();
     }
 
