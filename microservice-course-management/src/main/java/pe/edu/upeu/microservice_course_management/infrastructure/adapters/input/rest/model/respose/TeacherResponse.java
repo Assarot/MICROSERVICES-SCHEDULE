@@ -12,4 +12,5 @@ public class TeacherResponse {
     private String name;
     private String lastName;
     private String email;
+    private Long authUserId;
 }

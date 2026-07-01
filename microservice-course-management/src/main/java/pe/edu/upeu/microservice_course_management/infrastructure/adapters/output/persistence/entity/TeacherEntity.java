@@ -26,6 +26,8 @@ public class TeacherEntity {
     private String lastName;
     @Column(name = "email")
     private String email;
+    @Column(name = "auth_user_id")
+    private Long authUserId;
 
     @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

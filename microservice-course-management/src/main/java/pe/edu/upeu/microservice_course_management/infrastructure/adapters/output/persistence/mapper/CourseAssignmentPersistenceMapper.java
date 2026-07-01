@@ -26,6 +26,9 @@ public interface CourseAssignmentPersistenceMapper {
         TeacherEntity te = new TeacherEntity();
         te.setIdTeacher(teacher.getIdTeacher());
         te.setName(teacher.getName());
+        te.setLastName(teacher.getLastName());
+        te.setEmail(teacher.getEmail());
+        te.setAuthUserId(teacher.getAuthUserId());
         return te;
     }
 
@@ -37,6 +40,7 @@ public interface CourseAssignmentPersistenceMapper {
         t.setName(entity.getName());
         t.setLastName(entity.getLastName());
         t.setEmail(entity.getEmail());
+        t.setAuthUserId(entity.getAuthUserId());
         return t;
     }
 

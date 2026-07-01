@@ -15,4 +15,5 @@ public class TeacherCreateRequest {
     private String lastName;
     @NotBlank(message = "Field email cannot be empty or null")
     private String email;
+    private Long authUserId;
 }
