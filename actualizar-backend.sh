@@ -30,5 +30,6 @@ nohup java -jar microservice_schedule/target/microservice_schedule-0.0.1-SNAPSHO
 nohup java -jar microservice_inventory/target/microservice_inventory-0.0.1-SNAPSHOT.jar > ms-inventory.log 2>&1 &
 nohup java -jar microservice_incident/target/microservice_incident-0.0.1-SNAPSHOT.jar > ms-incident.log 2>&1 &
 nohup java -jar microservice-import/target/microservice-import-1.0.0.jar > ms-import.log 2>&1 &
+nohup java -jar microservice_reservation/target/microservice_reservation-0.0.1-SNAPSHOT.jar > ms-reservation.log 2>&1 &
 
 echo "✅ ¡Backend desplegado! (Eureka y Gateway activos)"
